@@ -181,12 +181,76 @@
     </section>
 
     <!-- قسم التقارير -->
-    <section id="reportsSection" class="section">
-      <div class="card">
-        <h3>📊 صفحة التقارير</h3>
-        <p>سيتم عرض التقارير هنا لاحقًا.</p>
-      </div>
-    </section>
+<section id="reportsSection" class="section">
+  <div class="card">
+    <h3>🎂 تقرير أعياد الميلاد</h3>
+    <label>اختر الشهر</label>
+    <select id="birthdayMonth">
+      <option value="">اختر الشهر</option>
+    </select>
+    <button id="birthdayShow" class="submit-btn">عرض الأسماء</button>
+    <div id="birthdayResult"></div>
+  </div>
+
+  <div class="card">
+    <h3>📅 تقرير الحضور في تاريخ محدد</h3>
+    <label>السنة</label>
+    <select id="reportYear"></select>
+
+    <label>الشهر</label>
+    <select id="reportMonth"></select>
+
+    <label>التاريخ</label>
+    <select id="reportDate"></select>
+
+    <div style="display:flex; gap:10px;">
+      <button id="showCount" class="submit-btn" style="flex:1;">عرض العدد</button>
+      <button id="showNames" class="submit-btn" style="flex:1;">عرض الأسماء</button>
+    </div>
+    <div id="attendanceReportResult"></div>
+  </div>
+
+  <div class="card">
+    <h3>🧒 تقرير بيانات طفل</h3>
+    <label>الاسم</label>
+    <input type="text" id="childInfoName" placeholder="اكتب الاسم...">
+    <div id="childInfoSuggestions" class="suggestions" style="display:none;"></div>
+    <button id="showChildInfo" class="submit-btn">عرض البيانات</button>
+    <div id="childInfoResult"></div>
+  </div>
+
+  <div class="card">
+    <h3>📈 عدد حضور الطفل في شهر محدد</h3>
+    <label>الاسم</label>
+    <input type="text" id="childAttendanceName" placeholder="اكتب الاسم...">
+    <div id="childAttendanceSuggestions" class="suggestions" style="display:none;"></div>
+
+    <label>السنة</label>
+    <select id="childAttendanceYear"></select>
+
+    <label>الشهر</label>
+    <select id="childAttendanceMonth"></select>
+
+    <button id="showChildAttendance" class="submit-btn">عرض عدد الحضور</button>
+    <div id="childAttendanceResult"></div>
+  </div>
+
+  <div class="card">
+    <h3>⭐ تقرير نقاط التفاعل</h3>
+    <label>الاسم</label>
+    <input type="text" id="interactionReportName" placeholder="اكتب الاسم...">
+    <div id="interactionReportSuggestions" class="suggestions" style="display:none;"></div>
+
+    <label>السنة</label>
+    <select id="interactionReportYear"></select>
+
+    <label>الشهر</label>
+    <select id="interactionReportMonth"></select>
+
+    <button id="showInteractionReport" class="submit-btn">عرض النقاط</button>
+    <div id="interactionReportResult"></div>
+  </div>
+</section>
   </main>
 
   <script>
