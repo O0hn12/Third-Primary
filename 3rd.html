@@ -516,7 +516,7 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   try {
     const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
     const data = await res.json();
-    renderArrayOfObjectsAsTable(container, data.records || [], ["name","year","month","date","attendance","notebook"]);
+    renderArrayOfObjectsAsTable(container, data.records || [], ["name","group","day","month","year","parentNumber","address","notes"]);
   } catch {
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
