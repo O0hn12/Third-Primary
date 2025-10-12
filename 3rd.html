@@ -282,15 +282,15 @@
 
     // تحميل الأسماء لمرة واحدة فقط
     async function loadNames() {
-      try {
-        const res = await fetch(apiURL + "?type=names");
-        const data = await res.json();
-        allNames = data.names || [];
-        console.log("✅ تم تحميل الأسماء:", allNames.length);
-      } catch {
-        console.warn("⚠️ فشل تحميل الأسماء");
-      }
-    }
+  try {
+    const res = await fetch(apiURL + "?type=names");
+    const data = await res.json();
+    allNames = Array.isArray(data) ? data : data.names || [];
+    console.log("✅ تم تحميل الأسماء:", allNames.length);
+  } catch (err) {
+    console.warn("⚠️ فشل تحميل الأسماء", err);
+  }
+}
     loadNames();
 
     // إنشاء دالة اقتراحات عامة
