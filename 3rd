@@ -258,6 +258,87 @@
 
     interactionName.addEventListener("input", checkInteractionReady);
     interactionPoints.addEventListener("input", checkInteractionReady);
+
+    // ====== الاتصال بـ Cloudflare Worker ======
+    const apiURL = "https://3rd.johnmamdouh777.workers.dev/";
+
+    attendanceSubmit.addEventListener("click", async () => {
+      const year = yearSelect.value;
+      const month = monthSelect.value;
+      const date = dateSelect.options[dateSelect.selectedIndex].text;
+      const name = document.getElementById("nameInput").value.trim();
+      const attendance = document.querySelector('input[name="attendance"]:checked').value;
+      const notebook = document.querySelector('input[name="notebook"]:checked').value;
+
+      attendanceSubmit.disabled = true;
+
+      const data = {
+        type: "attendance",
+        year, month, date, name, attendance, notebook
+      };
+
+      try {
+        const res = await fetch(apiURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          alert("✅ تم تسجيل الحضور بنجاح!");
+          document.getElementById("nameInput").value = "";
+          document.querySelectorAll('input[name="attendance"]').forEach(e => e.checked = false);
+          document.querySelectorAll('input[name="notebook"]').forEach(e => e.checked = false);
+          checkAttendanceReady();
+        } else {
+          alert("❌ حدث خطأ أثناء التسجيل.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ لم يتم الاتصال بالخادم.");
+      } finally {
+        attendanceSubmit.disabled = false;
+      }
+    });
+
+    interactionSubmit.addEventListener("click", async () => {
+      const name = interactionName.value.trim();
+      const points = interactionPoints.value;
+
+      interactionSubmit.disabled = true;
+
+      const data = {
+        type: "interaction",
+        name,
+        points
+      };
+
+      try {
+        const res = await fetch(apiURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          alert("✅ تم تسجيل التفاعل بنجاح!");
+          interactionName.value = "";
+          interactionPoints.value = "";
+          checkInteractionReady();
+        } else {
+          alert("❌ حدث خطأ أثناء التسجيل.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ لم يتم الاتصال بالخادم.");
+      } finally {
+        interactionSubmit.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
