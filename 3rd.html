@@ -426,15 +426,14 @@ checkInteractionReady();
 
 // --- إرسال التفاعل ---
 interactionSubmit.addEventListener("click", async ()=> {
-  const name = interactionName.value.trim();
-  const day = +document.getElementById("interactionDay").value;
-  const month = +document.getElementById("interactionMonthSelect").value;
-  const year = +document.getElementById("interactionYearSelect").value;
-  const points = +interactionPoints.value;
+  const day = Number(document.getElementById("interactionDay").value);
+const month = Number(document.getElementById("interactionMonthSelect").value);
+const year = Number(document.getElementById("interactionYearSelect").value);
+const points = Number(interactionPoints.value);
 
-  if(!name || !day || !month || !year || isNaN(points) || points<0 || points>5){
+if(!name || !day || !month || !year || isNaN(points) || points < 0 || points > 5){
     return alert("تأكد من إدخال الاسم والتاريخ والنقاط بشكل صحيح");
-  }
+}
 
   interactionSubmit.disabled = true;
 
