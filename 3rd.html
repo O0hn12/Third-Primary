@@ -157,17 +157,19 @@ fillYearSelect(document.getElementById("childAttendanceYear"));
 fillYearSelect(document.getElementById("interactionReportYear"));
 
 function fillMonthSelect(sel){
+  if (!sel) return; // حماية إذا العنصر مش موجود
   months.forEach((m,i)=>{
     const opt=document.createElement("option");
     opt.value=i+1; opt.textContent=m;
     sel.appendChild(opt);
   });
 }
+
 fillMonthSelect(document.getElementById("monthSelect"));
 fillMonthSelect(document.getElementById("reportMonth"));
 fillMonthSelect(document.getElementById("childAttendanceMonth"));
 fillMonthSelect(document.getElementById("interactionReportMonth"));
-fillMonthSelect(document.getElementById("Month"));
+fillMonthSelect(document.getElementById("birthdayMonth"));
 
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
@@ -201,14 +203,24 @@ async function loadNames(){
   }
 }
 
+const nameInput = document.getElementById("nameInput");
+const interactionName = document.getElementById("interactionName");
+const childInfoName = document.getElementById("childInfoName");
+const childAttendanceName = document.getElementById("childAttendanceName");
+const interactionReportName = document.getElementById("interactionReportName");
+
+// اختر مكان تنفيذ التحميل فقط مرة:
 async function initAttendance(){
   await loadNames(); // ننتظر تحميل الأسماء
+  // بعد تحميل الأسماء نربط الاقتراحات
   setupSuggestions(nameInput, document.getElementById("nameSuggestions"));
+  setupSuggestions(interactionName, document.getElementById("interactionSuggestions"));
+  setupSuggestions(childInfoName, document.getElementById("childInfoSuggestions"));
+  setupSuggestions(childAttendanceName, document.getElementById("childAttendanceSuggestions"));
+  setupSuggestions(interactionReportName, document.getElementById("interactionReportSuggestions"));
   checkAttendanceReady();
 }
-
 initAttendance();
-loadNames();
 
 // --- الاقتراحات ---
 function setupSuggestions(inputEl,suggestionsEl){
@@ -349,15 +361,16 @@ function renderArrayOfObjectsAsTable(container, arr, headers){
     arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("") + `</table>`;
 }
   // --- أعياد الميلاد ---
-document.getElementById("Show").addEventListener("click", async () => {
-  const month = document.getElementById("Month").value;
-  const container = document.getElementById("Result");
+document.getElementById("birthdayShow").addEventListener("click", async () => {
+  const month = document.getElementById("birthdayMonth").value;
+  const container = document.getElementById("birthdayResult");
   container.innerHTML = "جاري التحميل...";
   try {
     const res = await fetch(`${apiURL}?type=birthdays&month=${month}`);
     const data = await res.json();
     renderListAsTable(container, data.names || [], "اسم الطفل");
-  } catch {
+  } catch (err) {
+    console.error(err);
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
 });
