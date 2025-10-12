@@ -149,7 +149,7 @@
         <select id="dateSelect"></select>
 
         <label>الاسم</label>
-        <input type="text" id="nameInput" placeholder="اكتب الاسم...">
+        <input type="text" id="nameInput" placeholder="اكتب الاسم...(لازم من الاقتراحات)">
         <div id="nameSuggestions" class="suggestions" style="display:none;"></div>
 
         <label>الحضور</label>
@@ -257,11 +257,15 @@
     // زر الإرسال للحضور
     const attendanceSubmit = document.getElementById("attendanceSubmit");
     function checkAttendanceReady() {
-      const name = document.getElementById("nameInput").value.trim();
-      const att = document.querySelector('input[name="attendance"]:checked');
-      const note = document.querySelector('input[name="notebook"]:checked');
-      attendanceSubmit.disabled = !(yearSelect.value && monthSelect.value && dateSelect.value && name && att && note);
-    }
+  const name = document.getElementById("nameInput").value.trim();
+  const att = document.querySelector('input[name="attendance"]:checked');
+  const note = document.querySelector('input[name="notebook"]:checked');
+
+  // ✅ تحقق إن الاسم من ضمن الأسماء المحمّلة
+  const isValidName = allNames.includes(name);
+
+  attendanceSubmit.disabled = !(yearSelect.value && monthSelect.value && dateSelect.value && name && att && note && isValidName);
+}
     document.querySelectorAll('input, select').forEach(el => el.addEventListener("input", checkAttendanceReady));
 
     // زر التفاعل
@@ -269,10 +273,14 @@
     const interactionPoints = document.getElementById("interactionPoints");
     const interactionSubmit = document.getElementById("interactionSubmit");
     function checkInteractionReady() {
-      const name = interactionName.value.trim();
-      const points = interactionPoints.value;
-      interactionSubmit.disabled = !(name && points !== "");
-    }
+  const name = interactionName.value.trim();
+  const points = interactionPoints.value;
+
+  // ✅ تحقق إن الاسم من ضمن الأسماء المحمّلة
+  const isValidName = allNames.includes(name);
+
+  interactionSubmit.disabled = !(name && points !== "" && isValidName);
+}
     interactionName.addEventListener("input", checkInteractionReady);
     interactionPoints.addEventListener("input", checkInteractionReady);
 
