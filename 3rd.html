@@ -37,6 +37,7 @@ th { background: #0078d7; color: white; }
 
 <main>
 <section id="attendanceSection" class="section active">
+  <!-- تسجيل الحضور -->
   <div class="card">
     <h3>تسجيل الحضور والنوتة</h3>
     <label>السنة</label><select id="yearSelect"></select>
@@ -58,6 +59,7 @@ th { background: #0078d7; color: white; }
     <button id="attendanceSubmit" class="submit-btn" disabled>إرسال</button>
   </div>
 
+  <!-- تسجيل التفاعل -->
   <div class="card">
     <h3>تسجيل التفاعل</h3>
     <label>الاسم</label>
@@ -70,6 +72,7 @@ th { background: #0078d7; color: white; }
 </section>
 
 <section id="reportsSection" class="section">
+  <!-- أعياد الميلاد -->
   <div class="card">
     <h3>أعياد ميلاد الأطفال</h3>
     <label>اختر الشهر</label><select id="birthdayMonth"></select>
@@ -77,6 +80,7 @@ th { background: #0078d7; color: white; }
     <div id="birthdayResult"></div>
   </div>
 
+  <!-- تقرير الحضور -->
   <div class="card">
     <h3>تقرير الحضور</h3>
     <label>السنة</label><select id="reportYear"></select>
@@ -87,6 +91,7 @@ th { background: #0078d7; color: white; }
     <div id="attendanceReportResult"></div>
   </div>
 
+  <!-- بيانات الطفل -->
   <div class="card">
     <h3>بيانات الطفل</h3>
     <label>الاسم</label><input type="text" id="childInfoName" placeholder="اكتب الاسم...">
@@ -95,6 +100,7 @@ th { background: #0078d7; color: white; }
     <div id="childInfoResult"></div>
   </div>
 
+  <!-- حضور الطفل في الشهر -->
   <div class="card">
     <h3>حضور الطفل في الشهر</h3>
     <label>الاسم</label><input type="text" id="childAttendanceName" placeholder="اكتب الاسم...">
@@ -105,6 +111,7 @@ th { background: #0078d7; color: white; }
     <div id="childAttendanceResult"></div>
   </div>
 
+  <!-- نقاط التفاعل الشهرية -->
   <div class="card">
     <h3>نقاط التفاعل الشهرية</h3>
     <label>الاسم</label><input type="text" id="interactionReportName" placeholder="اكتب الاسم...">
@@ -118,77 +125,92 @@ th { background: #0078d7; color: white; }
 </main>
 
 <script>
-// --- التنقل بين الأقسام ---
-const attendanceTab = document.getElementById("attendanceTab");
-const reportsTab = document.getElementById("reportsTab");
-const attendanceSection = document.getElementById("attendanceSection");
-const reportsSection = document.getElementById("reportsSection");
+const apiURL="https://3rd.johnmamdouh777.workers.dev/";
+const currentYear = new Date().getFullYear();
+const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 
-attendanceTab.onclick = () => {
-  attendanceTab.classList.add("active");
-  reportsTab.classList.remove("active");
-  attendanceSection.classList.add("active");
-  reportsSection.classList.remove("active");
+// --- التنقل بين الأقسام ---
+document.getElementById("attendanceTab").onclick = () => {
+  document.getElementById("attendanceTab").classList.add("active");
+  document.getElementById("reportsTab").classList.remove("active");
+  document.getElementById("attendanceSection").classList.add("active");
+  document.getElementById("reportsSection").classList.remove("active");
 };
-reportsTab.onclick = () => {
-  reportsTab.classList.add("active");
-  attendanceTab.classList.remove("active");
-  reportsSection.classList.add("active");
-  attendanceSection.classList.remove("active");
+document.getElementById("reportsTab").onclick = () => {
+  document.getElementById("reportsTab").classList.add("active");
+  document.getElementById("attendanceTab").classList.remove("active");
+  document.getElementById("reportsSection").classList.add("active");
+  document.getElementById("attendanceSection").classList.remove("active");
 };
 
 // --- تعبئة السنوات والشهور ---
-const yearSelect = document.getElementById("yearSelect");
-const monthSelect = document.getElementById("monthSelect");
-const dateSelect = document.getElementById("dateSelect");
-const currentYear = new Date().getFullYear();
-for(let y=currentYear-1;y<=currentYear+1;y++){
-  const opt=document.createElement("option"); opt.value=y; opt.textContent=y;
-  yearSelect.appendChild(opt);
+function fillYearSelect(sel){
+  for(let y=currentYear-1;y<=currentYear+1;y++){
+    const opt=document.createElement("option");
+    opt.value=y; opt.textContent=y;
+    sel.appendChild(opt);
+  }
 }
-const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-months.forEach((m,i)=>{ const opt=document.createElement("option"); opt.value=i+1; opt.textContent=m; monthSelect.appendChild(opt); });
+fillYearSelect(document.getElementById("yearSelect"));
+fillYearSelect(document.getElementById("reportYear"));
+fillYearSelect(document.getElementById("childAttendanceYear"));
+fillYearSelect(document.getElementById("interactionReportYear"));
 
-function fillFridays() {
-  dateSelect.innerHTML="";
-  const year=+yearSelect.value;
-  const month=+monthSelect.value-1;
+function fillMonthSelect(sel){
+  months.forEach((m,i)=>{
+    const opt=document.createElement("option");
+    opt.value=i+1; opt.textContent=m;
+    sel.appendChild(opt);
+  });
+}
+fillMonthSelect(document.getElementById("monthSelect"));
+fillMonthSelect(document.getElementById("reportMonth"));
+fillMonthSelect(document.getElementById("childAttendanceMonth"));
+fillMonthSelect(document.getElementById("interactionReportMonth"));
+fillMonthSelect(document.getElementById("birthdayMonth"));
+
+// --- تعبئة أيام الجمعة ---
+function fillFridays(yearSel, monthSel, dateSel){
+  dateSel.innerHTML="";
+  const year=+yearSel.value;
+  const month=+monthSel.value-1;
   const daysInMonth=new Date(year,month+1,0).getDate();
-  for(let d=1;d<=daysInMonth;d++){
+  for(let d=1; d<=daysInMonth; d++){
     const date=new Date(year,month,d);
     if(date.getDay()===5){
-      const opt=document.createElement("option"); opt.value=d; opt.textContent=`${d}/${month+1}/${year}`;
-      dateSelect.appendChild(opt);
+      const opt=document.createElement("option");
+      opt.value=d; opt.textContent=`${d}/${month+1}/${year}`;
+      dateSel.appendChild(opt);
     }
   }
 }
-yearSelect.onchange=fillFridays;
-monthSelect.onchange=fillFridays;
-fillFridays();
+fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+document.getElementById("yearSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+document.getElementById("monthSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 
-// --- الاقتراحات ---
+// --- تحميل الأسماء ---
 let allNames=[];
-const apiURL="https://3rd.johnmamdouh777.workers.dev/";
-
 async function loadNames(){
   try{
-    const res = await fetch(apiURL+"?type=names");
-    const data = await res.json();
+    const res=await fetch(apiURL+"?type=names");
+    const data=await res.json();
     allNames = Array.isArray(data)?data:data.names||[];
   }catch(err){ console.warn(err); }
 }
 loadNames();
 
+// --- الاقتراحات ---
 function setupSuggestions(inputEl,suggestionsEl){
   inputEl.addEventListener("input",()=>{
     const q=inputEl.value.trim();
-    if(!q) return (suggestionsEl.style.display="none");
+    if(!q) return suggestionsEl.style.display="none";
     const filtered=allNames.filter(n=>n.includes(q)).slice(0,10);
     if(filtered.length===0){ suggestionsEl.style.display="none"; return; }
     suggestionsEl.innerHTML="";
     filtered.forEach(name=>{
-      const div=document.createElement("div"); div.textContent=name;
-      div.onclick=()=>{ inputEl.value=name; suggestionsEl.style.display="none"; inputEl.dispatchEvent(new Event("input")); };
+      const div=document.createElement("div");
+      div.textContent=name;
+      div.onclick = ()=>{ inputEl.value=name; suggestionsEl.style.display="none"; inputEl.dispatchEvent(new Event("input")); };
       suggestionsEl.appendChild(div);
     });
     suggestionsEl.style.display="block";
@@ -203,122 +225,111 @@ setupSuggestions(document.getElementById("childInfoName"),document.getElementByI
 setupSuggestions(document.getElementById("childAttendanceName"),document.getElementById("childAttendanceSuggestions"));
 setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
 
-// --- أزرار الإرسال ---
-const attendanceSubmit=document.getElementById("attendanceSubmit");
-const interactionSubmit=document.getElementById("interactionSubmit");
-const interactionName=document.getElementById("interactionName");
-const interactionPoints=document.getElementById("interactionPoints");
-
-// --- تفعيل زر الحضور تلقائيًا ---
+// --- تفعيل زر الحضور ---
 const nameInput = document.getElementById("nameInput");
 const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
 const notebookRadios = document.querySelectorAll('input[name="notebook"]');
+const attendanceSubmit = document.getElementById("attendanceSubmit");
 
-function checkAttendanceReady() {
-  const name = nameInput.value.trim();
-  const validName = allNames.includes(name);
-  const attendanceChecked = Array.from(attendanceRadios).some(r => r.checked);
-  const notebookChecked = Array.from(notebookRadios).some(r => r.checked);
+function checkAttendanceReady(){
+  const validName = allNames.includes(nameInput.value.trim());
+  const attendanceChecked = Array.from(attendanceRadios).some(r=>r.checked);
+  const notebookChecked = Array.from(notebookRadios).some(r=>r.checked);
   attendanceSubmit.disabled = !(validName && attendanceChecked && notebookChecked);
 }
-
-// ربط الدالة بالأحداث
 nameInput.addEventListener("input", checkAttendanceReady);
-attendanceRadios.forEach(r => r.addEventListener("change", checkAttendanceReady));
-notebookRadios.forEach(r => r.addEventListener("change", checkAttendanceReady));
-
-// تفعيل أول مرة لو في قيم موجودة مسبقًا
+attendanceRadios.forEach(r=>r.addEventListener("change", checkAttendanceReady));
+notebookRadios.forEach(r=>r.addEventListener("change", checkAttendanceReady));
 checkAttendanceReady();
 
-// إرسال بيانات الحضور مع التحقق من التكرار
-attendanceSubmit.addEventListener("click", async () => {
-  const name = nameInput.value.trim();
-  const attendance = document.querySelector('input[name="attendance"]:checked').value;
-  const notebook = document.querySelector('input[name="notebook"]:checked').value;
-  const date = dateSelect.options[dateSelect.selectedIndex].text;
-  const year = yearSelect.value;
-  const month = monthSelect.value;
+// --- إرسال الحضور ---
+attendanceSubmit.addEventListener("click", async ()=>{
+  const name=nameInput.value.trim();
+  const attendance=document.querySelector('input[name="attendance"]:checked').value;
+  const notebook=document.querySelector('input[name="notebook"]:checked').value;
+  const year=document.getElementById("yearSelect").value;
+  const month=document.getElementById("monthSelect").value;
+  const date=document.getElementById("dateSelect").value;
 
-  // تحقق من الاسم والتاريخ قبل الإرسال
-  try {
-    const checkRes = await fetch(apiURL + `?type=checkAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${encodeURIComponent(date)}`);
-    const checkData = await checkRes.json();
-    if (checkData.exists) {
-      alert(`❌ لا يمكن تسجيل الحضور مرة ثانية: ${name} مسجل بالفعل في هذا اليوم.`);
-      return;
-    }
-  } catch {
-    alert("⚠️ لم يتم الاتصال بالخادم للتحقق من الحضور.");
-    return;
-  }
+  try{
+    const checkRes=await fetch(`${apiURL}?type=checkAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${encodeURIComponent(date)}`);
+    const checkData=await checkRes.json();
+    if(checkData.exists){ alert(`❌ لا يمكن تسجيل الحضور مرة ثانية: ${name}`); return; }
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم للتحقق من الحضور."); return; }
 
-  attendanceSubmit.disabled = true;
-  const data = { type: "attendance", year, month, date, name, attendance, notebook };
-  try {
-    const res = await fetch(apiURL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-    const result = await res.json();
-    if (result.success) {
+  attendanceSubmit.disabled=true;
+  const data={ type:"attendance", year, month, date, name, attendance, notebook };
+  try{
+    const res=await fetch(apiURL, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data) });
+    const result=await res.json();
+    if(result.success){
       alert("✅ تم تسجيل الحضور بنجاح!");
-      nameInput.value = "";
-      document.querySelectorAll('input[name="attendance"]').forEach(e => e.checked = false);
-      document.querySelectorAll('input[name="notebook"]').forEach(e => e.checked = false);
+      nameInput.value="";
+      attendanceRadios.forEach(r=>r.checked=false);
+      notebookRadios.forEach(r=>r.checked=false);
       checkAttendanceReady();
-    } else alert("❌ حدث خطأ أثناء التسجيل.");
-  } catch {
-    alert("⚠️ لم يتم الاتصال بالخادم.");
-  } finally { attendanceSubmit.disabled = false; }
+    }else alert("❌ حدث خطأ أثناء التسجيل.");
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  finally{ attendanceSubmit.disabled=false; }
 });
 
-// التحقق من التفاعل
-function checkInteractionReady() {
-  const name = interactionName.value.trim();
-  const points = Number(interactionPoints.value);
-  const validName = allNames.includes(name);
-  const validPoints = !isNaN(points) && points >= 0 && points <= 5;
-  interactionSubmit.disabled = !(name && validPoints && validName);
+// --- تفعيل زر التفاعل ---
+const interactionName=document.getElementById("interactionName");
+const interactionPoints=document.getElementById("interactionPoints");
+const interactionSubmit=document.getElementById("interactionSubmit");
+
+function checkInteractionReady(){
+  const name=interactionName.value.trim();
+  const points=Number(interactionPoints.value);
+  const validName=allNames.includes(name);
+  const validPoints=!isNaN(points) && points>=0 && points<=5;
+  interactionSubmit.disabled=!(name && validPoints && validName);
 }
 interactionName.addEventListener("input", checkInteractionReady);
 interactionPoints.addEventListener("input", checkInteractionReady);
+checkInteractionReady();
 
-// إرسال التفاعل مع التحقق من الأسبوع
-interactionSubmit.addEventListener("click", async () => {
-  const name = interactionName.value.trim();
-  const points = Number(interactionPoints.value);
+// --- إرسال التفاعل ---
+interactionSubmit.addEventListener("click", async ()=>{
+  const name=interactionName.value.trim();
+  const points=Number(interactionPoints.value);
+  if(points<0 || points>5){ alert("❌ النقاط يجب أن تكون بين 0 و 5."); return; }
 
-  if (points < 0 || points > 5) {
-    alert("❌ النقاط يجب أن تكون بين 0 و 5.");
-    return;
-  }
+  try{
+    const checkRes=await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}`);
+    const checkData=await checkRes.json();
+    if(checkData.exists){ alert(`❌ لا يمكن إضافة التفاعل مرة ثانية في هذا الأسبوع لـ ${name}.`); return; }
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم للتحقق من التفاعل."); return; }
 
-  try {
-    const checkRes = await fetch(apiURL + `?type=checkInteraction&name=${encodeURIComponent(name)}`);
-    const checkData = await checkRes.json();
-    if (checkData.exists) {
-      alert(`❌ لا يمكن إضافة التفاعل مرة ثانية في هذا الأسبوع لـ ${name}.`);
-      return;
-    }
-  } catch {
-    alert("⚠️ لم يتم الاتصال بالخادم للتحقق من التفاعل.");
-    return;
-  }
-
-  interactionSubmit.disabled = true;
-  const data = { type: "interaction", name, points };
-  try {
-    const res = await fetch(apiURL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-    const result = await res.json();
-    if (result.success) {
+  interactionSubmit.disabled=true;
+  const data={ type:"interaction", name, points };
+  try{
+    const res=await fetch(apiURL, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data) });
+    const result=await res.json();
+    if(result.success){
       alert("✅ تم تسجيل التفاعل بنجاح!");
-      interactionName.value = "";
-      interactionPoints.value = "";
+      interactionName.value="";
+      interactionPoints.value="";
       checkInteractionReady();
-    } else alert("❌ حدث خطأ أثناء التسجيل.");
-  } catch {
-    alert("⚠️ لم يتم الاتصال بالخادم.");
-  } finally { interactionSubmit.disabled = false; }
+    }else alert("❌ حدث خطأ أثناء التسجيل.");
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  finally{ interactionSubmit.disabled=false; }
 });
 
-// --- باقي الكود للتقارير وأعياد الميلاد ونقاط التفاعل (لم يتغير) ---
+// --- دوال عرض الجداول ---
+function renderListAsTable(container, arr, colName="الاسم"){
+  if(!arr || arr.length===0){ container.innerHTML="لا توجد بيانات"; return; }
+  container.innerHTML = `<table><tr><th>${colName}</th></tr>` + arr.map(x=>`<tr><td>${x}</td></tr>`).join("") + "</table>";
+}
+function renderObjectAsTable(container, obj){
+  if(!obj || Object.keys(obj).length===0){ container.innerHTML="لا توجد بيانات"; return; }
+  container.innerHTML = `<table>` + Object.entries(obj).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join("") + `</table>`;
+}
+function renderArrayOfObjectsAsTable(container, arr, headers){
+  if(!arr || arr.length===0){ container.innerHTML="لا توجد بيانات"; return; }
+  container.innerHTML = `<table><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr>` +
+    arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("") + `</table>`;
+}
 </script>
 </body>
 </html>
