@@ -162,14 +162,14 @@ th {
   <input type="text" id="interactionName" placeholder="اكتب الاسم...">
   <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
 
-  <label>اليوم</label>
-<select id="interactionDateSelect"></select>
-
-  <label>الشهر</label>
-  <select id="interactionMonthSelect"></select>
-
   <label>السنة</label>
-  <select id="interactionYearSelect"></select>
+<select id="interactionYearSelect"></select>
+
+<label>الشهر</label>
+<select id="interactionMonthSelect"></select>
+
+<label>اليوم</label>
+<select id="interactionDateSelect"></select>
 
   <label>نقاط التفاعل (0 - 5)</label>
   <input type="number" id="interactionPoints" min="0" max="5">
@@ -608,6 +608,12 @@ document.getElementById("reportMonth").onchange = fillFridaysForReport;
 // استدعاء عند تحميل الصفحة
 fillFridaysForReport();
 
+    // تعبئة السنوات للشهور الخاصة بالتفاعل
+fillYearSelect(document.getElementById("interactionYearSelect"));
+
+// تعبئة الشهور للشهور الخاصة بالتفاعل
+fillMonthSelect(document.getElementById("interactionMonthSelect"));
+    
     function fillInteractionFridays() {
   const yearSel = document.getElementById("interactionYearSelect");
   const monthSel = document.getElementById("interactionMonthSelect");
