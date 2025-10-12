@@ -22,6 +22,10 @@ button.submit-btn:disabled { background:#aaa; cursor:not-allowed; }
 .suggestions { position:absolute; background:white; border:1px solid #ccc; border-radius:8px; width:calc(100% - 40px); max-height:150px; overflow-y:auto; box-shadow:0 4px 8px rgba(0,0,0,0.15); z-index:10; }
 .suggestions div { padding:8px; cursor:pointer; transition:0.2s; }
 .suggestions div:hover { background:#0078d7; color:white; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+table, th, td { border: 1px solid #ccc; }
+th, td { padding: 8px; text-align: center; }
+th { background: #0078d7; color: white; }
 @media (max-width:600px) { .card { padding:15px; } }
 </style>
 </head>
@@ -114,7 +118,7 @@ button.submit-btn:disabled { background:#aaa; cursor:not-allowed; }
 </main>
 
 <script>
-// التنقل بين الأقسام
+// --- التنقل بين الأقسام ---
 const attendanceTab = document.getElementById("attendanceTab");
 const reportsTab = document.getElementById("reportsTab");
 const attendanceSection = document.getElementById("attendanceSection");
@@ -133,7 +137,7 @@ reportsTab.onclick = () => {
   attendanceSection.classList.remove("active");
 };
 
-// تعبئة القوائم بالسنة والشهر
+// --- تعبئة السنوات والشهور ---
 const yearSelect = document.getElementById("yearSelect");
 const monthSelect = document.getElementById("monthSelect");
 const dateSelect = document.getElementById("dateSelect");
@@ -162,7 +166,7 @@ yearSelect.onchange=fillFridays;
 monthSelect.onchange=fillFridays;
 fillFridays();
 
-// الاقتراحات
+// --- الاقتراحات ---
 let allNames=[];
 const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 
@@ -199,7 +203,7 @@ setupSuggestions(document.getElementById("childInfoName"),document.getElementByI
 setupSuggestions(document.getElementById("childAttendanceName"),document.getElementById("childAttendanceSuggestions"));
 setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
 
-// أزرار الإرسال
+// --- أزرار الإرسال ---
 const attendanceSubmit=document.getElementById("attendanceSubmit");
 const interactionSubmit=document.getElementById("interactionSubmit");
 const interactionName=document.getElementById("interactionName");
@@ -223,7 +227,7 @@ function checkInteractionReady(){
 interactionName.addEventListener("input",checkInteractionReady);
 interactionPoints.addEventListener("input",checkInteractionReady);
 
-// إرسال بيانات الحضور
+// --- إرسال بيانات الحضور ---
 attendanceSubmit.addEventListener("click",async()=>{
   const name=document.getElementById("nameInput").value.trim();
   const attendance=document.querySelector('input[name="attendance"]:checked').value;
@@ -236,13 +240,18 @@ attendanceSubmit.addEventListener("click",async()=>{
   try{
     const res=await fetch(apiURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
     const result=await res.json();
-    if(result.success){ alert("✅ تم تسجيل الحضور بنجاح!"); document.getElementById("nameInput").value=""; document.querySelectorAll('input[name="attendance"]').forEach(e=>e.checked=false); document.querySelectorAll('input[name="notebook"]').forEach(e=>e.checked=false); checkAttendanceReady();}
-    else alert("❌ حدث خطأ أثناء التسجيل.");
+    if(result.success){ 
+      alert("✅ تم تسجيل الحضور بنجاح!");
+      document.getElementById("nameInput").value=""; 
+      document.querySelectorAll('input[name="attendance"]').forEach(e=>e.checked=false); 
+      document.querySelectorAll('input[name="notebook"]').forEach(e=>e.checked=false); 
+      checkAttendanceReady();
+    } else alert("❌ حدث خطأ أثناء التسجيل.");
   }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
   finally{ attendanceSubmit.disabled=false; }
 });
 
-// إرسال التفاعل
+// --- إرسال التفاعل ---
 interactionSubmit.addEventListener("click",async()=>{
   const name=interactionName.value.trim();
   const points=interactionPoints.value;
@@ -251,13 +260,17 @@ interactionSubmit.addEventListener("click",async()=>{
   try{
     const res=await fetch(apiURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
     const result=await res.json();
-    if(result.success){ alert("✅ تم تسجيل التفاعل بنجاح!"); interactionName.value=""; interactionPoints.value=""; checkInteractionReady(); }
-    else alert("❌ حدث خطأ أثناء التسجيل.");
+    if(result.success){ 
+      alert("✅ تم تسجيل التفاعل بنجاح!"); 
+      interactionName.value=""; 
+      interactionPoints.value=""; 
+      checkInteractionReady(); 
+    } else alert("❌ حدث خطأ أثناء التسجيل.");
   }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
   finally{ interactionSubmit.disabled=false; }
 });
 
-// إعداد باقي القوائم للتقارير (سنوات وأشهر)
+// --- إعداد قوائم التقارير ---
 const birthdayMonth=document.getElementById("birthdayMonth");
 const reportYear=document.getElementById("reportYear");
 const reportMonth=document.getElementById("reportMonth");
@@ -279,7 +292,7 @@ months.forEach((m,i)=>{
   const optB=document.createElement("option"); optB.value=i+1; optB.textContent=m; birthdayMonth.appendChild(optB);
 });
 
-// ملء أيام الجمعة لتقارير الحضور
+// --- ملء أيام الجمعة لتقارير الحضور ---
 function fillReportFridays(){
   reportDate.innerHTML="";
   const year=+reportYear.value;
@@ -294,42 +307,89 @@ reportYear.onchange=fillReportFridays;
 reportMonth.onchange=fillReportFridays;
 fillReportFridays();
 
-// باقي أزرار التقارير: عرض عيد الميلاد، الحضور، بيانات الطفل، التفاعل
+// --- تعديل طريقة عرض النتائج لتكون جداول ---
+function renderListAsTable(container, arr, colName="الاسم"){
+  if(!arr || arr.length===0){ container.innerHTML="لا توجد بيانات"; return; }
+  container.innerHTML = `<table><tr><th>${colName}</th></tr>${arr.map(x=>`<tr><td>${x}</td></tr>`).join("")}</table>`;
+}
+
+function renderObjectAsTable(container, obj){
+  if(!obj || Object.keys(obj).length===0){ container.innerHTML="لا توجد بيانات"; return; }
+  container.innerHTML = `<table>${Object.entries(obj).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join("")}</table>`;
+}
+
+function renderArrayOfObjectsAsTable(container, arr, headers){
+  if(!arr || arr.length===0){ container.innerHTML="لا توجد بيانات"; return; }
+  container.innerHTML = `<table>
+    <tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr>
+    ${arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("")}
+  </table>`;
+}
+
+// --- أعياد الميلاد ---
 document.getElementById("birthdayShow").addEventListener("click",async()=>{
   const month=birthdayMonth.value; if(!month) return alert("اختر الشهر أولاً");
-  try{ const res=await fetch(apiURL+`?type=birthday&month=${month}`); const data=await res.json(); const c=document.getElementById("birthdayResult"); if(data.names&&data.names.length>0) c.innerHTML="<ul>"+data.names.map(n=>`<li>${n}</li>`).join("")+"</ul>"; else c.innerHTML="لا توجد أعياد ميلاد هذا الشهر"; }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  try{
+    const res=await fetch(apiURL+`?type=birthday&month=${month}`);
+    const data=await res.json();
+    renderListAsTable(document.getElementById("birthdayResult"), data.names || [], "الأسماء");
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
 });
 
-// عرض عدد الحضور
+// --- عدد الحضور ---
 document.getElementById("showCount").addEventListener("click",async()=>{
   const year=reportYear.value; const month=reportMonth.value; const date=reportDate.value;
-  try{ const res=await fetch(apiURL+`?type=attendanceCount&year=${year}&month=${month}&date=${date}`); const data=await res.json(); document.getElementById("attendanceReportResult").textContent=`عدد الحضور: ${data.count||0}`; }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  try{
+    const res=await fetch(apiURL+`?type=attendanceCount&year=${year}&month=${month}&date=${date}`);
+    const data=await res.json();
+    document.getElementById("attendanceReportResult").textContent=`عدد الحضور: ${data.count||0}`;
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
 });
 
-// عرض أسماء الحضور
+// --- أسماء الحضور ---
 document.getElementById("showNames").addEventListener("click",async()=>{
   const year=reportYear.value; const month=reportMonth.value; const date=reportDate.value;
-  try{ const res=await fetch(apiURL+`?type=attendanceNames&year=${year}&month=${month}&date=${date}`); const data=await res.json(); const c=document.getElementById("attendanceReportResult"); if(data.names&&data.names.length>0) c.innerHTML="<ul>"+data.names.map(n=>`<li>${n}</li>`).join("")+"</ul>"; else c.innerHTML="لا توجد بيانات"; }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  try{
+    const res=await fetch(apiURL+`?type=attendanceNames&year=${year}&month=${month}&date=${date}`);
+    const data=await res.json();
+    renderListAsTable(document.getElementById("attendanceReportResult"), data.names || [], "الأسماء");
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
 });
 
-// بيانات الطفل
+// --- بيانات الطفل ---
 document.getElementById("showChildInfo").addEventListener("click",async()=>{
   const name=document.getElementById("childInfoName").value.trim(); if(!name) return alert("اكتب الاسم");
-  try{ const res=await fetch(apiURL+`?type=childInfo&name=${name}`); const data=await res.json(); document.getElementById("childInfoResult").innerHTML=JSON.stringify(data); }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  try{
+    const res=await fetch(apiURL+`?type=childInfo&name=${name}`);
+    const data=await res.json();
+    renderObjectAsTable(document.getElementById("childInfoResult"), data);
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
 });
 
-// حضور الطفل في الشهر
+// --- حضور الطفل في الشهر ---
 document.getElementById("showChildAttendance").addEventListener("click",async()=>{
-  const name=document.getElementById("childAttendanceName").value.trim(); const year=childAttendanceYear.value; const month=childAttendanceMonth.value;
+  const name=document.getElementById("childAttendanceName").value.trim(); 
+  const year=childAttendanceYear.value; 
+  const month=childAttendanceMonth.value;
   if(!name) return alert("اكتب الاسم");
-  try{ const res=await fetch(apiURL+`?type=childAttendance&name=${name}&year=${year}&month=${month}`); const data=await res.json(); document.getElementById("childAttendanceResult").innerHTML=JSON.stringify(data); }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  try{
+    const res=await fetch(apiURL+`?type=childAttendance&name=${name}&year=${year}&month=${month}`);
+    const data=await res.json();
+    renderArrayOfObjectsAsTable(document.getElementById("childAttendanceResult"), data, ["date","attendance","notebook"]);
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
 });
 
-// نقاط التفاعل الشهرية
+// --- نقاط التفاعل الشهرية ---
 document.getElementById("showInteractionReport").addEventListener("click",async()=>{
-  const name=document.getElementById("interactionReportName").value.trim(); const year=interactionReportYear.value; const month=interactionReportMonth.value;
+  const name=document.getElementById("interactionReportName").value.trim(); 
+  const year=interactionReportYear.value; 
+  const month=interactionReportMonth.value;
   if(!name) return alert("اكتب الاسم");
-  try{ const res=await fetch(apiURL+`?type=interactionReport&name=${name}&year=${year}&month=${month}`); const data=await res.json(); document.getElementById("interactionReportResult").innerHTML=JSON.stringify(data); }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  try{
+    const res=await fetch(apiURL+`?type=interactionReport&name=${name}&year=${year}&month=${month}`);
+    const data=await res.json();
+    renderArrayOfObjectsAsTable(document.getElementById("interactionReportResult"), data, ["date","points"]);
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
 });
 </script>
 </body>
