@@ -251,12 +251,18 @@ attendanceSubmit.addEventListener("click", async ()=>{
   const month=document.getElementById("monthSelect").value;
   const date=document.getElementById("dateSelect").value;
 
-  // --- تحقق مسبق مؤقتًا (معطل) ---
-// try{
-//   const checkRes=await fetch(`${apiURL}?type=checkAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${encodeURIComponent(date)}`);
-//   const checkData=await checkRes.json();
-//   if(checkData.exists){ alert(`❌ لا يمكن تسجيل الحضور مرة ثانية: ${name}`); return; }
-// }catch{ alert("⚠️ لم يتم الاتصال بالخادم للتحقق من الحضور."); return; }
+  // --- تحقق مسبق للتأكد من عدم تكرار الحضور ---
+try {
+  const checkRes = await fetch(`${apiURL}?type=checkAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${encodeURIComponent(date)}`);
+  const checkData = await checkRes.json();
+  if(checkData.exists) {
+    alert(`❌ لا يمكن تسجيل الحضور مرة ثانية: ${name}`);
+    return; // توقف التنفيذ هنا
+  }
+} catch {
+  alert("⚠️ لم يتم الاتصال بالخادم للتحقق من الحضور.");
+  return;
+}
 
   attendanceSubmit.disabled=true;
   const data={ type:"attendance", year, month, date, name, attendance, notebook };
