@@ -163,7 +163,7 @@ th {
   <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
 
   <label>اليوم</label>
-  <input type="number" id="interactionDay" min="1" max="31">
+<select id="interactionDateSelect"></select>
 
   <label>الشهر</label>
   <select id="interactionMonthSelect"></select>
@@ -426,7 +426,8 @@ checkInteractionReady();
 
 // --- إرسال التفاعل ---
 interactionSubmit.addEventListener("click", async ()=> {
-  const day = Number(document.getElementById("interactionDay").value);
+    const name = interactionName.value.trim();
+  const day = Number(document.getElementById("interactionDateSelect").value);
 const month = Number(document.getElementById("interactionMonthSelect").value);
 const year = Number(document.getElementById("interactionYearSelect").value);
 const points = Number(interactionPoints.value);
@@ -606,6 +607,32 @@ document.getElementById("reportMonth").onchange = fillFridaysForReport;
 
 // استدعاء عند تحميل الصفحة
 fillFridaysForReport();
+
+    function fillInteractionFridays() {
+  const yearSel = document.getElementById("interactionYearSelect");
+  const monthSel = document.getElementById("interactionMonthSelect");
+  const dateSel = document.getElementById("interactionDateSelect");
+  dateSel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let d=1; d<=daysInMonth; d++){
+    const date = new Date(year, month, d);
+    if(date.getDay() === 5){ // يوم الجمعة
+      const opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = `${d}/${month+1}/${year}`;
+      dateSel.appendChild(opt);
+    }
+  }
+}
+
+// استدعاء عند تغيير السنة أو الشهر
+document.getElementById("interactionYearSelect").onchange = fillInteractionFridays;
+document.getElementById("interactionMonthSelect").onchange = fillInteractionFridays;
+
+// استدعاء عند تحميل الصفحة
+fillInteractionFridays();
 
 </script>
 </body>
