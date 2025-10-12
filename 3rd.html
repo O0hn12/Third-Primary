@@ -1,479 +1,336 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام حضور ثالثة ابتدائي</title>
-  <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      margin: 0;
-      background: #f5f6fa;
-      color: #222;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background: #0078d7;
-      color: white;
-      padding: 15px;
-      font-weight: bold;
-    }
-
-    header button {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    header button.active {
-      border-bottom: 3px solid #fff;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .card {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-
-    select, input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-
-    .radio-group label {
-      font-weight: normal;
-    }
-
-    button.submit-btn {
-      background: #0078d7;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: 0.3s;
-    }
-
-    button.submit-btn:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-
-    /* الاقتراحات */
-    .suggestions {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      width: calc(100% - 40px);
-      max-height: 150px;
-      overflow-y: auto;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      z-index: 10;
-    }
-
-    .suggestions div {
-      padding: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .suggestions div:hover {
-      background: #0078d7;
-      color: white;
-    }
-
-    @media (max-width: 600px) {
-      .card {
-        padding: 15px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام حضور ثالثة ابتدائي</title>
+<style>
+body { font-family: "Cairo", sans-serif; margin:0; background:#f5f6fa; color:#222; }
+header { display:flex; justify-content:space-around; align-items:center; background:#0078d7; color:white; padding:15px; font-weight:bold; }
+header button { background:transparent; border:none; color:white; font-size:16px; cursor:pointer; transition:0.3s; }
+header button.active { border-bottom:3px solid #fff; }
+main { padding:20px; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:white; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px; margin-bottom:20px; position:relative; }
+label { display:block; margin-bottom:6px; font-weight:bold; }
+select, input[type="text"], input[type="number"] { width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:10px; font-size:15px; }
+.radio-group { display:flex; gap:15px; margin-bottom:15px; }
+.radio-group label { font-weight:normal; }
+button.submit-btn { background:#0078d7; color:white; border:none; border-radius:10px; padding:10px 20px; cursor:pointer; font-size:16px; transition:0.3s; }
+button.submit-btn:disabled { background:#aaa; cursor:not-allowed; }
+.suggestions { position:absolute; background:white; border:1px solid #ccc; border-radius:8px; width:calc(100% - 40px); max-height:150px; overflow-y:auto; box-shadow:0 4px 8px rgba(0,0,0,0.15); z-index:10; }
+.suggestions div { padding:8px; cursor:pointer; transition:0.2s; }
+.suggestions div:hover { background:#0078d7; color:white; }
+@media (max-width:600px) { .card { padding:15px; } }
+</style>
 </head>
 <body>
-  <header>
-    <button id="attendanceTab" class="active">📋 التسجيل</button>
-    <button id="reportsTab">📊 التقارير</button>
-  </header>
+<header>
+<button id="attendanceTab" class="active">📋 التسجيل</button>
+<button id="reportsTab">📊 التقارير</button>
+</header>
 
-  <main>
-    <!-- قسم التسجيل -->
-    <section id="attendanceSection" class="section active">
-      <div class="card">
-        <h3>تسجيل الحضور والنوتة</h3>
-        <label>السنة</label>
-        <select id="yearSelect"></select>
+<main>
+<section id="attendanceSection" class="section active">
+  <div class="card">
+    <h3>تسجيل الحضور والنوتة</h3>
+    <label>السنة</label><select id="yearSelect"></select>
+    <label>الشهر</label><select id="monthSelect"></select>
+    <label>التاريخ</label><select id="dateSelect"></select>
+    <label>الاسم</label>
+    <input type="text" id="nameInput" placeholder="اكتب الاسم...(لازم من الاقتراحات)">
+    <div id="nameSuggestions" class="suggestions" style="display:none;"></div>
+    <label>الحضور</label>
+    <div class="radio-group">
+      <label><input type="radio" name="attendance" value="حضر"> حضر</label>
+      <label><input type="radio" name="attendance" value="غاب"> غاب</label>
+    </div>
+    <label>جاب النوتة؟</label>
+    <div class="radio-group">
+      <label><input type="radio" name="notebook" value="نعم"> نعم</label>
+      <label><input type="radio" name="notebook" value="لا"> لا</label>
+    </div>
+    <button id="attendanceSubmit" class="submit-btn" disabled>إرسال</button>
+  </div>
 
-        <label>الشهر</label>
-        <select id="monthSelect"></select>
+  <div class="card">
+    <h3>تسجيل التفاعل</h3>
+    <label>الاسم</label>
+    <input type="text" id="interactionName" placeholder="اكتب الاسم...">
+    <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
+    <label>نقاط التفاعل (0 - 5)</label>
+    <input type="number" id="interactionPoints" min="0" max="5">
+    <button id="interactionSubmit" class="submit-btn" disabled>إرسال</button>
+  </div>
+</section>
 
-        <label>التاريخ</label>
-        <select id="dateSelect"></select>
-
-        <label>الاسم</label>
-        <input type="text" id="nameInput" placeholder="اكتب الاسم...(لازم من الاقتراحات)">
-        <div id="nameSuggestions" class="suggestions" style="display:none;"></div>
-
-        <label>الحضور</label>
-        <div class="radio-group">
-          <label><input type="radio" name="attendance" value="حضر"> حضر</label>
-          <label><input type="radio" name="attendance" value="غاب"> غاب</label>
-        </div>
-
-        <label>جاب النوتة؟</label>
-        <div class="radio-group">
-          <label><input type="radio" name="notebook" value="نعم"> نعم</label>
-          <label><input type="radio" name="notebook" value="لا"> لا</label>
-        </div>
-
-        <button id="attendanceSubmit" class="submit-btn" disabled>إرسال</button>
-      </div>
-
-      <div class="card">
-        <h3>تسجيل التفاعل</h3>
-        <label>الاسم</label>
-        <input type="text" id="interactionName" placeholder="اكتب الاسم...">
-        <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
-
-        <label>نقاط التفاعل (0 - 5)</label>
-        <input type="number" id="interactionPoints" min="0" max="5">
-
-        <button id="interactionSubmit" class="submit-btn" disabled>إرسال</button>
-      </div>
-    </section>
-
-    <!-- قسم التقارير -->
 <section id="reportsSection" class="section">
   <div class="card">
-    <h3>🎂 تقرير أعياد الميلاد</h3>
-    <label>اختر الشهر</label>
-    <select id="birthdayMonth">
-      <option value="">اختر الشهر</option>
-    </select>
+    <h3>أعياد ميلاد الأطفال</h3>
+    <label>اختر الشهر</label><select id="birthdayMonth"></select>
     <button id="birthdayShow" class="submit-btn">عرض الأسماء</button>
     <div id="birthdayResult"></div>
   </div>
 
   <div class="card">
-    <h3>📅 تقرير الحضور في تاريخ محدد</h3>
-    <label>السنة</label>
-    <select id="reportYear"></select>
-
-    <label>الشهر</label>
-    <select id="reportMonth"></select>
-
-    <label>التاريخ</label>
-    <select id="reportDate"></select>
-
-    <div style="display:flex; gap:10px;">
-      <button id="showCount" class="submit-btn" style="flex:1;">عرض العدد</button>
-      <button id="showNames" class="submit-btn" style="flex:1;">عرض الأسماء</button>
-    </div>
+    <h3>تقرير الحضور</h3>
+    <label>السنة</label><select id="reportYear"></select>
+    <label>الشهر</label><select id="reportMonth"></select>
+    <label>التاريخ</label><select id="reportDate"></select>
+    <button id="showCount" class="submit-btn">عدد الحضور</button>
+    <button id="showNames" class="submit-btn">عرض الأسماء</button>
     <div id="attendanceReportResult"></div>
   </div>
 
   <div class="card">
-    <h3>🧒 تقرير بيانات طفل</h3>
-    <label>الاسم</label>
-    <input type="text" id="childInfoName" placeholder="اكتب الاسم...">
+    <h3>بيانات الطفل</h3>
+    <label>الاسم</label><input type="text" id="childInfoName" placeholder="اكتب الاسم...">
     <div id="childInfoSuggestions" class="suggestions" style="display:none;"></div>
     <button id="showChildInfo" class="submit-btn">عرض البيانات</button>
     <div id="childInfoResult"></div>
   </div>
 
   <div class="card">
-    <h3>📈 عدد حضور الطفل في شهر محدد</h3>
-    <label>الاسم</label>
-    <input type="text" id="childAttendanceName" placeholder="اكتب الاسم...">
+    <h3>حضور الطفل في الشهر</h3>
+    <label>الاسم</label><input type="text" id="childAttendanceName" placeholder="اكتب الاسم...">
     <div id="childAttendanceSuggestions" class="suggestions" style="display:none;"></div>
-
-    <label>السنة</label>
-    <select id="childAttendanceYear"></select>
-
-    <label>الشهر</label>
-    <select id="childAttendanceMonth"></select>
-
-    <button id="showChildAttendance" class="submit-btn">عرض عدد الحضور</button>
+    <label>السنة</label><select id="childAttendanceYear"></select>
+    <label>الشهر</label><select id="childAttendanceMonth"></select>
+    <button id="showChildAttendance" class="submit-btn">عرض الحضور</button>
     <div id="childAttendanceResult"></div>
   </div>
 
   <div class="card">
-    <h3>⭐ تقرير نقاط التفاعل</h3>
-    <label>الاسم</label>
-    <input type="text" id="interactionReportName" placeholder="اكتب الاسم...">
+    <h3>نقاط التفاعل الشهرية</h3>
+    <label>الاسم</label><input type="text" id="interactionReportName" placeholder="اكتب الاسم...">
     <div id="interactionReportSuggestions" class="suggestions" style="display:none;"></div>
-
-    <label>السنة</label>
-    <select id="interactionReportYear"></select>
-
-    <label>الشهر</label>
-    <select id="interactionReportMonth"></select>
-
-    <button id="showInteractionReport" class="submit-btn">عرض النقاط</button>
+    <label>السنة</label><select id="interactionReportYear"></select>
+    <label>الشهر</label><select id="interactionReportMonth"></select>
+    <button id="showInteractionReport" class="submit-btn">عرض نقاط التفاعل</button>
     <div id="interactionReportResult"></div>
   </div>
 </section>
-  </main>
+</main>
 
-  <script>
-    // التنقل بين الصفحات
-    const attendanceTab = document.getElementById("attendanceTab");
-    const reportsTab = document.getElementById("reportsTab");
-    const attendanceSection = document.getElementById("attendanceSection");
-    const reportsSection = document.getElementById("reportsSection");
+<script>
+// التنقل بين الأقسام
+const attendanceTab = document.getElementById("attendanceTab");
+const reportsTab = document.getElementById("reportsTab");
+const attendanceSection = document.getElementById("attendanceSection");
+const reportsSection = document.getElementById("reportsSection");
 
-    attendanceTab.onclick = () => {
-      attendanceTab.classList.add("active");
-      reportsTab.classList.remove("active");
-      attendanceSection.classList.add("active");
-      reportsSection.classList.remove("active");
-    };
+attendanceTab.onclick = () => {
+  attendanceTab.classList.add("active");
+  reportsTab.classList.remove("active");
+  attendanceSection.classList.add("active");
+  reportsSection.classList.remove("active");
+};
+reportsTab.onclick = () => {
+  reportsTab.classList.add("active");
+  attendanceTab.classList.remove("active");
+  reportsSection.classList.add("active");
+  attendanceSection.classList.remove("active");
+};
 
-    reportsTab.onclick = () => {
-      reportsTab.classList.add("active");
-      attendanceTab.classList.remove("active");
-      reportsSection.classList.add("active");
-      attendanceSection.classList.remove("active");
-    };
-
-    // تعبئة القوائم
-    const yearSelect = document.getElementById("yearSelect");
-    const monthSelect = document.getElementById("monthSelect");
-    const dateSelect = document.getElementById("dateSelect");
-
-    const currentYear = new Date().getFullYear();
-    for (let y = currentYear - 1; y <= currentYear + 1; y++) {
-      const option = document.createElement("option");
-      option.value = y;
-      option.textContent = y;
-      yearSelect.appendChild(option);
-    }
-
-    const months = [
-      "يناير","فبراير","مارس","أبريل","مايو","يونيو",
-      "يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"
-    ];
-    months.forEach((m, i) => {
-      const opt = document.createElement("option");
-      opt.value = i + 1;
-      opt.textContent = m;
-      monthSelect.appendChild(opt);
-    });
-
-    function fillFridays() {
-      dateSelect.innerHTML = "";
-      const year = +yearSelect.value;
-      const month = +monthSelect.value - 1;
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      for (let d = 1; d <= daysInMonth; d++) {
-        const date = new Date(year, month, d);
-        if (date.getDay() === 5) {
-          const opt = document.createElement("option");
-          opt.value = d;
-          opt.textContent = `${d}/${month + 1}/${year}`;
-          dateSelect.appendChild(opt);
-        }
-      }
-    }
-    yearSelect.onchange = fillFridays;
-    monthSelect.onchange = fillFridays;
-    fillFridays();
-
-    // زر الإرسال للحضور
-    const attendanceSubmit = document.getElementById("attendanceSubmit");
-    function checkAttendanceReady() {
-  const name = document.getElementById("nameInput").value.trim();
-  const att = document.querySelector('input[name="attendance"]:checked');
-  const note = document.querySelector('input[name="notebook"]:checked');
-
-  // ✅ تحقق إن الاسم من ضمن الأسماء المحمّلة
-  const isValidName = allNames.includes(name);
-
-  attendanceSubmit.disabled = !(yearSelect.value && monthSelect.value && dateSelect.value && name && att && note && isValidName);
+// تعبئة القوائم بالسنة والشهر
+const yearSelect = document.getElementById("yearSelect");
+const monthSelect = document.getElementById("monthSelect");
+const dateSelect = document.getElementById("dateSelect");
+const currentYear = new Date().getFullYear();
+for(let y=currentYear-1;y<=currentYear+1;y++){
+  const opt=document.createElement("option"); opt.value=y; opt.textContent=y;
+  yearSelect.appendChild(opt);
 }
-    document.querySelectorAll('input, select').forEach(el => el.addEventListener("input", checkAttendanceReady));
+const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+months.forEach((m,i)=>{ const opt=document.createElement("option"); opt.value=i+1; opt.textContent=m; monthSelect.appendChild(opt); });
 
-    // زر التفاعل
-    const interactionName = document.getElementById("interactionName");
-    const interactionPoints = document.getElementById("interactionPoints");
-    const interactionSubmit = document.getElementById("interactionSubmit");
-    function checkInteractionReady() {
-  const name = interactionName.value.trim();
-  const points = interactionPoints.value;
-
-  // ✅ تحقق إن الاسم من ضمن الأسماء المحمّلة
-  const isValidName = allNames.includes(name);
-
-  interactionSubmit.disabled = !(name && points !== "" && isValidName);
-}
-    interactionName.addEventListener("input", checkInteractionReady);
-    interactionPoints.addEventListener("input", checkInteractionReady);
-
-    // API
-    const apiURL = "https://3rd.johnmamdouh777.workers.dev/";
-    let allNames = [];
-
-    // تحميل الأسماء لمرة واحدة فقط
-    async function loadNames() {
-  try {
-    const res = await fetch(apiURL + "?type=names");
-    const data = await res.json();
-    allNames = Array.isArray(data) ? data : data.names || [];
-    console.log("✅ تم تحميل الأسماء:", allNames.length);
-  } catch (err) {
-    console.warn("⚠️ فشل تحميل الأسماء", err);
+function fillFridays() {
+  dateSelect.innerHTML="";
+  const year=+yearSelect.value;
+  const month=+monthSelect.value-1;
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  for(let d=1;d<=daysInMonth;d++){
+    const date=new Date(year,month,d);
+    if(date.getDay()===5){
+      const opt=document.createElement("option"); opt.value=d; opt.textContent=`${d}/${month+1}/${year}`;
+      dateSelect.appendChild(opt);
+    }
   }
 }
-    loadNames();
+yearSelect.onchange=fillFridays;
+monthSelect.onchange=fillFridays;
+fillFridays();
 
-    // إنشاء دالة اقتراحات عامة
-    function setupSuggestions(inputEl, suggestionsEl) {
-      inputEl.addEventListener("input", () => {
-        const query = inputEl.value.trim();
-        if (!query) return (suggestionsEl.style.display = "none");
+// الاقتراحات
+let allNames=[];
+const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 
-        const filtered = allNames.filter(n => n.includes(query)).slice(0, 10);
-        if (filtered.length === 0) {
-          suggestionsEl.style.display = "none";
-          return;
-        }
+async function loadNames(){
+  try{
+    const res = await fetch(apiURL+"?type=names");
+    const data = await res.json();
+    allNames = Array.isArray(data)?data:data.names||[];
+  }catch(err){ console.warn(err); }
+}
+loadNames();
 
-        suggestionsEl.innerHTML = "";
-        filtered.forEach(name => {
-          const div = document.createElement("div");
-          div.textContent = name;
-          div.onclick = () => {
-            inputEl.value = name;
-            suggestionsEl.style.display = "none";
-            inputEl.dispatchEvent(new Event("input"));
-          };
-          suggestionsEl.appendChild(div);
-        });
-        suggestionsEl.style.display = "block";
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!inputEl.contains(e.target) && !suggestionsEl.contains(e.target)) {
-          suggestionsEl.style.display = "none";
-        }
-      });
-    }
-
-    setupSuggestions(
-      document.getElementById("nameInput"),
-      document.getElementById("nameSuggestions")
-    );
-    setupSuggestions(
-      document.getElementById("interactionName"),
-      document.getElementById("interactionSuggestions")
-    );
-
-    // إرسال البيانات
-    attendanceSubmit.addEventListener("click", async () => {
-      const year = yearSelect.value;
-      const month = monthSelect.value;
-      const date = dateSelect.options[dateSelect.selectedIndex].text;
-      const name = document.getElementById("nameInput").value.trim();
-      const attendance = document.querySelector('input[name="attendance"]:checked').value;
-      const notebook = document.querySelector('input[name="notebook"]:checked').value;
-
-      attendanceSubmit.disabled = true;
-
-      const data = { type: "attendance", year, month, date, name, attendance, notebook };
-
-      try {
-        const res = await fetch(apiURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        const result = await res.json();
-
-        if (result.success) {
-          alert("✅ تم تسجيل الحضور بنجاح!");
-          document.getElementById("nameInput").value = "";
-          document.querySelectorAll('input[name="attendance"]').forEach(e => e.checked = false);
-          document.querySelectorAll('input[name="notebook"]').forEach(e => e.checked = false);
-          checkAttendanceReady();
-        } else {
-          alert("❌ حدث خطأ أثناء التسجيل.");
-        }
-      } catch {
-        alert("⚠️ لم يتم الاتصال بالخادم.");
-      } finally {
-        attendanceSubmit.disabled = false;
-      }
+function setupSuggestions(inputEl,suggestionsEl){
+  inputEl.addEventListener("input",()=>{
+    const q=inputEl.value.trim();
+    if(!q) return (suggestionsEl.style.display="none");
+    const filtered=allNames.filter(n=>n.includes(q)).slice(0,10);
+    if(filtered.length===0){ suggestionsEl.style.display="none"; return; }
+    suggestionsEl.innerHTML="";
+    filtered.forEach(name=>{
+      const div=document.createElement("div"); div.textContent=name;
+      div.onclick=()=>{ inputEl.value=name; suggestionsEl.style.display="none"; inputEl.dispatchEvent(new Event("input")); };
+      suggestionsEl.appendChild(div);
     });
+    suggestionsEl.style.display="block";
+  });
+  document.addEventListener("click",(e)=>{
+    if(!inputEl.contains(e.target)&&!suggestionsEl.contains(e.target)) suggestionsEl.style.display="none";
+  });
+}
+setupSuggestions(document.getElementById("nameInput"),document.getElementById("nameSuggestions"));
+setupSuggestions(document.getElementById("interactionName"),document.getElementById("interactionSuggestions"));
+setupSuggestions(document.getElementById("childInfoName"),document.getElementById("childInfoSuggestions"));
+setupSuggestions(document.getElementById("childAttendanceName"),document.getElementById("childAttendanceSuggestions"));
+setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
 
-    interactionSubmit.addEventListener("click", async () => {
-      const name = interactionName.value.trim();
-      const points = interactionPoints.value;
+// أزرار الإرسال
+const attendanceSubmit=document.getElementById("attendanceSubmit");
+const interactionSubmit=document.getElementById("interactionSubmit");
+const interactionName=document.getElementById("interactionName");
+const interactionPoints=document.getElementById("interactionPoints");
 
-      interactionSubmit.disabled = true;
+function checkAttendanceReady(){
+  const name=document.getElementById("nameInput").value.trim();
+  const att=document.querySelector('input[name="attendance"]:checked');
+  const note=document.querySelector('input[name="notebook"]:checked');
+  const validName = allNames.includes(name);
+  attendanceSubmit.disabled=!(yearSelect.value && monthSelect.value && dateSelect.value && name && att && note && validName);
+}
+document.querySelectorAll('input, select').forEach(el=>el.addEventListener("input",checkAttendanceReady));
 
-      const data = { type: "interaction", name, points };
+function checkInteractionReady(){
+  const name=interactionName.value.trim();
+  const points=interactionPoints.value;
+  const validName=allNames.includes(name);
+  interactionSubmit.disabled=!(name && points!=="" && validName);
+}
+interactionName.addEventListener("input",checkInteractionReady);
+interactionPoints.addEventListener("input",checkInteractionReady);
 
-      try {
-        const res = await fetch(apiURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        const result = await res.json();
+// إرسال بيانات الحضور
+attendanceSubmit.addEventListener("click",async()=>{
+  const name=document.getElementById("nameInput").value.trim();
+  const attendance=document.querySelector('input[name="attendance"]:checked').value;
+  const notebook=document.querySelector('input[name="notebook"]:checked').value;
+  const date=dateSelect.options[dateSelect.selectedIndex].text;
+  const year=yearSelect.value;
+  const month=monthSelect.value;
+  attendanceSubmit.disabled=true;
+  const data={type:"attendance",year,month,date,name,attendance,notebook};
+  try{
+    const res=await fetch(apiURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    const result=await res.json();
+    if(result.success){ alert("✅ تم تسجيل الحضور بنجاح!"); document.getElementById("nameInput").value=""; document.querySelectorAll('input[name="attendance"]').forEach(e=>e.checked=false); document.querySelectorAll('input[name="notebook"]').forEach(e=>e.checked=false); checkAttendanceReady();}
+    else alert("❌ حدث خطأ أثناء التسجيل.");
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  finally{ attendanceSubmit.disabled=false; }
+});
 
-        if (result.success) {
-          alert("✅ تم تسجيل التفاعل بنجاح!");
-          interactionName.value = "";
-          interactionPoints.value = "";
-          checkInteractionReady();
-        } else {
-          alert("❌ حدث خطأ أثناء التسجيل.");
-        }
-      } catch {
-        alert("⚠️ لم يتم الاتصال بالخادم.");
-      } finally {
-        interactionSubmit.disabled = false;
-      }
-    });
-  </script>
+// إرسال التفاعل
+interactionSubmit.addEventListener("click",async()=>{
+  const name=interactionName.value.trim();
+  const points=interactionPoints.value;
+  interactionSubmit.disabled=true;
+  const data={type:"interaction",name,points};
+  try{
+    const res=await fetch(apiURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    const result=await res.json();
+    if(result.success){ alert("✅ تم تسجيل التفاعل بنجاح!"); interactionName.value=""; interactionPoints.value=""; checkInteractionReady(); }
+    else alert("❌ حدث خطأ أثناء التسجيل.");
+  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+  finally{ interactionSubmit.disabled=false; }
+});
+
+// إعداد باقي القوائم للتقارير (سنوات وأشهر)
+const birthdayMonth=document.getElementById("birthdayMonth");
+const reportYear=document.getElementById("reportYear");
+const reportMonth=document.getElementById("reportMonth");
+const reportDate=document.getElementById("reportDate");
+const childAttendanceYear=document.getElementById("childAttendanceYear");
+const childAttendanceMonth=document.getElementById("childAttendanceMonth");
+const interactionReportYear=document.getElementById("interactionReportYear");
+const interactionReportMonth=document.getElementById("interactionReportMonth");
+
+[reportYear,childAttendanceYear,interactionReportYear].forEach(sel=>{
+  for(let y=currentYear-1;y<=currentYear+1;y++){
+    const opt=document.createElement("option"); opt.value=y; opt.textContent=y; sel.appendChild(opt);
+  }
+});
+months.forEach((m,i)=>{
+  const opt1=document.createElement("option"); opt1.value=i+1; opt1.textContent=m; reportMonth.appendChild(opt1);
+  const opt2=document.createElement("option"); opt2.value=i+1; opt2.textContent=m; childAttendanceMonth.appendChild(opt2);
+  const opt3=document.createElement("option"); opt3.value=i+1; opt3.textContent=m; interactionReportMonth.appendChild(opt3);
+  const optB=document.createElement("option"); optB.value=i+1; optB.textContent=m; birthdayMonth.appendChild(optB);
+});
+
+// ملء أيام الجمعة لتقارير الحضور
+function fillReportFridays(){
+  reportDate.innerHTML="";
+  const year=+reportYear.value;
+  const month=+reportMonth.value-1;
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  for(let d=1;d<=daysInMonth;d++){
+    const date=new Date(year,month,d);
+    if(date.getDay()===5){ const opt=document.createElement("option"); opt.value=d; opt.textContent=`${d}/${month+1}/${year}`; reportDate.appendChild(opt); }
+  }
+}
+reportYear.onchange=fillReportFridays;
+reportMonth.onchange=fillReportFridays;
+fillReportFridays();
+
+// باقي أزرار التقارير: عرض عيد الميلاد، الحضور، بيانات الطفل، التفاعل
+document.getElementById("birthdayShow").addEventListener("click",async()=>{
+  const month=birthdayMonth.value; if(!month) return alert("اختر الشهر أولاً");
+  try{ const res=await fetch(apiURL+`?type=birthday&month=${month}`); const data=await res.json(); const c=document.getElementById("birthdayResult"); if(data.names&&data.names.length>0) c.innerHTML="<ul>"+data.names.map(n=>`<li>${n}</li>`).join("")+"</ul>"; else c.innerHTML="لا توجد أعياد ميلاد هذا الشهر"; }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+});
+
+// عرض عدد الحضور
+document.getElementById("showCount").addEventListener("click",async()=>{
+  const year=reportYear.value; const month=reportMonth.value; const date=reportDate.value;
+  try{ const res=await fetch(apiURL+`?type=attendanceCount&year=${year}&month=${month}&date=${date}`); const data=await res.json(); document.getElementById("attendanceReportResult").textContent=`عدد الحضور: ${data.count||0}`; }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+});
+
+// عرض أسماء الحضور
+document.getElementById("showNames").addEventListener("click",async()=>{
+  const year=reportYear.value; const month=reportMonth.value; const date=reportDate.value;
+  try{ const res=await fetch(apiURL+`?type=attendanceNames&year=${year}&month=${month}&date=${date}`); const data=await res.json(); const c=document.getElementById("attendanceReportResult"); if(data.names&&data.names.length>0) c.innerHTML="<ul>"+data.names.map(n=>`<li>${n}</li>`).join("")+"</ul>"; else c.innerHTML="لا توجد بيانات"; }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+});
+
+// بيانات الطفل
+document.getElementById("showChildInfo").addEventListener("click",async()=>{
+  const name=document.getElementById("childInfoName").value.trim(); if(!name) return alert("اكتب الاسم");
+  try{ const res=await fetch(apiURL+`?type=childInfo&name=${name}`); const data=await res.json(); document.getElementById("childInfoResult").innerHTML=JSON.stringify(data); }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+});
+
+// حضور الطفل في الشهر
+document.getElementById("showChildAttendance").addEventListener("click",async()=>{
+  const name=document.getElementById("childAttendanceName").value.trim(); const year=childAttendanceYear.value; const month=childAttendanceMonth.value;
+  if(!name) return alert("اكتب الاسم");
+  try{ const res=await fetch(apiURL+`?type=childAttendance&name=${name}&year=${year}&month=${month}`); const data=await res.json(); document.getElementById("childAttendanceResult").innerHTML=JSON.stringify(data); }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+});
+
+// نقاط التفاعل الشهرية
+document.getElementById("showInteractionReport").addEventListener("click",async()=>{
+  const name=document.getElementById("interactionReportName").value.trim(); const year=interactionReportYear.value; const month=interactionReportMonth.value;
+  if(!name) return alert("اكتب الاسم");
+  try{ const res=await fetch(apiURL+`?type=interactionReport&name=${name}&year=${year}&month=${month}`); const data=await res.json(); document.getElementById("interactionReportResult").innerHTML=JSON.stringify(data); }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
+});
+</script>
 </body>
 </html>
