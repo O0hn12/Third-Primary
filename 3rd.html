@@ -330,6 +330,99 @@ function renderArrayOfObjectsAsTable(container, arr, headers){
   container.innerHTML = `<table><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr>` +
     arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("") + `</table>`;
 }
+  // --- أعياد الميلاد ---
+document.getElementById("birthdayShow").addEventListener("click", async () => {
+  const month = document.getElementById("birthdayMonth").value;
+  const container = document.getElementById("birthdayResult");
+  container.innerHTML = "جاري التحميل...";
+  try {
+    const res = await fetch(`${apiURL}?type=birthdays&month=${month}`);
+    const data = await res.json();
+    renderListAsTable(container, data.names || [], "اسم الطفل");
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+  }
+});
+
+// --- تقرير الحضور ---
+document.getElementById("showCount").addEventListener("click", async () => {
+  const year = document.getElementById("reportYear").value;
+  const month = document.getElementById("reportMonth").value;
+  const date = document.getElementById("reportDate").value;
+  const container = document.getElementById("attendanceReportResult");
+  container.innerHTML = "جاري التحميل...";
+  try {
+    const res = await fetch(`${apiURL}?type=attendanceCount&year=${year}&month=${month}&date=${date}`);
+    const data = await res.json();
+    container.innerHTML = `عدد الحضور: ${data.count || 0}`;
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+  }
+});
+
+document.getElementById("showNames").addEventListener("click", async () => {
+  const year = document.getElementById("reportYear").value;
+  const month = document.getElementById("reportMonth").value;
+  const date = document.getElementById("reportDate").value;
+  const container = document.getElementById("attendanceReportResult");
+  container.innerHTML = "جاري التحميل...";
+  try {
+    const res = await fetch(`${apiURL}?type=attendanceNames&year=${year}&month=${month}&date=${date}`);
+    const data = await res.json();
+    renderListAsTable(container, data.names || [], "اسم الطفل");
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+  }
+});
+
+// --- بيانات الطفل ---
+document.getElementById("showChildInfo").addEventListener("click", async () => {
+  const name = document.getElementById("childInfoName").value.trim();
+  const container = document.getElementById("childInfoResult");
+  if(!name) return alert("ادخل اسم الطفل");
+  container.innerHTML = "جاري التحميل...";
+  try {
+    const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
+    const data = await res.json();
+    renderObjectAsTable(container, data);
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+  }
+});
+
+// --- حضور الطفل في الشهر ---
+document.getElementById("showChildAttendance").addEventListener("click", async () => {
+  const name = document.getElementById("childAttendanceName").value.trim();
+  const year = document.getElementById("childAttendanceYear").value;
+  const month = document.getElementById("childAttendanceMonth").value;
+  const container = document.getElementById("childAttendanceResult");
+  if(!name) return alert("ادخل اسم الطفل");
+  container.innerHTML = "جاري التحميل...";
+  try {
+    const res = await fetch(`${apiURL}?type=childAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
+    const data = await res.json();
+    renderArrayOfObjectsAsTable(container, data.records || [], ["التاريخ", "الحضور", "جاب النوتة"]);
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+  }
+});
+
+// --- نقاط التفاعل الشهرية ---
+document.getElementById("showInteractionReport").addEventListener("click", async () => {
+  const name = document.getElementById("interactionReportName").value.trim();
+  const year = document.getElementById("interactionReportYear").value;
+  const month = document.getElementById("interactionReportMonth").value;
+  const container = document.getElementById("interactionReportResult");
+  if(!name) return alert("ادخل اسم الطفل");
+  container.innerHTML = "جاري التحميل...";
+  try {
+    const res = await fetch(`${apiURL}?type=interactionReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
+    const data = await res.json();
+    renderArrayOfObjectsAsTable(container, data.records || [], ["التاريخ", "نقاط التفاعل"]);
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+  }
+});
 </script>
 </body>
 </html>
