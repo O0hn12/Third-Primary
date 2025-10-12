@@ -359,14 +359,22 @@ function renderArrayOfObjectsAsTable(container, arr, headers){
     arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("") + `</table>`;
 }
   // --- أعياد الميلاد ---
+// --- أعياد الميلاد ---
 document.getElementById("birthdayShow").addEventListener("click", async () => {
-  const month = document.getElementById("birthdayMonth").value;
+  const monthIndex = document.getElementById("birthdayMonth").value; // ده رقم الشهر 1-12
   const container = document.getElementById("birthdayResult");
   container.innerHTML = "جاري التحميل...";
   try {
-    const res = await fetch(`${apiURL}?type=birthdays&month=${month}`);
+    const res = await fetch(`${apiURL}?type=birthdays&month=${monthIndex}`);
     const data = await res.json();
-    renderListAsTable(container, data.names || [], "اسم الطفل");
+    // هنا نعرض النتائج في جدول
+    if(data.records && data.records.length > 0){
+      container.innerHTML = `<table><tr><th>اسم الطفل</th><th>اليوم</th><th>الشهر</th><th>السنة</th></tr>` +
+        data.records.map(r=>`<tr><td>${r.name}</td><td>${r.day}</td><td>${r.month}</td><td>${r.year}</td></tr>`).join("") +
+        `</table>`;
+    } else {
+      container.innerHTML = "لا توجد بيانات لهذا الشهر";
+    }
   } catch (err) {
     console.error(err);
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
