@@ -533,7 +533,7 @@ document.getElementById("showChildAttendance").addEventListener("click", async (
   try {
     const res = await fetch(`${apiURL}?type=childAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
     const data = await res.json();
-    renderArrayOfObjectsAsTable(container, data.records || [], ["التاريخ", "الحضور", "جاب النوتة"]);
+    renderArrayOfObjectsAsTable(container, data.records || [], ["date", "attendance", "notebook"]);
   } catch {
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
