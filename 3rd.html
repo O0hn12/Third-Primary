@@ -167,7 +167,7 @@ fillMonthSelect(document.getElementById("monthSelect"));
 fillMonthSelect(document.getElementById("reportMonth"));
 fillMonthSelect(document.getElementById("childAttendanceMonth"));
 fillMonthSelect(document.getElementById("interactionReportMonth"));
-fillMonthSelect(document.getElementById("birthdayMonth"));
+fillMonthSelect(document.getElementById("Month"));
 
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
@@ -349,12 +349,12 @@ function renderArrayOfObjectsAsTable(container, arr, headers){
     arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("") + `</table>`;
 }
   // --- أعياد الميلاد ---
-document.getElementById("birthdayShow").addEventListener("click", async () => {
-  const month = document.getElementById("birthdayMonth").value;
-  const container = document.getElementById("birthdayResult");
+document.getElementById("Show").addEventListener("click", async () => {
+  const month = document.getElementById("Month").value;
+  const container = document.getElementById("Result");
   container.innerHTML = "جاري التحميل...";
   try {
-    const res = await fetch(`${apiURL}?type=birthday&month=${month}`);
+    const res = await fetch(`${apiURL}?type=birthdays&month=${month}`);
     const data = await res.json();
     renderListAsTable(container, data.names || [], "اسم الطفل");
   } catch {
