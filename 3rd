@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام حضور ثالثة ابتدائي</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      margin: 0;
+      background: #f5f6fa;
+      color: #222;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #0078d7;
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+    }
+
+    header button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    header button.active {
+      border-bottom: 3px solid #fff;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .radio-group label {
+      font-weight: normal;
+    }
+
+    button.submit-btn {
+      background: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button.submit-btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button id="attendanceTab" class="active">📋 التسجيل</button>
+    <button id="reportsTab">📊 التقارير</button>
+  </header>
+
+  <main>
+    <!-- قسم التسجيل -->
+    <section id="attendanceSection" class="section active">
+      <div class="card">
+        <h3>تسجيل الحضور والنوتة</h3>
+        <label>السنة</label>
+        <select id="yearSelect"></select>
+
+        <label>الشهر</label>
+        <select id="monthSelect"></select>
+
+        <label>التاريخ (الجمعة فقط)</label>
+        <select id="dateSelect"></select>
+
+        <label>الاسم</label>
+        <input type="text" id="nameInput" placeholder="اكتب الاسم...">
+
+        <label>الحضور</label>
+        <div class="radio-group">
+          <label><input type="radio" name="attendance" value="حضر"> حضر</label>
+          <label><input type="radio" name="attendance" value="غاب"> غاب</label>
+        </div>
+
+        <label>جاب النوتة؟</label>
+        <div class="radio-group">
+          <label><input type="radio" name="notebook" value="نعم"> نعم</label>
+          <label><input type="radio" name="notebook" value="لا"> لا</label>
+        </div>
+
+        <button id="attendanceSubmit" class="submit-btn" disabled>إرسال</button>
+      </div>
+
+      <div class="card">
+        <h3>تسجيل التفاعل</h3>
+        <label>الاسم</label>
+        <input type="text" id="interactionName" placeholder="اكتب الاسم...">
+
+        <label>نقاط التفاعل (0 - 5)</label>
+        <input type="number" id="interactionPoints" min="0" max="5">
+
+        <button id="interactionSubmit" class="submit-btn" disabled>إرسال</button>
+      </div>
+    </section>
+
+    <!-- قسم التقارير -->
+    <section id="reportsSection" class="section">
+      <div class="card">
+        <h3>📊 صفحة التقارير</h3>
+        <p>سيتم عرض التقارير هنا لاحقًا.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // التنقل بين الصفحات
+    const attendanceTab = document.getElementById("attendanceTab");
+    const reportsTab = document.getElementById("reportsTab");
+    const attendanceSection = document.getElementById("attendanceSection");
+    const reportsSection = document.getElementById("reportsSection");
+
+    attendanceTab.onclick = () => {
+      attendanceTab.classList.add("active");
+      reportsTab.classList.remove("active");
+      attendanceSection.classList.add("active");
+      reportsSection.classList.remove("active");
+    };
+
+    reportsTab.onclick = () => {
+      reportsTab.classList.add("active");
+      attendanceTab.classList.remove("active");
+      reportsSection.classList.add("active");
+      attendanceSection.classList.remove("active");
+    };
+
+    // تعبئة القوائم (سنة - شهر - جمعة)
+    const yearSelect = document.getElementById("yearSelect");
+    const monthSelect = document.getElementById("monthSelect");
+    const dateSelect = document.getElementById("dateSelect");
+
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear - 1; y <= currentYear + 1; y++) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    }
+
+    const months = [
+      "يناير","فبراير","مارس","أبريل","مايو","يونيو",
+      "يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"
+    ];
+    months.forEach((m, i) => {
+      const opt = document.createElement("option");
+      opt.value = i + 1;
+      opt.textContent = m;
+      monthSelect.appendChild(opt);
+    });
+
+    function fillFridays() {
+      dateSelect.innerHTML = "";
+      const year = +yearSelect.value;
+      const month = +monthSelect.value - 1;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(year, month, d);
+        if (date.getDay() === 5) { // Friday
+          const opt = document.createElement("option");
+          opt.value = d;
+          opt.textContent = `${d}/${month + 1}/${year}`;
+          dateSelect.appendChild(opt);
+        }
+      }
+    }
+    yearSelect.onchange = fillFridays;
+    monthSelect.onchange = fillFridays;
+    fillFridays();
+
+    // تفعيل زر الإرسال للحضور
+    const attendanceInputs = [
+      yearSelect, monthSelect, dateSelect,
+      document.getElementById("nameInput")
+    ];
+    const attendanceSubmit = document.getElementById("attendanceSubmit");
+
+    function checkAttendanceReady() {
+      const name = document.getElementById("nameInput").value.trim();
+      const att = document.querySelector('input[name="attendance"]:checked');
+      const note = document.querySelector('input[name="notebook"]:checked');
+      attendanceSubmit.disabled = !(yearSelect.value && monthSelect.value && dateSelect.value && name && att && note);
+    }
+
+    attendanceInputs.forEach(el => el.addEventListener("input", checkAttendanceReady));
+    document.querySelectorAll('input[name="attendance"]').forEach(el => el.addEventListener("change", checkAttendanceReady));
+    document.querySelectorAll('input[name="notebook"]').forEach(el => el.addEventListener("change", checkAttendanceReady));
+
+    // تفعيل زر التفاعل
+    const interactionName = document.getElementById("interactionName");
+    const interactionPoints = document.getElementById("interactionPoints");
+    const interactionSubmit = document.getElementById("interactionSubmit");
+
+    function checkInteractionReady() {
+      const name = interactionName.value.trim();
+      const points = interactionPoints.value;
+      interactionSubmit.disabled = !(name && points !== "");
+    }
+
+    interactionName.addEventListener("input", checkInteractionReady);
+    interactionPoints.addEventListener("input", checkInteractionReady);
+  </script>
+</body>
+</html>
