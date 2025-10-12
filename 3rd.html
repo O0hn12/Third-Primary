@@ -189,18 +189,25 @@ document.getElementById("yearSelect").onchange = () => fillFridays(document.getE
 document.getElementById("monthSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 
 // --- تحميل الأسماء ---
-let allNames=[];
+let allNames = [];
+
 async function loadNames(){
   try{
     const res = await fetch(apiURL+"?type=names");
     const data = await res.json();
-    // الآن نتحقق من وجود 'names' داخل JSON
     allNames = Array.isArray(data) ? data : (data.names || []);
-    checkAttendanceReady(); // نعيد التحقق بعد تحميل الأسماء
   } catch(err){ 
     console.warn(err); 
   }
 }
+
+async function initAttendance(){
+  await loadNames(); // ننتظر تحميل الأسماء
+  setupSuggestions(nameInput, document.getElementById("nameSuggestions"));
+  checkAttendanceReady();
+}
+
+initAttendance();
 loadNames();
 
 // --- الاقتراحات ---
