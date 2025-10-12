@@ -5,28 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نظام حضور ثالثة ابتدائي</title>
 <style>
-body { font-family: "Cairo", sans-serif; margin:0; background:#f5f6fa; color:#222; }
-header { display:flex; justify-content:space-around; align-items:center; background:#0078d7; color:white; padding:15px; font-weight:bold; }
-header button { background:transparent; border:none; color:white; font-size:16px; cursor:pointer; transition:0.3s; }
-header button.active { border-bottom:3px solid #fff; }
-main { padding:20px; }
-.section { display:none; }
-.section.active { display:block; }
-.card { background:white; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px; margin-bottom:20px; position:relative; }
-label { display:block; margin-bottom:6px; font-weight:bold; }
-select, input[type="text"], input[type="number"] { width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:10px; font-size:15px; }
-.radio-group { display:flex; gap:15px; margin-bottom:15px; }
-.radio-group label { font-weight:normal; }
-button.submit-btn { background:#0078d7; color:white; border:none; border-radius:10px; padding:10px 20px; cursor:pointer; font-size:16px; transition:0.3s; }
-button.submit-btn:disabled { background:#aaa; cursor:not-allowed; }
-.suggestions { position:absolute; background:white; border:1px solid #ccc; border-radius:8px; width:calc(100% - 40px); max-height:150px; overflow-y:auto; box-shadow:0 4px 8px rgba(0,0,0,0.15); z-index:10; }
-.suggestions div { padding:8px; cursor:pointer; transition:0.2s; }
-.suggestions div:hover { background:#0078d7; color:white; }
-table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-table, th, td { border: 1px solid #ccc; }
-th, td { padding: 8px; text-align: center; }
-th { background: #0078d7; color: white; }
-@media (max-width:600px) { .card { padding:15px; } }
+/* --- أساسيات الصفحة --- */
+body { 
+    font-family: "Cairo", sans-serif; 
+    margin: 0; 
+    background: #f5f6fa; 
+    color: #222; 
+}
+header { 
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center; 
+    background: #0078d7; 
+    color: white; 
+    padding: 15px; 
+    font-weight: bold; 
+}
+header button { 
+    background: transparent; 
+    border: none; 
+    color: white; 
+    font-size: 16px; 
+    cursor: pointer; 
+    transition: 0.3s; 
+}
+header button.active { 
+    border-bottom: 3px solid #fff; 
+}
+main { 
+    padding: 20px; 
+}
+.section { 
+    display: none; 
+}
+.section.active { 
+    display: block; 
+}
+.card { 
+    background: white; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    position: relative; 
+}
+label { 
+    display: block; 
+    margin-bottom: 6px; 
+    font-weight: bold; 
+}
+select, input[type="text"], input[type="number"] { 
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 15px; 
+    border: 1px solid #ccc; 
+    border-radius: 10px; 
+    font-size: 15px; 
+}
+.radio-group { 
+    display: flex; 
+    gap: 15px; 
+    margin-bottom: 15px; 
+}
+.radio-group label { 
+    font-weight: normal; 
+}
+button.submit-btn { 
+    background: #0078d7; 
+    color: white; 
+    border: none; 
+    border-radius: 10px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-size: 16px; 
+    transition: 0.3s; 
+}
+button.submit-btn:disabled { 
+    background: #aaa; 
+    cursor: not-allowed; 
+}
+.suggestions { 
+    position: absolute; 
+    background: white; 
+    border: 1px solid #ccc; 
+    border-radius: 8px; 
+    width: calc(100% - 40px); 
+    max-height: 150px; 
+    overflow-y: auto; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+    z-index: 10; 
+}
+.suggestions div { 
+    padding: 8px; 
+    cursor: pointer; 
+    transition: 0.2s; 
+}
+.suggestions div:hover { 
+    background: #0078d7; 
+    color: white; 
+}
+table { 
+    border-collapse: collapse; 
+    width: 100%; 
+    margin-top: 10px; 
+}
+table, th, td { 
+    border: 1px solid #ccc; 
+}
+th, td { 
+    padding: 8px; 
+    text-align: center; 
+}
+th { 
+    background: #0078d7; 
+    color: white; 
+}
+@media (max-width:600px) { 
+    .card { padding: 15px; } 
+}
 </style>
 </head>
 <body>
