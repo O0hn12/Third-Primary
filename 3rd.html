@@ -354,7 +354,7 @@ document.getElementById("birthdayShow").addEventListener("click", async () => {
   const container = document.getElementById("birthdayResult");
   container.innerHTML = "جاري التحميل...";
   try {
-    const res = await fetch(`${apiURL}?type=birthdays&month=${month}`);
+    const res = await fetch(`${apiURL}?type=birthday&month=${month}`);
     const data = await res.json();
     renderListAsTable(container, data.names || [], "اسم الطفل");
   } catch {
