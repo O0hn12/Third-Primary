@@ -550,7 +550,7 @@ document.getElementById("showInteractionReport").addEventListener("click", async
   try {
     const res = await fetch(`${apiURL}?type=interactionReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
     const data = await res.json();
-    renderArrayOfObjectsAsTable(container, data.records || [], ["التاريخ", "نقاط التفاعل"]);
+    renderArrayOfObjectsAsTable(container, data.records || [], ["date", "points"]);
   } catch {
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
