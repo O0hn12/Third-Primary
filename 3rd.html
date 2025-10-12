@@ -432,24 +432,24 @@ const month = Number(document.getElementById("interactionMonthSelect").value);
 const date = Number(document.getElementById("interactionDateSelect").value);
 const points = Number(interactionPoints.value);
 
-if(!name || !day || !month || !year || isNaN(points) || points < 0 || points > 5){
+if(!name || !date || !month || !year || isNaN(points) || points < 0 || points > 5){
     return alert("تأكد من إدخال الاسم والتاريخ والنقاط بشكل صحيح");
 }
 
-  interactionSubmit.disabled = true;
+interactionSubmit.disabled = true;
 
-  try {
+try {
     const res = await fetch(apiURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "interaction",
-        name,
-        day,
-        month,
-        year,
-        points
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            type: "interaction",
+            name,
+            day: date,  // هنا تبعته كـ day
+            month,
+            year,
+            points
+        })
     });
     const result = await res.json();
     if(result.success){
