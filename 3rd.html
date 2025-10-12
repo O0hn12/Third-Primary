@@ -427,9 +427,9 @@ checkInteractionReady();
 // --- إرسال التفاعل ---
 interactionSubmit.addEventListener("click", async ()=> {
     const name = interactionName.value.trim();
-  const day = Number(document.getElementById("interactionDateSelect").value);
-const month = Number(document.getElementById("interactionMonthSelect").value);
 const year = Number(document.getElementById("interactionYearSelect").value);
+const month = Number(document.getElementById("interactionMonthSelect").value);
+const date = Number(document.getElementById("interactionDateSelect").value);
 const points = Number(interactionPoints.value);
 
 if(!name || !day || !month || !year || isNaN(points) || points < 0 || points > 5){
