@@ -157,14 +157,25 @@ th {
 
   <!-- تسجيل التفاعل -->
   <div class="card">
-    <h3>تسجيل التفاعل</h3>
-    <label>الاسم</label>
-    <input type="text" id="interactionName" placeholder="اكتب الاسم...">
-    <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
-    <label>نقاط التفاعل (0 - 5)</label>
-    <input type="number" id="interactionPoints" min="0" max="5">
-    <button id="interactionSubmit" class="submit-btn" disabled>إرسال</button>
-  </div>
+  <h3>تسجيل التفاعل</h3>
+  <label>الاسم</label>
+  <input type="text" id="interactionName" placeholder="اكتب الاسم...">
+  <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
+
+  <label>اليوم</label>
+  <input type="number" id="interactionDay" min="1" max="31">
+
+  <label>الشهر</label>
+  <select id="interactionMonthSelect"></select>
+
+  <label>السنة</label>
+  <select id="interactionYearSelect"></select>
+
+  <label>نقاط التفاعل (0 - 5)</label>
+  <input type="number" id="interactionPoints" min="0" max="5">
+
+  <button id="interactionSubmit" class="submit-btn" disabled>إرسال</button>
+</div>
 </section>
 
 <section id="reportsSection" class="section">
@@ -414,30 +425,45 @@ interactionPoints.addEventListener("input", checkInteractionReady);
 checkInteractionReady();
 
 // --- إرسال التفاعل ---
-interactionSubmit.addEventListener("click", async ()=>{
-  const name=interactionName.value.trim();
-  const points=Number(interactionPoints.value);
-  if(points<0 || points>5){ alert("❌ النقاط يجب أن تكون بين 0 و 5."); return; }
+interactionSubmit.addEventListener("click", async ()=> {
+  const name = interactionName.value.trim();
+  const day = +document.getElementById("interactionDay").value;
+  const month = +document.getElementById("interactionMonthSelect").value;
+  const year = +document.getElementById("interactionYearSelect").value;
+  const points = +interactionPoints.value;
 
-  try{
-    const checkRes=await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}`);
-    const checkData=await checkRes.json();
-    if(checkData.exists){ alert(`❌ لا يمكن إضافة التفاعل مرة ثانية في هذا الأسبوع لـ ${name}.`); return; }
-  }catch{ alert("⚠️ لم يتم الاتصال بالخادم للتحقق من التفاعل."); return; }
+  if(!name || !day || !month || !year || isNaN(points) || points<0 || points>5){
+    return alert("تأكد من إدخال الاسم والتاريخ والنقاط بشكل صحيح");
+  }
 
-  interactionSubmit.disabled=true;
-  const data={ type:"interaction", name, points };
-  try{
-    const res=await fetch(apiURL, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data) });
-    const result=await res.json();
+  interactionSubmit.disabled = true;
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "interaction",
+        name,
+        day,
+        month,
+        year,
+        points
+      })
+    });
+    const result = await res.json();
     if(result.success){
       alert("✅ تم تسجيل التفاعل بنجاح!");
-      interactionName.value="";
-      interactionPoints.value="";
+      interactionName.value = "";
+      interactionPoints.value = "";
+      document.getElementById("interactionDay").value = "";
       checkInteractionReady();
-    }else alert("❌ حدث خطأ أثناء التسجيل.");
-  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
-  finally{ interactionSubmit.disabled=false; }
+    } else alert("❌ حدث خطأ أثناء التسجيل.");
+  } catch {
+    alert("⚠️ لم يتم الاتصال بالخادم.");
+  } finally {
+    interactionSubmit.disabled = false;
+  }
 });
 
 // --- دوال عرض الجداول ---
