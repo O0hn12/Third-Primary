@@ -460,6 +460,33 @@ document.getElementById("showInteractionReport").addEventListener("click", async
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
 });
+
+  function fillFridaysForReport(){
+  const yearSel = document.getElementById("reportYear");
+  const monthSel = document.getElementById("reportMonth");
+  const dateSel = document.getElementById("reportDate");
+  dateSel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let d=1; d<=daysInMonth; d++){
+    const date = new Date(year, month, d);
+    if(date.getDay() === 5){ // جمعه
+      const opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = `${d}/${month+1}/${year}`;
+      dateSel.appendChild(opt);
+    }
+  }
+}
+
+// ربطها مع تغيير السنة والشهر
+document.getElementById("reportYear").onchange = fillFridaysForReport;
+document.getElementById("reportMonth").onchange = fillFridaysForReport;
+
+// استدعاء عند تحميل الصفحة
+fillFridaysForReport();
+
 </script>
 </body>
 </html>
