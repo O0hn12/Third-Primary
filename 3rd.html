@@ -359,7 +359,6 @@ function renderArrayOfObjectsAsTable(container, arr, headers){
     arr.map(row=>`<tr>${headers.map(h=>`<td>${row[h]||""}</td>`).join("")}</tr>`).join("") + `</table>`;
 }
   // --- أعياد الميلاد ---
-// --- أعياد الميلاد ---
 document.getElementById("birthdayShow").addEventListener("click", async () => {
   const monthIndex = document.getElementById("birthdayMonth").value; // ده رقم الشهر 1-12
   const container = document.getElementById("birthdayResult");
@@ -421,7 +420,7 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   try {
     const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
     const data = await res.json();
-    renderObjectAsTable(container, data);
+renderArrayOfObjectsAsTable(container, data.records || [], ["name","year","month","date","attendance","notebook"]);
   } catch {
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
