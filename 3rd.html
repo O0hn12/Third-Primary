@@ -192,10 +192,14 @@ document.getElementById("monthSelect").onchange = () => fillFridays(document.get
 let allNames=[];
 async function loadNames(){
   try{
-    const res=await fetch(apiURL+"?type=names");
-    const data=await res.json();
-    allNames = Array.isArray(data)?data:data.names||[];
-  }catch(err){ console.warn(err); }
+    const res = await fetch(apiURL+"?type=names");
+    const data = await res.json();
+    // الآن نتحقق من وجود 'names' داخل JSON
+    allNames = Array.isArray(data) ? data : (data.names || []);
+    checkAttendanceReady(); // نعيد التحقق بعد تحميل الأسماء
+  } catch(err){ 
+    console.warn(err); 
+  }
 }
 loadNames();
 
