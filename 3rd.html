@@ -53,6 +53,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       padding: 20px;
       margin-bottom: 20px;
+      position: relative;
     }
 
     label {
@@ -96,6 +97,30 @@
       cursor: not-allowed;
     }
 
+    /* الاقتراحات */
+    .suggestions {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: calc(100% - 40px);
+      max-height: 150px;
+      overflow-y: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .suggestions div {
+      padding: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .suggestions div:hover {
+      background: #0078d7;
+      color: white;
+    }
+
     @media (max-width: 600px) {
       .card {
         padding: 15px;
@@ -125,6 +150,7 @@
 
         <label>الاسم</label>
         <input type="text" id="nameInput" placeholder="اكتب الاسم...">
+        <div id="nameSuggestions" class="suggestions" style="display:none;"></div>
 
         <label>الحضور</label>
         <div class="radio-group">
@@ -145,6 +171,7 @@
         <h3>تسجيل التفاعل</h3>
         <label>الاسم</label>
         <input type="text" id="interactionName" placeholder="اكتب الاسم...">
+        <div id="interactionSuggestions" class="suggestions" style="display:none;"></div>
 
         <label>نقاط التفاعل (0 - 5)</label>
         <input type="number" id="interactionPoints" min="0" max="5">
@@ -183,7 +210,7 @@
       attendanceSection.classList.remove("active");
     };
 
-    // تعبئة القوائم (سنة - شهر - جمعة)
+    // تعبئة القوائم
     const yearSelect = document.getElementById("yearSelect");
     const monthSelect = document.getElementById("monthSelect");
     const dateSelect = document.getElementById("dateSelect");
@@ -215,7 +242,7 @@
 
       for (let d = 1; d <= daysInMonth; d++) {
         const date = new Date(year, month, d);
-        if (date.getDay() === 5) { // Friday
+        if (date.getDay() === 5) {
           const opt = document.createElement("option");
           opt.value = d;
           opt.textContent = `${d}/${month + 1}/${year}`;
@@ -227,41 +254,88 @@
     monthSelect.onchange = fillFridays;
     fillFridays();
 
-    // تفعيل زر الإرسال للحضور
-    const attendanceInputs = [
-      yearSelect, monthSelect, dateSelect,
-      document.getElementById("nameInput")
-    ];
+    // زر الإرسال للحضور
     const attendanceSubmit = document.getElementById("attendanceSubmit");
-
     function checkAttendanceReady() {
       const name = document.getElementById("nameInput").value.trim();
       const att = document.querySelector('input[name="attendance"]:checked');
       const note = document.querySelector('input[name="notebook"]:checked');
       attendanceSubmit.disabled = !(yearSelect.value && monthSelect.value && dateSelect.value && name && att && note);
     }
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener("input", checkAttendanceReady));
 
-    attendanceInputs.forEach(el => el.addEventListener("input", checkAttendanceReady));
-    document.querySelectorAll('input[name="attendance"]').forEach(el => el.addEventListener("change", checkAttendanceReady));
-    document.querySelectorAll('input[name="notebook"]').forEach(el => el.addEventListener("change", checkAttendanceReady));
-
-    // تفعيل زر التفاعل
+    // زر التفاعل
     const interactionName = document.getElementById("interactionName");
     const interactionPoints = document.getElementById("interactionPoints");
     const interactionSubmit = document.getElementById("interactionSubmit");
-
     function checkInteractionReady() {
       const name = interactionName.value.trim();
       const points = interactionPoints.value;
       interactionSubmit.disabled = !(name && points !== "");
     }
-
     interactionName.addEventListener("input", checkInteractionReady);
     interactionPoints.addEventListener("input", checkInteractionReady);
 
-    // ====== الاتصال بـ Cloudflare Worker ======
+    // API
     const apiURL = "https://3rd.johnmamdouh777.workers.dev/";
+    let allNames = [];
 
+    // تحميل الأسماء لمرة واحدة فقط
+    async function loadNames() {
+      try {
+        const res = await fetch(apiURL + "?type=names");
+        const data = await res.json();
+        allNames = data.names || [];
+        console.log("✅ تم تحميل الأسماء:", allNames.length);
+      } catch {
+        console.warn("⚠️ فشل تحميل الأسماء");
+      }
+    }
+    loadNames();
+
+    // إنشاء دالة اقتراحات عامة
+    function setupSuggestions(inputEl, suggestionsEl) {
+      inputEl.addEventListener("input", () => {
+        const query = inputEl.value.trim();
+        if (!query) return (suggestionsEl.style.display = "none");
+
+        const filtered = allNames.filter(n => n.includes(query)).slice(0, 10);
+        if (filtered.length === 0) {
+          suggestionsEl.style.display = "none";
+          return;
+        }
+
+        suggestionsEl.innerHTML = "";
+        filtered.forEach(name => {
+          const div = document.createElement("div");
+          div.textContent = name;
+          div.onclick = () => {
+            inputEl.value = name;
+            suggestionsEl.style.display = "none";
+            inputEl.dispatchEvent(new Event("input"));
+          };
+          suggestionsEl.appendChild(div);
+        });
+        suggestionsEl.style.display = "block";
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!inputEl.contains(e.target) && !suggestionsEl.contains(e.target)) {
+          suggestionsEl.style.display = "none";
+        }
+      });
+    }
+
+    setupSuggestions(
+      document.getElementById("nameInput"),
+      document.getElementById("nameSuggestions")
+    );
+    setupSuggestions(
+      document.getElementById("interactionName"),
+      document.getElementById("interactionSuggestions")
+    );
+
+    // إرسال البيانات
     attendanceSubmit.addEventListener("click", async () => {
       const year = yearSelect.value;
       const month = monthSelect.value;
@@ -272,10 +346,7 @@
 
       attendanceSubmit.disabled = true;
 
-      const data = {
-        type: "attendance",
-        year, month, date, name, attendance, notebook
-      };
+      const data = { type: "attendance", year, month, date, name, attendance, notebook };
 
       try {
         const res = await fetch(apiURL, {
@@ -283,7 +354,6 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
-
         const result = await res.json();
 
         if (result.success) {
@@ -295,8 +365,7 @@
         } else {
           alert("❌ حدث خطأ أثناء التسجيل.");
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         alert("⚠️ لم يتم الاتصال بالخادم.");
       } finally {
         attendanceSubmit.disabled = false;
@@ -309,11 +378,7 @@
 
       interactionSubmit.disabled = true;
 
-      const data = {
-        type: "interaction",
-        name,
-        points
-      };
+      const data = { type: "interaction", name, points };
 
       try {
         const res = await fetch(apiURL, {
@@ -321,7 +386,6 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
-
         const result = await res.json();
 
         if (result.success) {
@@ -332,8 +396,7 @@
         } else {
           alert("❌ حدث خطأ أثناء التسجيل.");
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         alert("⚠️ لم يتم الاتصال بالخادم.");
       } finally {
         interactionSubmit.disabled = false;
