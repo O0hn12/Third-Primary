@@ -790,6 +790,29 @@ fillInteractionFridays();
   }
 });
 
+    function fillAbsenceDates() {
+  const yearSel = document.getElementById("absenceYear");
+  const monthSel = document.getElementById("absenceMonth");
+  const dateSel = document.getElementById("absenceDate");
+  dateSel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let d=1; d<=daysInMonth; d++){
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = `${d}/${month+1}/${year}`;
+    dateSel.appendChild(opt);
+  }
+}
+
+// استدعاء عند تغيير السنة أو الشهر
+document.getElementById("absenceYear").onchange = fillAbsenceDates;
+document.getElementById("absenceMonth").onchange = fillAbsenceDates;
+
+// استدعاء عند تحميل الصفحة
+fillAbsenceDates();
+
 </script>
 </body>
 </html>
