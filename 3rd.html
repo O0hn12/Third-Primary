@@ -121,19 +121,14 @@ th {
     color: white; 
 }
 
-/* 🌀 تنسيق الانزلاق السلس بين الشاشتين */
 #attendanceSection, #reportsSection {
-  position: absolute;
-  top: 70px;
-  left: 0;
+  position: relative;
   width: 100%;
-  height: calc(100% - 70px);
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  background: white;
+  display: none; /* كل قسم مخفي بشكل افتراضي */
 }
 
-#reportsSection {
-  transform: translateX(100%);
+#attendanceSection.active, #reportsSection.active {
+  display: block; /* القسم النشط يظهر */
 }
 
 @media (max-width:600px) { 
@@ -254,23 +249,19 @@ const months=["يناير","فبراير","مارس","أبريل","مايو","ي
 
 // --- التنقل بين الأقسام ---
 document.getElementById("attendanceTab").onclick = () => {
-  const att = document.getElementById("attendanceSection");
-  const rep = document.getElementById("reportsSection");
-  att.style.transform = "translateX(0)";
-  rep.style.transform = "translateX(100%)";
+  document.getElementById("attendanceSection").classList.add("active");
+  document.getElementById("reportsSection").classList.remove("active");
   document.getElementById("attendanceTab").classList.add("active");
   document.getElementById("reportsTab").classList.remove("active");
 };
 
 document.getElementById("reportsTab").onclick = () => {
-  const att = document.getElementById("attendanceSection");
-  const rep = document.getElementById("reportsSection");
-  att.style.transform = "translateX(-100%)";
-  rep.style.transform = "translateX(0)";
-  document.getElementById("reportsTab").classList.add("active");
+  document.getElementById("attendanceSection").classList.remove("active");
+  document.getElementById("reportsSection").classList.add("active");
   document.getElementById("attendanceTab").classList.remove("active");
+  document.getElementById("reportsTab").classList.add("active");
 };
-
+    
 // --- تعبئة السنوات والشهور ---
 function fillYearSelect(sel){
   for(let y=currentYear-1;y<=currentYear+1;y++){
