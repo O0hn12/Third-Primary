@@ -501,7 +501,7 @@ document.getElementById("birthdayShow").addEventListener("click", async () => {
   const container = document.getElementById("birthdayResult");
   container.innerHTML = "جاري التحميل...";
   try {
-    const res = await fetch(`${apiURL}?type=birthdays&month=${monthIndex}`);
+    const res = await fetch(`${apiURL}?type=birthdaysReport&month=${monthIndex}`);
     const data = await res.json();
     // هنا نعرض النتائج في جدول
     if(data.records && data.records.length > 0){
