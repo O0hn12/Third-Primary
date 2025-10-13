@@ -120,11 +120,61 @@ th {
     background: #0078d7; 
     color: white; 
 }
+
+#attendanceSection, #reportsSection {
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
 @media (max-width:600px) { 
     .card { padding: 15px; } 
 }
 </style>
 </head>
+    <script>
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const diff = touchEndX - touchStartX;
+
+  // لو السحب لليسار (من تسجيل إلى تقرير)
+  // Swipe transition animation
+if (diff < -70) { // من تسجيل إلى تقرير
+  const att = document.getElementById("attendanceSection");
+  const rep = document.getElementById("reportsSection");
+  att.style.transition = rep.style.transition = "transform 0.3s ease";
+  att.style.transform = "translateX(-100%)";
+  rep.style.transform = "translateX(0)";
+  document.getElementById("attendanceTab").classList.remove("active");
+  document.getElementById("reportsTab").classList.add("active");
+  att.classList.remove("active");
+  rep.classList.add("active");
+}
+
+if (diff > 70) { // من تقرير إلى تسجيل
+  const att = document.getElementById("attendanceSection");
+  const rep = document.getElementById("reportsSection");
+  att.style.transition = rep.style.transition = "transform 0.3s ease";
+  att.style.transform = "translateX(0)";
+  rep.style.transform = "translateX(100%)";
+  document.getElementById("reportsTab").classList.remove("active");
+  document.getElementById("attendanceTab").classList.add("active");
+  rep.classList.remove("active");
+  att.classList.add("active");
+}
+}
+</script>
+
 <body>
 <header>
 <button id="attendanceTab" class="active">📋 التسجيل</button>
@@ -655,6 +705,15 @@ document.getElementById("interactionMonthSelect").onchange = fillInteractionFrid
 // استدعاء عند تحميل الصفحة
 fillInteractionFridays();
 
+    function showSection(section) {
+  if (section === "report") {
+    document.getElementById("reportPage").style.display = "block";
+    document.getElementById("registerPage").style.display = "none";
+  } else {
+    document.getElementById("reportPage").style.display = "none";
+    document.getElementById("registerPage").style.display = "block";
+  }
+}
 </script>
 </body>
 </html>
