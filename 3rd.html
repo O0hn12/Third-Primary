@@ -280,6 +280,9 @@ th {
   <input type="text" id="absenceReportChildName" placeholder="اكتب اسم الطفل...">
   <div id="absenceReportSuggestions" class="suggestions" style="display:none;"></div>
 
+  <label>اختر السنة</label>
+  <select id="absenceReportYear"></select>
+
   <label>اختر الشهر</label>
   <select id="absenceReportMonth"></select>
 
@@ -296,6 +299,8 @@ const currentYear = new Date().getFullYear();
 const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 fillYearSelect(document.getElementById("absenceYear"));
 fillMonthSelect(document.getElementById("absenceMonth"));
+fillYearSelect(document.getElementById("absenceReportYear"));
+
 
 
 // --- التنقل بين الأقسام ---
@@ -325,6 +330,7 @@ fillYearSelect(document.getElementById("yearSelect"));
 fillYearSelect(document.getElementById("reportYear"));
 fillYearSelect(document.getElementById("childAttendanceYear"));
 fillYearSelect(document.getElementById("interactionReportYear"));
+fillYearSelect(document.getElementById("absenceReportYear"));
 
 function fillMonthSelect(sel){
   if (!sel) return; // حماية إذا العنصر مش موجود
@@ -340,6 +346,7 @@ fillMonthSelect(document.getElementById("reportMonth"));
 fillMonthSelect(document.getElementById("childAttendanceMonth"));
 fillMonthSelect(document.getElementById("interactionReportMonth"));
 fillMonthSelect(document.getElementById("birthdayMonth"));
+fillYearSelect(document.getElementById("absenceReportYear"));
 
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
@@ -772,15 +779,14 @@ document.getElementById("interactionMonthSelect").onchange = fillInteractionFrid
 // استدعاء عند تحميل الصفحة
 fillInteractionFridays();
 
-    document.getElementById("showAbsenceReport").addEventListener("click", async () => {
-  const name = document.getElementById("absenceReportChildName").value.trim();
-  const month = document.getElementById("absenceReportMonth").value;
-  const container = document.getElementById("absenceReportResult");
-  if(!name) return alert("ادخل اسم الطفل");
-  container.innerHTML = "جاري التحميل...";
-  
-  try {
-    const res = await fetch(`${apiURL}?type=absenceReport&name=${encodeURIComponent(name)}&month=${month}`);
+    const year = document.getElementById("absenceReportYear").value;
+const month = document.getElementById("absenceReportMonth").value;
+const container = document.getElementById("absenceReportResult");
+if(!name) return alert("ادخل اسم الطفل");
+container.innerHTML = "جاري التحميل...";
+
+try {
+  const res = await fetch(`${apiURL}?type=absenceReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
     const data = await res.json();
     if(data.records && data.records.length>0){
       container.innerHTML = `<table>
