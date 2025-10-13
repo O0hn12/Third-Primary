@@ -123,16 +123,15 @@ th {
 
 /* 🌀 تنسيق الانزلاق السلس بين الشاشتين */
 #attendanceSection, #reportsSection {
-  overflow-y: auto;
   position: absolute;
-  top: 70px; /* حسب مكان الـ navbar عندك */
+  top: 70px;
   left: 0;
   width: 100%;
   height: calc(100% - 70px);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  will-change: transform;
   background: white;
 }
+
 #reportsSection {
   transform: translateX(100%);
 }
@@ -688,69 +687,42 @@ fillInteractionFridays();
 }
 
     // ✅ حركة Swipe حقيقية وسلسة بين تسجيل الحضور والتقارير
-(function enableSwipeNavigation() {
+// ✅ Swipe مبسط وسلس بين تسجيل الحضور والتقارير
+(function(){
   const att = document.getElementById("attendanceSection");
   const rep = document.getElementById("reportsSection");
   const attTab = document.getElementById("attendanceTab");
   const repTab = document.getElementById("reportsTab");
   
   let startX = 0;
-  let currentX = 0;
-  let isDragging = false;
+  let activeSection = 'attendance'; // القسم الحالي
 
-  document.addEventListener("touchstart", (e) => {
+  document.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
-    isDragging = true;
-    att.style.transition = rep.style.transition = "none";
   });
 
-  document.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-    currentX = e.touches[0].clientX;
-    const diff = currentX - startX;
+  document.addEventListener('touchend', e => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = endX - startX;
 
-    // سحب من تسجيل لتقرير
-    if (diff < 0 && Math.abs(diff) <= window.innerWidth) {
-      att.style.transform = `translateX(${diff}px)`;
-      rep.style.transform = `translateX(${100 + (diff / window.innerWidth) * 100}%)`;
-    }
-
-    // سحب من تقرير لتسجيل
-    if (diff > 0 && diff <= window.innerWidth) {
-      att.style.transform = `translateX(${-(100 - (diff / window.innerWidth) * 100)}%)`;
-      rep.style.transform = `translateX(${diff}px)`;
-    }
-  });
-
-  document.addEventListener("touchend", () => {
-    isDragging = false;
-    att.style.transition = rep.style.transition = "transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)";
-    const diff = currentX - startX;
-
-    if (diff < -70) { // انتقل لتقرير
-      att.style.transform = "translateX(-100%)";
-      rep.style.transform = "translateX(0)";
-      attTab.classList.remove("active");
-      repTab.classList.add("active");
+    // إذا السحب أكبر من 50px نتعامل معاه
+    if(diff < -50 && activeSection === 'attendance'){ // من تسجيل للتقارير
+      att.style.transform = 'translateX(-100%)';
+      rep.style.transform = 'translateX(0)';
+      activeSection = 'report';
+      attTab.classList.remove('active');
+      repTab.classList.add('active');
     } 
-    else if (diff > 70) { // ارجع لتسجيل
-      att.style.transform = "translateX(0)";
-      rep.style.transform = "translateX(100%)";
-      repTab.classList.remove("active");
-      attTab.classList.add("active");
-    } 
-    else { // لو السحب بسيط، رجّعهم مكانهم
-      const isReportActive = rep.style.transform === "translateX(0)";
-      if (isReportActive) {
-        att.style.transform = "translateX(-100%)";
-        rep.style.transform = "translateX(0)";
-      } else {
-        att.style.transform = "translateX(0)";
-        rep.style.transform = "translateX(100%)";
-      }
+    else if(diff > 50 && activeSection === 'report'){ // من تقارير لتسجيل
+      att.style.transform = 'translateX(0)';
+      rep.style.transform = 'translateX(100%)';
+      activeSection = 'attendance';
+      attTab.classList.add('active');
+      repTab.classList.remove('active');
     }
   });
 })();
+
 </script>
 </body>
 </html>
