@@ -779,21 +779,30 @@ document.getElementById("interactionMonthSelect").onchange = fillInteractionFrid
 // استدعاء عند تحميل الصفحة
 fillInteractionFridays();
 
-    const year = document.getElementById("absenceReportYear").value;
-const month = document.getElementById("absenceReportMonth").value;
-const container = document.getElementById("absenceReportResult");
-if(!name) return alert("ادخل اسم الطفل");
-container.innerHTML = "جاري التحميل...";
-
-try {
-  const res = await fetch(`${apiURL}?type=absenceReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
+    document.getElementById("showAbsenceReport").addEventListener("click", async () => {
+  const name = document.getElementById("absenceReportChildName").value.trim();
+  const year = document.getElementById("absenceReportYear").value;
+  const month = document.getElementById("absenceReportMonth").value;
+  const container = document.getElementById("absenceReportResult");
+  
+  if (!name) {
+    alert("ادخل اسم الطفل");
+    return;
+  }
+  
+  container.innerHTML = "جاري التحميل...";
+  
+  try {
+    const res = await fetch(`${apiURL}?type=absenceReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
     const data = await res.json();
-    if(data.records && data.records.length>0){
+    if (data.records && data.records.length > 0) {
       container.innerHTML = `<table>
         <tr><th>التاريخ</th><th>نوع الافتقاد</th><th>اسم الخادم</th><th>الملاحظات</th></tr>` +
         data.records.map(r=>`<tr><td>${r.date}/${r.month}/${r.year}</td><td>${r.absenceType}</td><td>${r.staff}</td><td>${r.notes}</td></tr>`).join("") +
         `</table>`;
-    } else container.innerHTML = "لا توجد بيانات لهذا الطفل في هذا الشهر";
+    } else {
+      container.innerHTML = "لا توجد بيانات لهذا الطفل في هذا الشهر";
+    }
   } catch {
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
