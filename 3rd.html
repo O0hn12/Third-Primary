@@ -187,6 +187,39 @@ th {
 
   <button id="interactionSubmit" class="submit-btn" disabled>إرسال</button>
 </div>
+
+    <!-- تسجيل الافتقاد -->
+<div class="card">
+  <h3>تسجيل الافتقاد</h3>
+
+  <label>التاريخ</label>
+  <select id="absenceYear"></select>
+  <select id="absenceMonth"></select>
+  <select id="absenceDate"></select>
+
+  <label>اسم الطفل</label>
+  <input type="text" id="absenceChildName" placeholder="اكتب اسم الطفل...">
+  <div id="absenceChildSuggestions" class="suggestions" style="display:none;"></div>
+
+  <label>اسم الخادم</label>
+  <select id="absenceStaff">
+    <option value="">اختر الخادم</option>
+    <option value="خادم1">خادم1</option>
+    <option value="خادم2">خادم2</option>
+    <option value="خادم3">خادم3</option>
+  </select>
+
+  <label>نوع الافتقاد</label>
+  <select id="absenceType">
+    <option value="منزل">منزل</option>
+    <option value="تيليفون">تيليفون</option>
+  </select>
+
+  <label>الملاحظات</label>
+  <textarea id="absenceNotes" placeholder="اكتب الملاحظات هنا..." rows="3"></textarea>
+
+  <button id="absenceSubmit" class="submit-btn" disabled>إرسال</button>
+</div>
 </section>
 
 <section id="reportsSection" class="section">
@@ -239,6 +272,21 @@ th {
     <button id="showInteractionReport" class="submit-btn">عرض نقاط التفاعل</button>
     <div id="interactionReportResult"></div>
   </div>
+
+    <!-- تقرير الافتقاد -->
+<div class="card">
+  <h3>تقرير الافتقاد</h3>
+  <label>اختر الطفل</label>
+  <input type="text" id="absenceReportChildName" placeholder="اكتب اسم الطفل...">
+  <div id="absenceReportSuggestions" class="suggestions" style="display:none;"></div>
+
+  <label>اختر الشهر</label>
+  <select id="absenceReportMonth"></select>
+
+  <button id="showAbsenceReport" class="submit-btn">عرض تقرير الافتقاد</button>
+  <div id="absenceReportResult"></div>
+</div>
+
 </section>
 </main>
 
@@ -337,6 +385,8 @@ async function initAttendance(){
   setupSuggestions(childInfoName, document.getElementById("childInfoSuggestions"));
   setupSuggestions(childAttendanceName, document.getElementById("childAttendanceSuggestions"));
   setupSuggestions(interactionReportName, document.getElementById("interactionReportSuggestions"));
+  setupSuggestions(document.getElementById("absenceChildName"), document.getElementById("absenceChildSuggestions"));
+  setupSuggestions(document.getElementById("absenceReportChildName"), document.getElementById("absenceReportSuggestions"));
   checkAttendanceReady();
 }
 initAttendance();
@@ -366,6 +416,58 @@ setupSuggestions(document.getElementById("interactionName"),document.getElementB
 setupSuggestions(document.getElementById("childInfoName"),document.getElementById("childInfoSuggestions"));
 setupSuggestions(document.getElementById("childAttendanceName"),document.getElementById("childAttendanceSuggestions"));
 setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
+
+    const absenceSubmit = document.getElementById("absenceSubmit");
+const absenceChildNameInput = document.getElementById("absenceChildName");
+const absenceStaffSelect = document.getElementById("absenceStaff");
+
+function checkAbsenceReady() {
+  const nameValid = allNames.includes(absenceChildNameInput.value.trim());
+  const staffSelected = absenceStaffSelect.value !== "";
+  absenceSubmit.disabled = !(nameValid && staffSelected);
+}
+
+absenceChildNameInput.addEventListener("input", checkAbsenceReady);
+absenceStaffSelect.addEventListener("change", checkAbsenceReady);
+checkAbsenceReady();
+
+    absenceSubmit.addEventListener("click", async () => {
+  const name = absenceChildNameInput.value.trim();
+  const year = document.getElementById("absenceYear").value;
+  const month = document.getElementById("absenceMonth").value;
+  const date = document.getElementById("absenceDate").value;
+  const staff = absenceStaffSelect.value;
+  const type = document.getElementById("absenceType").value;
+  const notes = document.getElementById("absenceNotes").value.trim();
+
+  absenceSubmit.disabled = true;
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "absence",
+        name, year, month, date,
+        staff, absenceType: type, notes
+      })
+    });
+    const result = await res.json();
+    if(result.success){
+      alert("✅ تم تسجيل الافتقاد بنجاح!");
+      absenceChildNameInput.value = "";
+      absenceStaffSelect.value = "";
+      document.getElementById("absenceNotes").value = "";
+      checkAbsenceReady();
+    } else {
+      alert("❌ حدث خطأ أثناء التسجيل.");
+    }
+  } catch {
+    alert("⚠️ لم يتم الاتصال بالخادم.");
+  } finally {
+    absenceSubmit.disabled = false;
+  }
+});
 
 // --- تفعيل زر الحضور ---
 const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
@@ -667,15 +769,27 @@ document.getElementById("interactionMonthSelect").onchange = fillInteractionFrid
 // استدعاء عند تحميل الصفحة
 fillInteractionFridays();
 
-    function showSection(section) {
-  if (section === "report") {
-    document.getElementById("reportPage").style.display = "block";
-    document.getElementById("registerPage").style.display = "none";
-  } else {
-    document.getElementById("reportPage").style.display = "none";
-    document.getElementById("registerPage").style.display = "block";
+    document.getElementById("showAbsenceReport").addEventListener("click", async () => {
+  const name = document.getElementById("absenceReportChildName").value.trim();
+  const month = document.getElementById("absenceReportMonth").value;
+  const container = document.getElementById("absenceReportResult");
+  if(!name) return alert("ادخل اسم الطفل");
+  container.innerHTML = "جاري التحميل...";
+  
+  try {
+    const res = await fetch(`${apiURL}?type=absenceReport&name=${encodeURIComponent(name)}&month=${month}`);
+    const data = await res.json();
+    if(data.records && data.records.length>0){
+      container.innerHTML = `<table>
+        <tr><th>التاريخ</th><th>نوع الافتقاد</th><th>اسم الخادم</th><th>الملاحظات</th></tr>` +
+        data.records.map(r=>`<tr><td>${r.date}/${r.month}/${r.year}</td><td>${r.absenceType}</td><td>${r.staff}</td><td>${r.notes}</td></tr>`).join("") +
+        `</table>`;
+    } else container.innerHTML = "لا توجد بيانات لهذا الطفل في هذا الشهر";
+  } catch {
+    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
-}
+});
+
 </script>
 </body>
 </html>
