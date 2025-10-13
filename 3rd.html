@@ -425,40 +425,55 @@ interactionPoints.addEventListener("input", checkInteractionReady);
 checkInteractionReady();
 
 // --- إرسال التفاعل ---
+// --- إرسال التفاعل مع تحقق من التكرار ---
 interactionSubmit.addEventListener("click", async ()=> {
-    const name = interactionName.value.trim();
-const year = Number(document.getElementById("interactionYearSelect").value);
-const month = Number(document.getElementById("interactionMonthSelect").value);
-const date = Number(document.getElementById("interactionDateSelect").value);
-const points = Number(interactionPoints.value);
+  const name = interactionName.value.trim();
+  const year = Number(document.getElementById("interactionYearSelect").value);
+  const month = Number(document.getElementById("interactionMonthSelect").value);
+  const date = Number(document.getElementById("interactionDateSelect").value);
+  const points = Number(interactionPoints.value);
 
-if(!name || !date || !month || !year || isNaN(points) || points < 0 || points > 5){
+  if(!name || !date || !month || !year || isNaN(points) || points < 0 || points > 5){
     return alert("تأكد من إدخال الاسم والتاريخ والنقاط بشكل صحيح");
-}
+  }
 
-interactionSubmit.disabled = true;
+  // ✅ تحقق مسبق من التكرار قبل الإرسال
+  try {
+    const checkRes = await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}&year=${year}&month=${month}&day=${date}`);
+    const checkData = await checkRes.json();
+    if (checkData.exists) {
+      alert(`❌ لا يمكن إضافة نقاط تفاعل لنفس اليوم مرة أخرى (${name})`);
+      return; // وقف التنفيذ هنا
+    }
+  } catch {
+    alert("⚠️ لم يتم الاتصال بالخادم للتحقق من التكرار.");
+    return;
+  }
 
-try {
+  interactionSubmit.disabled = true;
+
+  try {
     const res = await fetch(apiURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            type: "interaction",
-            name,
-            day: date,  // هنا تبعته كـ day
-            month,
-            year,
-            points
-        })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "interaction",
+        name,
+        day: date,
+        month,
+        year,
+        points
+      })
     });
     const result = await res.json();
     if(result.success){
       alert("✅ تم تسجيل التفاعل بنجاح!");
       interactionName.value = "";
       interactionPoints.value = "";
-      document.getElementById("interactionDay").value = "";
       checkInteractionReady();
-    } else alert("❌ حدث خطأ أثناء التسجيل.");
+    } else {
+      alert("❌ حدث خطأ أثناء التسجيل.");
+    }
   } catch {
     alert("⚠️ لم يتم الاتصال بالخادم.");
   } finally {
