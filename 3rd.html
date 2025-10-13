@@ -123,6 +123,7 @@ th {
 
 /* 🌀 تنسيق الانزلاق السلس بين الشاشتين */
 #attendanceSection, #reportsSection {
+  overflow-y: auto;
   position: absolute;
   top: 70px; /* حسب مكان الـ navbar عندك */
   left: 0;
@@ -318,16 +319,21 @@ const months=["يناير","فبراير","مارس","أبريل","مايو","ي
 
 // --- التنقل بين الأقسام ---
 document.getElementById("attendanceTab").onclick = () => {
+  const att = document.getElementById("attendanceSection");
+  const rep = document.getElementById("reportsSection");
+  att.style.transform = "translateX(0)";
+  rep.style.transform = "translateX(100%)";
   document.getElementById("attendanceTab").classList.add("active");
   document.getElementById("reportsTab").classList.remove("active");
-  document.getElementById("attendanceSection").classList.add("active");
-  document.getElementById("reportsSection").classList.remove("active");
 };
+
 document.getElementById("reportsTab").onclick = () => {
+  const att = document.getElementById("attendanceSection");
+  const rep = document.getElementById("reportsSection");
+  att.style.transform = "translateX(-100%)";
+  rep.style.transform = "translateX(0)";
   document.getElementById("reportsTab").classList.add("active");
   document.getElementById("attendanceTab").classList.remove("active");
-  document.getElementById("reportsSection").classList.add("active");
-  document.getElementById("attendanceSection").classList.remove("active");
 };
 
 // --- تعبئة السنوات والشهور ---
@@ -809,7 +815,9 @@ fillInteractionFridays();
     }
   });
 })();
-    
+
+    document.addEventListener("DOMContentLoaded", handleSwipe);
+
 </script>
 </body>
 </html>
