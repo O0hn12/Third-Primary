@@ -1267,6 +1267,22 @@ document.getElementById("ae_month").onchange = () => {
 // تعبئة أولية عند تحميل الصفحة
 fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
 
+document.getElementById("ae_year").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+document.getElementById("ae_month").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+
+
+    document.getElementById("absenceYear").onchange = () => {
+  fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
+};
+document.getElementById("absenceMonth").onchange = () => {
+  fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
+};
+fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
 
 </script>
 </body>
