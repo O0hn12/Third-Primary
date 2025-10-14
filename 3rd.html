@@ -1334,6 +1334,28 @@ fillAllDays(
   );
 }
 
+    document.getElementById("ae_year").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+document.getElementById("ae_month").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+
+    function fillAllDays(yearSel, monthSel, dateSel){
+  if (!yearSel || !monthSel || !dateSel) return;
+  dateSel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for(let d = 1; d <= daysInMonth; d++){
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = `${d}/${month + 1}/${year}`;
+    dateSel.appendChild(opt);
+  }
+}
+
 </script>
 </body>
 </html>
