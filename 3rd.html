@@ -1286,7 +1286,7 @@ document.getElementById("absenceMonth").onchange = () => {
 fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
 
     // تعبئة السنوات والشهور لتعديل الافتقاد
-fillYearSelect(document.getElementById("ae_year"));
+fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
 fillMonthSelect(document.getElementById("ae_month"));
 
 // تعبئة الأيام تلقائيًا عند تغيير السنة أو الشهر
@@ -1355,6 +1355,20 @@ fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_mont
     dateSel.appendChild(opt);
   }
 }
+
+    fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
+fillMonthSelect(document.getElementById("ae_month"));
+
+document.getElementById("ae_year").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+document.getElementById("ae_month").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+
+// تعبئة أولية عند تحميل الصفحة
+fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+
 
 </script>
 </body>
