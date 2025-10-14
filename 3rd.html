@@ -688,9 +688,10 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   try {
     const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
     const data = await res.json();
-    if(data && data.info){
-      let infoHtml = `<div class="child-info-table"><table>`;
-      for (const [key, value] of Object.entries(data.info)) {
+    if (data && data.records && data.records.length > 0) {
+  const record = data.records[0];
+  let infoHtml = `<div class="child-info-table"><table>`;
+  for (const [key, value] of Object.entries(record)) {
         if (key === "الصورة" && value.includes("drive.google.com")) {
           const idMatch = value.match(/\/d\/([^/]+)/);
           const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
