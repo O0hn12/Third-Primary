@@ -1284,6 +1284,60 @@ document.getElementById("absenceMonth").onchange = () => {
 };
 fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
 
+    // تعبئة السنوات والشهور لتعديل الافتقاد
+fillYearSelect(document.getElementById("ae_year"));
+fillMonthSelect(document.getElementById("ae_month"));
+
+// تعبئة الأيام تلقائيًا عند تغيير السنة أو الشهر
+document.getElementById("ae_year").onchange = () => {
+  fillAllDays(
+    document.getElementById("ae_year"),
+    document.getElementById("ae_month"),
+    document.getElementById("ae_day")
+  );
+};
+document.getElementById("ae_month").onchange = () => {
+  fillAllDays(
+    document.getElementById("ae_year"),
+    document.getElementById("ae_month"),
+    document.getElementById("ae_day")
+  );
+};
+
+// تعبئة أولية عند تحميل الصفحة
+fillAllDays(
+  document.getElementById("ae_year"),
+  document.getElementById("ae_month"),
+  document.getElementById("ae_day")
+);
+
+    function clearAddEditForm(){
+  const fields = [
+    "ae_name", "ae_group", "ae_school", "ae_schoolYear", "ae_confession", "ae_area",
+    "ae_street", "ae_near", "ae_homeNum", "ae_homePhone", "ae_fatherPhone", "ae_fatherJob",
+    "ae_motherPhone", "ae_motherJob", "ae_brother1", "ae_brother1Age", "ae_brother2", "ae_brother2Age",
+    "ae_brother3", "ae_brother3Age", "ae_brother4", "ae_brother4Age", "ae_brother5", "ae_brother5Age",
+    "ae_loveLangs", "ae_traits", "ae_talents", "ae_bestWays", "ae_problems", "ae_photo"
+  ];
+
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+
+  // إعادة تعبئة الأيام حسب السنة والشهر الحاليين
+  fillAllDays(
+    document.getElementById("ae_year"),
+    document.getElementById("ae_month"),
+    document.getElementById("ae_day")
+  );
+}
+
+    if(result.success){
+  alert("✅ تم حفظ البيانات بنجاح!");
+  clearAddEditForm();
+}
+
 </script>
 </body>
 </html>
