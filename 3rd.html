@@ -683,14 +683,30 @@ document.getElementById("showNames").addEventListener("click", async () => {
 document.getElementById("showChildInfo").addEventListener("click", async () => {
   const name = document.getElementById("childInfoName").value.trim();
   const container = document.getElementById("childInfoResult");
-  if(!name) return alert("ادخل اسم الطفل");
-  container.innerHTML = "جاري التحميل...";
+  if(!name){ container.innerHTML="❌ اكتب الاسم أولًا"; return; }
+  container.innerHTML = "⏳ جاري تحميل البيانات...";
   try {
     const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
     const data = await res.json();
-    renderArrayOfObjectsAsTable(container, data.records || [], ["name","group","day","month","year","parentNumber","address","notes"]);
-  } catch {
-    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
+    if(data && data.info){
+      let infoHtml = `<div class="child-info-table"><table>`;
+      for (const [key, value] of Object.entries(data.info)) {
+        if (key === "الصورة" && value.includes("drive.google.com")) {
+          const idMatch = value.match(/\/d\/([^/]+)/);
+          const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
+          infoHtml += `<tr><th>${key}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
+        } else {
+          infoHtml += `<tr><th>${key}</th><td>${value}</td></tr>`;
+        }
+      }
+      infoHtml += `</table></div>`;
+      container.innerHTML = infoHtml;
+    } else {
+      container.innerHTML = "❌ لم يتم العثور على بيانات لهذا الاسم.";
+    }
+  } catch (err) {
+    container.innerHTML = "⚠️ حدث خطأ أثناء تحميل البيانات.";
+    console.error(err);
   }
 });
 
