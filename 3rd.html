@@ -838,6 +838,59 @@ document.getElementById("absenceMonth").onchange = fillAbsenceDates;
 // استدعاء عند تحميل الصفحة
 fillAbsenceDates();
 
+    async function showAbsenceReport() {
+  const name = document.getElementById("absenceReportName").value.trim();
+  const year = document.getElementById("absenceReportYear").value;
+  const month = document.getElementById("absenceReportMonth").value;
+
+  if (!name || !year || !month) {
+    alert("من فضلك اختر الاسم والسنة والشهر أولاً");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${SCRIPT_URL}?type=absenceReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
+    const data = await response.json();
+
+    console.log("🔍 absence report data:", data.records); // عشان تشوف شكل البيانات في console
+
+    const tableBody = document.getElementById("absenceReportTableBody");
+    tableBody.innerHTML = "";
+
+    if (!data.records || data.records.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="4">لا توجد بيانات افتقاد لهذا الطفل في هذا الشهر</td></tr>`;
+      return;
+    }
+
+    // عرض كل سجل افتقاد
+    data.records.forEach(r => {
+      // لو الأعمدة عندك في الشيت مرتبة كالتالي:
+      // الاسم | السنة | الشهر | التاريخ | الحضور | جاب النوتة | التفاعل | آخر تعديل | نوع الافتقاد | اسم الخادم | الملاحظات
+      // يبقى المفاتيح هتكون بالشكل ده:
+      const yearVal = r.year || r[1] || "";
+      const monthVal = r.month || r[2] || "";
+      const dateVal = r.date || r[3] || "";
+      const absenceType = r.absenceType || r["نوع الافتقاد"] || r[8] || "";
+      const staff = r.staff || r["اسم الخادم"] || r[9] || "";
+      const notes = r.notes || r["الملاحظات الخاصة بالافتقاد"] || r[10] || "";
+
+      const row = `
+        <tr>
+          <td>${dateVal}/${monthVal}/${yearVal}</td>
+          <td>${absenceType}</td>
+          <td>${staff}</td>
+          <td>${notes}</td>
+        </tr>
+      `;
+      tableBody.insertAdjacentHTML("beforeend", row);
+    });
+
+  } catch (err) {
+    console.error("❌ خطأ أثناء تحميل تقرير الافتقاد:", err);
+    alert("حدث خطأ أثناء تحميل البيانات، حاول مرة أخرى.");
+  }
+}
+
 </script>
 </body>
 </html>
