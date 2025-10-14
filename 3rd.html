@@ -140,7 +140,8 @@ th {
 <header>
 <button id="attendanceTab" class="active">📋 التسجيل</button>
 <button id="reportsTab">📊 التقارير</button>
-<button id="addEdit">📊 إضافة/تعديل</button>
+<button id="addEditTab">✍🏻️ إضافة / تعديل</button>
+
 </header>
 
 <main>
@@ -295,7 +296,7 @@ th {
 
     <div id="addEdit" class="tabcontent" style="display:none; text-align:right;">
 
-  <h2>🧒 إضافة / تعديل بيانات طفل</h2>
+  <h2>✍🏻️ إضافة / تعديل بيانات طفل</h2>
 
   <div id="addEditForm" class="child-form">
     <label>الاسم:</label>
@@ -375,15 +376,31 @@ fillYearSelect(document.getElementById("absenceReportYear"));
 document.getElementById("attendanceTab").onclick = () => {
   document.getElementById("attendanceSection").classList.add("active");
   document.getElementById("reportsSection").classList.remove("active");
+  document.getElementById("addEditSection").classList.remove("active");
+
   document.getElementById("attendanceTab").classList.add("active");
   document.getElementById("reportsTab").classList.remove("active");
+  document.getElementById("addEditTab").classList.remove("active");
 };
 
 document.getElementById("reportsTab").onclick = () => {
   document.getElementById("attendanceSection").classList.remove("active");
   document.getElementById("reportsSection").classList.add("active");
+  document.getElementById("addEditSection").classList.remove("active");
+
   document.getElementById("attendanceTab").classList.remove("active");
   document.getElementById("reportsTab").classList.add("active");
+  document.getElementById("addEditTab").classList.remove("active");
+};
+
+document.getElementById("addEditTab").onclick = () => {
+  document.getElementById("attendanceSection").classList.remove("active");
+  document.getElementById("reportsSection").classList.remove("active");
+  document.getElementById("addEditSection").classList.add("active");
+
+  document.getElementById("attendanceTab").classList.remove("active");
+  document.getElementById("reportsTab").classList.remove("active");
+  document.getElementById("addEditTab").classList.add("active");
 };
     
 // --- تعبئة السنوات والشهور ---
