@@ -350,6 +350,48 @@ th {
     <label>عمل الأم:</label>
     <input id="ae_motherJob" type="text"><br>
 
+      <!-- الإخوة -->
+<label>اسم الأخ 1:</label>
+<input id="ae_brother1" type="text"><br>
+<label>سن الأخ 1:</label>
+<input id="ae_brother1Age" type="number"><br>
+
+<label>اسم الأخ 2:</label>
+<input id="ae_brother2" type="text"><br>
+<label>سن الأخ 2:</label>
+<input id="ae_brother2Age" type="number"><br>
+
+<label>اسم الأخ 3:</label>
+<input id="ae_brother3" type="text"><br>
+<label>سن الأخ 3:</label>
+<input id="ae_brother3Age" type="number"><br>
+
+<label>اسم الأخ 4:</label>
+<input id="ae_brother4" type="text"><br>
+<label>سن الأخ 4:</label>
+<input id="ae_brother4Age" type="number"><br>
+
+<label>اسم الأخ 5:</label>
+<input id="ae_brother5" type="text"><br>
+<label>سن الأخ 5:</label>
+<input id="ae_brother5Age" type="number"><br>
+
+<!-- السمات -->
+<label>لغات الحب:</label>
+<input id="ae_loveLangs" type="text"><br>
+
+<label>السمات الشخصية:</label>
+<input id="ae_traits" type="text"><br>
+
+<label>المواهب:</label>
+<input id="ae_talents" type="text"><br>
+
+<label>أفضل الطرق للتعامل معه:</label>
+<input id="ae_bestWays" type="text"><br>
+
+<label>المشكلات:</label>
+<input id="ae_problems" type="text"><br>
+
     <label>رابط الصورة (Google Drive):</label>
     <input id="ae_photo" type="text" placeholder="ضع رابط الصورة هنا"><br>
 
@@ -1000,26 +1042,45 @@ fillAbsenceDates();
   resultDiv.textContent = "⏳ جاري الحفظ...";
 
   const data = {
-    type: "addEditChild",
-    name: document.getElementById("ae_name").value.trim(),
-    group: document.getElementById("ae_group").value.trim(),
-    day: document.getElementById("ae_day").value,
-    month: document.getElementById("ae_month").value,
-    year: document.getElementById("ae_year").value,
-    school: document.getElementById("ae_school").value.trim(),
-    schoolYear: document.getElementById("ae_schoolYear").value.trim(),
-    confession: document.getElementById("ae_confession").value.trim(),
-    area: document.getElementById("ae_area").value.trim(),
-    street: document.getElementById("ae_street").value.trim(),
-    near: document.getElementById("ae_near").value.trim(),
-    homeNum: document.getElementById("ae_homeNum").value.trim(),
-    homePhone: document.getElementById("ae_homePhone").value.trim(),
-    fatherPhone: document.getElementById("ae_fatherPhone").value.trim(),
-    fatherJob: document.getElementById("ae_fatherJob").value.trim(),
-    motherPhone: document.getElementById("ae_motherPhone").value.trim(),
-    motherJob: document.getElementById("ae_motherJob").value.trim(),
-    photo: document.getElementById("ae_photo").value.trim()
-  };
+  type: "addEditChild",
+  name: document.getElementById("ae_name").value.trim(),
+  group: document.getElementById("ae_group").value.trim(),
+  day: document.getElementById("ae_day").value,
+  month: document.getElementById("ae_month").value,
+  year: document.getElementById("ae_year").value,
+  school: document.getElementById("ae_school").value.trim(),
+  schoolYear: document.getElementById("ae_schoolYear").value.trim(),
+  confession: document.getElementById("ae_confession").value.trim(),
+  area: document.getElementById("ae_area").value.trim(),
+  street: document.getElementById("ae_street").value.trim(),
+  near: document.getElementById("ae_near").value.trim(),
+  homeNum: document.getElementById("ae_homeNum").value.trim(),
+  homePhone: document.getElementById("ae_homePhone").value.trim(),
+  fatherPhone: document.getElementById("ae_fatherPhone").value.trim(),
+  fatherJob: document.getElementById("ae_fatherJob").value.trim(),
+  motherPhone: document.getElementById("ae_motherPhone").value.trim(),
+  motherJob: document.getElementById("ae_motherJob").value.trim(),
+  photo: document.getElementById("ae_photo").value.trim(),
+
+  // الإخوة
+  brother1: document.getElementById("ae_brother1").value.trim(),
+  brother1Age: document.getElementById("ae_brother1Age").value,
+  brother2: document.getElementById("ae_brother2").value.trim(),
+  brother2Age: document.getElementById("ae_brother2Age").value,
+  brother3: document.getElementById("ae_brother3").value.trim(),
+  brother3Age: document.getElementById("ae_brother3Age").value,
+  brother4: document.getElementById("ae_brother4").value.trim(),
+  brother4Age: document.getElementById("ae_brother4Age").value,
+  brother5: document.getElementById("ae_brother5").value.trim(),
+  brother5Age: document.getElementById("ae_brother5Age").value,
+
+  // السمات
+  loveLangs: document.getElementById("ae_loveLangs").value.trim(),
+  traits: document.getElementById("ae_traits").value.trim(),
+  talents: document.getElementById("ae_talents").value.trim(),
+  bestWays: document.getElementById("ae_bestWays").value.trim(),
+  problems: document.getElementById("ae_problems").value.trim()
+};
 
   try {
     const res = await fetch(apiURL, {
