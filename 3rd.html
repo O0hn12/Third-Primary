@@ -140,6 +140,7 @@ th {
 <header>
 <button id="attendanceTab" class="active">📋 التسجيل</button>
 <button id="reportsTab">📊 التقارير</button>
+<button id="addEdit">📊 إضافة/تعديل</button>
 </header>
 
 <main>
@@ -291,6 +292,73 @@ th {
 </div>
 
 </section>
+
+    <div id="addEdit" class="tabcontent" style="display:none; text-align:right;">
+
+  <h2>🧒 إضافة / تعديل بيانات طفل</h2>
+
+  <div id="addEditForm" class="child-form">
+    <label>الاسم:</label>
+    <input id="ae_name" type="text" placeholder="ادخل الاسم" list="allNamesList"><br>
+
+    <label>الفرقة:</label>
+    <input id="ae_group" type="text" placeholder="ادخل الفرقة"><br>
+
+    <label>اليوم:</label>
+    <input id="ae_day" type="number" min="1" max="31"><br>
+
+    <label>الشهر:</label>
+    <input id="ae_month" type="number" min="1" max="12"><br>
+
+    <label>السنة:</label>
+    <input id="ae_year" type="number"><br>
+
+    <label>المدرسة:</label>
+    <input id="ae_school" type="text"><br>
+
+    <label>السنة الدراسية:</label>
+    <input id="ae_schoolYear" type="text"><br>
+
+    <label>أب الاعتراف:</label>
+    <input id="ae_confession" type="text"><br>
+
+    <label>المنطقة:</label>
+    <input id="ae_area" type="text"><br>
+
+    <label>الشارع:</label>
+    <input id="ae_street" type="text"><br>
+
+    <label>بجوار / أعلى / أمام:</label>
+    <input id="ae_near" type="text"><br>
+
+    <label>رقم المنزل:</label>
+    <input id="ae_homeNum" type="text"><br>
+
+    <label>تليفون المنزل:</label>
+    <input id="ae_homePhone" type="text"><br>
+
+    <label>تليفون الأب:</label>
+    <input id="ae_fatherPhone" type="text"><br>
+
+    <label>عمل الأب:</label>
+    <input id="ae_fatherJob" type="text"><br>
+
+    <label>تليفون الأم:</label>
+    <input id="ae_motherPhone" type="text"><br>
+
+    <label>عمل الأم:</label>
+    <input id="ae_motherJob" type="text"><br>
+
+    <label>رابط الصورة (Google Drive):</label>
+    <input id="ae_photo" type="text" placeholder="ضع رابط الصورة هنا"><br>
+
+    <button id="saveChildBtn">💾 حفظ البيانات</button>
+  </div>
+
+  <div id="addEditResult" style="margin-top:15px; font-weight:bold;"></div>
+
+</div>
+
 </main>
 
 <script>
@@ -907,6 +975,53 @@ fillAbsenceDates();
     alert("حدث خطأ أثناء تحميل البيانات، حاول مرة أخرى.");
   }
 }
+
+    document.getElementById("saveChildBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("saveChildBtn");
+  const resultDiv = document.getElementById("addEditResult");
+  btn.disabled = true;
+  resultDiv.textContent = "⏳ جاري الحفظ...";
+
+  const data = {
+    type: "addEditChild",
+    name: document.getElementById("ae_name").value.trim(),
+    group: document.getElementById("ae_group").value.trim(),
+    day: document.getElementById("ae_day").value,
+    month: document.getElementById("ae_month").value,
+    year: document.getElementById("ae_year").value,
+    school: document.getElementById("ae_school").value.trim(),
+    schoolYear: document.getElementById("ae_schoolYear").value.trim(),
+    confession: document.getElementById("ae_confession").value.trim(),
+    area: document.getElementById("ae_area").value.trim(),
+    street: document.getElementById("ae_street").value.trim(),
+    near: document.getElementById("ae_near").value.trim(),
+    homeNum: document.getElementById("ae_homeNum").value.trim(),
+    homePhone: document.getElementById("ae_homePhone").value.trim(),
+    fatherPhone: document.getElementById("ae_fatherPhone").value.trim(),
+    fatherJob: document.getElementById("ae_fatherJob").value.trim(),
+    motherPhone: document.getElementById("ae_motherPhone").value.trim(),
+    motherJob: document.getElementById("ae_motherJob").value.trim(),
+    photo: document.getElementById("ae_photo").value.trim()
+  };
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (result.success) {
+      resultDiv.textContent = "✅ تم حفظ البيانات بنجاح";
+    } else {
+      resultDiv.textContent = "⚠️ " + (result.message || "حدث خطأ أثناء الحفظ");
+    }
+  } catch (err) {
+    resultDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
+    console.error(err);
+  }
+  btn.disabled = false;
+});
 
 </script>
 </body>
