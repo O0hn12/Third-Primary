@@ -503,10 +503,10 @@ document.getElementById("addEditTab").onclick = () => {
 };
     
 // --- تعبئة السنوات والشهور ---
-function fillYearSelect(sel){
-  if(!sel) return;
-  sel.innerHTML = ""; // إزالة أي خيارات موجودة مسبقًا
-  for(let y=currentYear-1; y<=currentYear+1; y++){
+function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
+  if (!sel) return;
+  sel.innerHTML = "";
+  for (let y = start; y <= end; y++) {
     const opt = document.createElement("option");
     opt.value = y;
     opt.textContent = y;
