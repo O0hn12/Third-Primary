@@ -541,19 +541,22 @@ fillMonthSelect(document.getElementById("absenceReportMonth"));
 
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
-  dateSel.innerHTML="";
-  const year=+yearSel.value;
-  const month=+monthSel.value-1;
-  const daysInMonth=new Date(year,month+1,0).getDate();
-  for(let d=1; d<=daysInMonth; d++){
-    const date=new Date(year,month,d);
-    if(date.getDay()===5){
-      const opt=document.createElement("option");
-      opt.value=d; opt.textContent=`${d}/${month+1}/${year}`;
+  if (!yearSel || !monthSel || !dateSel) return; // حماية من null
+  dateSel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for(let d = 1; d <= daysInMonth; d++){
+    const date = new Date(year, month, d);
+    if(date.getDay() === 5){
+      const opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = `${d}/${month + 1}/${year}`;
       dateSel.appendChild(opt);
     }
   }
 }
+
 fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 document.getElementById("yearSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 document.getElementById("monthSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
