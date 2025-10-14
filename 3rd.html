@@ -1149,9 +1149,10 @@ fillAbsenceDates();
       body: JSON.stringify(data)
     });
     const result = await res.json();
-    if (result.success) {
-      resultDiv.textContent = "✅ تم حفظ البيانات بنجاح";
-    } else {
+    if(result.success){
+  alert("✅ تم حفظ البيانات بنجاح!");
+  clearAddEditForm();
+} else {
       resultDiv.textContent = "⚠️ " + (result.message || "حدث خطأ أثناء الحفظ");
     }
   } catch (err) {
@@ -1331,11 +1332,6 @@ fillAllDays(
     document.getElementById("ae_month"),
     document.getElementById("ae_day")
   );
-}
-
-    if(result.success){
-  alert("✅ تم حفظ البيانات بنجاح!");
-  clearAddEditForm();
 }
 
 </script>
