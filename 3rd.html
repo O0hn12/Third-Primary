@@ -434,9 +434,15 @@ th {
 <div class="card">
   <h3>📞 تعديل / إضافة افتقاد</h3>
   <label>الاسم:</label><input id="ae_abs_name" type="text"><br>
-  <label>السنة:</label><select id="ae_abs_year"></select>
-  <label>الشهر:</label><select id="ae_abs_month"></select>
-  <label>اليوم:</label><select id="ae_abs_day"></select>
+  <label>السنة:</label>
+<select id="ae_year"></select><br>
+
+<label>الشهر:</label>
+<select id="ae_month"></select><br>
+
+<label>اليوم:</label>
+<select id="ae_day"></select><br>
+
   <label>نوع الافتقاد:</label>
   <select id="ae_abs_type">
     <option value="منزل">منزل</option>
@@ -1213,6 +1219,51 @@ document.getElementById("ae_abs_btn").addEventListener("click", async () => {
     body: JSON.stringify({ type: "updateAbsence", name, year, month, date, absenceType, staff, notes })
   });
 });
+
+    // تعبئة السنوات
+fillYearSelect(document.getElementById("ae_year"));
+
+// تعبئة الشهور
+fillMonthSelect(document.getElementById("ae_month"));
+
+// تعبئة أيام الجمعة تلقائيًا حسب السنة والشهر
+document.getElementById("ae_year").onchange = () => {
+  fillFridays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+document.getElementById("ae_month").onchange = () => {
+  fillFridays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+
+// تعبئة أولية
+fillFridays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+
+    // تعبئة كل الأيام في الشهر
+function fillAllDays(yearSel, monthSel, dateSel){
+  dateSel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for(let d = 1; d <= daysInMonth; d++){
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = `${d}/${month + 1}/${year}`;
+    dateSel.appendChild(opt);
+  }
+}
+
+    fillYearSelect(document.getElementById("ae_year"));
+fillMonthSelect(document.getElementById("ae_month"));
+
+document.getElementById("ae_year").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+document.getElementById("ae_month").onchange = () => {
+  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+};
+
+// تعبئة أولية عند تحميل الصفحة
+fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+
 
 </script>
 </body>
