@@ -1583,6 +1583,9 @@ try {
     errorDiv.style.display = "block";
     return;
   }
+    userGroups = data.groups || [];
+await loadNames(userGroups);
+initAttendance();
 
   // ✅ تسجيل الدخول ناجح
   errorDiv.style.display = "none";
