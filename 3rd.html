@@ -622,6 +622,7 @@ async function initAttendance(){
   setupSuggestions(interactionReportName, document.getElementById("interactionReportSuggestions"));
   setupSuggestions(document.getElementById("absenceChildName"), document.getElementById("absenceChildSuggestions"));
   setupSuggestions(document.getElementById("absenceReportChildName"), document.getElementById("absenceReportSuggestions"));
+  setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
   checkAttendanceReady();
 }
 initAttendance();
@@ -1438,7 +1439,7 @@ window.onload = () => {
   };
 };
 
-    fillYearSelect(document.getElementById("giftYear"), 2010, 2025);
+    fillYearSelect(document.getElementById("giftYear"));
 fillMonthSelect(document.getElementById("giftMonth"));
 fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
 
@@ -1456,7 +1457,7 @@ const giftYearSelect = document.getElementById("giftYear");
 const giftMonthSelect = document.getElementById("giftMonth");
 const giftDaySelect = document.getElementById("giftDay");
 const giftStaffSelect = document.getElementById("giftStaff");
-const giftSubmit = document.getElementById("giftSubmit"); // لازم ييجي قبل أي استخدام
+const giftSubmit = document.getElementById("giftSubmit");
 
 function checkGiftReady() {
   const nameValid = allNames.includes(giftNameInput.value.trim());
