@@ -666,9 +666,6 @@ const interactionReportName = document.getElementById("interactionReportName");
 
 // اختر مكان تنفيذ التحميل فقط مرة:
 async function initAttendance(){
-  userGroups = data.groups || [];
-userGroups = data.groups || [];
-await loadNames(userGroups); // تحميل الأسماء حسب المجموعات// ننتظر تحميل الأسماء
   // بعد تحميل الأسماء نربط الاقتراحات
   setupSuggestions(nameInput, document.getElementById("nameSuggestions"));
   setupSuggestions(interactionName, document.getElementById("interactionSuggestions"));
