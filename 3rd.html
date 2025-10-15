@@ -1564,38 +1564,39 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
     const errorDiv = document.getElementById("loginError");
 
     if (!username || !password) {
-      errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
-      return;
-    }
+  errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
+  errorDiv.style.display = "block";
+  return;
+}
 
-    errorDiv.textContent = "⏳ جاري التحقق...";
+errorDiv.textContent = "⏳ جاري التحقق...";
+errorDiv.style.display = "block";
 
-    try {
-      const res = await fetch(`${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
-      const data = await res.json();
+try {
+  const res = await fetch(`${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+  const data = await res.json();
+  console.log("🔍 login result:", data);
 
-      if (!data.success) {
-        errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
-        return;
-      }
+  if (!data.success) {
+    errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+    errorDiv.style.display = "block";
+    return;
+  }
 
-      // ✅ تسجيل الدخول ناجح
-      localStorage.setItem("username", data.username);
-      localStorage.setItem("userType", data.type);
-      localStorage.setItem("userGroups", JSON.stringify(data.groups));
-
-      const login = document.getElementById("loginSection");
-const main = document.getElementById("mainContent");
-login.style.opacity = "0";
-login.style.transition = "opacity 0.5s";
-setTimeout(() => {
-  login.style.display = "none";
-  main.style.display = "block";
-}, 500);
-
-    } catch {
-      errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
-    }
+  // ✅ تسجيل الدخول ناجح
+  errorDiv.style.display = "none";
+  const login = document.getElementById("loginSection");
+  const main = document.getElementById("mainContent");
+  login.style.opacity = "0";
+  login.style.transition = "opacity 0.5s";
+  setTimeout(() => {
+    login.style.display = "none";
+    main.style.display = "block";
+  }, 500);
+} catch {
+  errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
+  errorDiv.style.display = "block";
+}
   });
 });
 
