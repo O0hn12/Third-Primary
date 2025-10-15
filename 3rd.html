@@ -871,6 +871,31 @@ document.getElementById("birthdayShow").addEventListener("click", async () => {
     container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
   }
 });
+    const giftNameInput = document.getElementById("giftName");
+const giftReceivedSelect = document.getElementById("giftReceived");
+const giftYearSelect = document.getElementById("giftYear");
+const giftMonthSelect = document.getElementById("giftMonth");
+const giftDaySelect = document.getElementById("giftDay");
+const giftStaffSelect = document.getElementById("giftStaff");
+const giftSubmit = document.getElementById("giftSubmit");
+
+function checkGiftReady() {
+  const nameValid = allNames.includes(giftNameInput.value.trim());
+  const receivedSelected = giftReceivedSelect.value !== "";
+  const yearSelected = giftYearSelect.value !== "";
+  const monthSelected = giftMonthSelect.value !== "";
+  const daySelected = giftDaySelect.value !== "";
+  const staffSelected = giftStaffSelect.value !== "";
+
+  giftSubmit.disabled = !(nameValid && receivedSelected && yearSelected && monthSelected && daySelected && staffSelected);
+}
+
+giftNameInput.addEventListener("input", checkGiftReady);
+giftReceivedSelect.addEventListener("change", checkGiftReady);
+giftYearSelect.addEventListener("change", checkGiftReady);
+giftMonthSelect.addEventListener("change", checkGiftReady);
+giftDaySelect.addEventListener("change", checkGiftReady);
+giftStaffSelect.addEventListener("change", checkGiftReady);
 
     giftSubmit.addEventListener("click", async () => {
   const name = giftNameInput.value.trim();
@@ -1441,32 +1466,6 @@ document.getElementById("giftMonth").onchange = () => {
   fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
 };
 setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
-
-    const giftNameInput = document.getElementById("giftName");
-const giftReceivedSelect = document.getElementById("giftReceived");
-const giftYearSelect = document.getElementById("giftYear");
-const giftMonthSelect = document.getElementById("giftMonth");
-const giftDaySelect = document.getElementById("giftDay");
-const giftStaffSelect = document.getElementById("giftStaff");
-const giftSubmit = document.getElementById("giftSubmit");
-
-function checkGiftReady() {
-  const nameValid = allNames.includes(giftNameInput.value.trim());
-  const receivedSelected = giftReceivedSelect.value !== "";
-  const yearSelected = giftYearSelect.value !== "";
-  const monthSelected = giftMonthSelect.value !== "";
-  const daySelected = giftDaySelect.value !== "";
-  const staffSelected = giftStaffSelect.value !== "";
-
-  giftSubmit.disabled = !(nameValid && receivedSelected && yearSelected && monthSelected && daySelected && staffSelected);
-}
-
-giftNameInput.addEventListener("input", checkGiftReady);
-giftReceivedSelect.addEventListener("change", checkGiftReady);
-giftYearSelect.addEventListener("change", checkGiftReady);
-giftMonthSelect.addEventListener("change", checkGiftReady);
-giftDaySelect.addEventListener("change", checkGiftReady);
-giftStaffSelect.addEventListener("change", checkGiftReady);
 
 </script>
 </body>
