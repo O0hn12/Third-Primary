@@ -131,12 +131,25 @@ th {
   display: block; /* القسم النشط يظهر */
 }
 
+    #mainApp { display: none; }
+
 @media (max-width:600px) { 
     .card { padding: 15px; } 
 }
 </style>
 </head>
 <body>
+
+    <div id="loginSection" style="padding: 30px; max-width: 400px; margin: auto;">
+  <h2>🔐 تسجيل الدخول</h2>
+  <label>اسم المستخدم</label>
+  <input type="text" id="loginUsername" placeholder="ادخل اسم المستخدم"><br><br>
+  <label>كلمة المرور</label>
+  <input type="password" id="loginPassword" placeholder="ادخل كلمة المرور"><br><br>
+  <button id="loginBtn" class="submit-btn">دخول</button>
+  <div id="loginError" style="color:red; margin-top:10px;"></div>
+</div>
+
 <header>
 <button id="attendanceTab" class="active">📋 التسجيل</button>
 <button id="reportsTab">📊 التقارير</button>
@@ -145,14 +158,6 @@ th {
 </header>
 
 <main>
-
-    <div id="loginSection">
-  <h3>🔐 تسجيل الدخول</h3>
-  <input type="text" id="loginUsername" placeholder="اسم المستخدم">
-  <input type="password" id="loginPassword" placeholder="كلمة المرور">
-  <button id="loginBtn">دخول</button>
-  <div id="loginError" style="color:red;"></div>
-</div>
 
 <section id="attendanceSection" class="section active">
   <!-- تسجيل الحضور -->
@@ -1533,6 +1538,40 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
     ).join("") + "</ul>";
   } catch {
     resultDiv.innerHTML = "⚠️ حدث خطأ أثناء تحميل التقرير.";
+  }
+});
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const errorDiv = document.getElementById("loginError");
+
+  if (!username || !password) {
+    errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
+    return;
+  }
+
+  errorDiv.textContent = "⏳ جاري التحقق...";
+
+  try {
+    const res = await fetch(`${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+    const data = await res.json();
+
+    if (!data.success) {
+      errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+      return;
+    }
+
+    // ✅ تسجيل الدخول ناجح
+    localStorage.setItem("username", data.username);
+    localStorage.setItem("userType", data.type);
+    localStorage.setItem("userGroups", JSON.stringify(data.groups));
+
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+
+  } catch {
+    errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
   }
 });
 
