@@ -141,13 +141,24 @@ th {
 <body>
     
   <!-- صفحة تسجيل الدخول -->
-  <div id="loginSection">
-    <h2>تسجيل الدخول</h2>
-    <input type="text" id="loginUsername" placeholder="اسم المستخدم">
-<input type="password" id="loginPassword" placeholder="كلمة المرور">
-<button id="loginBtn">دخول</button>
-<p id="loginError" style="color:red;display:none"></p>
+<div id="loginSection" style="display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#0078d7,#00a8ff);">
+  <div style="background:white;padding:40px 30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.2);width:320px;text-align:center;">
+    <h2 style="margin-bottom:25px;color:#0078d7;">تسجيل الدخول</h2>
+
+    <input type="text" id="username" placeholder="اسم المستخدم" 
+      style="width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:10px;font-size:16px;text-align:center;">
+
+    <input type="password" id="password" placeholder="كلمة المرور"
+      style="width:100%;padding:10px;margin-bottom:20px;border:1px solid #ccc;border-radius:10px;font-size:16px;text-align:center;">
+
+    <button id="loginBtn"
+      style="width:100%;background:#0078d7;color:white;border:none;padding:10px;font-size:16px;border-radius:10px;cursor:pointer;transition:0.3s;">
+      دخول 🔐
+    </button>
+
+    <p id="loginMessage" style="margin-top:15px;color:red;display:none;">❌ اسم المستخدم أو كلمة المرور غير صحيحة</p>
   </div>
+</div>
 
   <!-- باقي الموقع -->
   <div id="mainContent" style="display:none;">
