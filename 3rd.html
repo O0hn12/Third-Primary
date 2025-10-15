@@ -1438,6 +1438,18 @@ window.onload = () => {
   };
 };
 
+    fillYearSelect(document.getElementById("giftYear"), 2010, 2025);
+fillMonthSelect(document.getElementById("giftMonth"));
+fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+
+    document.getElementById("giftYear").onchange = () => {
+  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+};
+document.getElementById("giftMonth").onchange = () => {
+  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+};
+setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
+
 </script>
 </body>
 </html>
