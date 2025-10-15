@@ -533,6 +533,7 @@ th {
 </main>
 
 <script>
+    let userGroups = [];
 const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 const currentYear = new Date().getFullYear();
 const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
@@ -648,7 +649,7 @@ let allNames = [];
 
 async function loadNames(){
   try{
-    const res = await fetch(apiURL+"?type=names");
+    const res = await fetch(apiURL+"?type=names&groups=" + userGroups.join(","));
     const data = await res.json();
     allNames = Array.isArray(data) ? data : (data.names || []);
   } catch(err){ 
@@ -664,7 +665,8 @@ const interactionReportName = document.getElementById("interactionReportName");
 
 // اختر مكان تنفيذ التحميل فقط مرة:
 async function initAttendance(){
-  await loadNames(); // ننتظر تحميل الأسماء
+  userGroups = data.groups || [];
+await loadNames(); // ننتظر تحميل الأسماء
   // بعد تحميل الأسماء نربط الاقتراحات
   setupSuggestions(nameInput, document.getElementById("nameSuggestions"));
   setupSuggestions(interactionName, document.getElementById("interactionSuggestions"));
@@ -677,7 +679,7 @@ async function initAttendance(){
   setupSuggestions(document.getElementById("giftReportName"), document.getElementById("giftReportSuggestions"));
   checkAttendanceReady();
 }
-initAttendance();
+// initAttendance();
 
 // --- الاقتراحات ---
 function setupSuggestions(inputEl, suggestionsEl){
