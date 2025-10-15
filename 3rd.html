@@ -323,6 +323,19 @@ th {
   <div id="absenceReportResult"></div>
 </div>
 
+    <div class="card">
+  <h3>🎁 تقرير هدايا عيد الميلاد</h3>
+  <label>الاسم</label>
+  <input type="text" id="giftReportName" placeholder="اكتب الاسم...">
+  <div id="giftReportSuggestions" class="suggestions" style="display:none;"></div>
+
+  <label>السنة</label>
+  <select id="giftReportYear"></select>
+
+  <button id="showGiftReport" class="submit-btn">عرض التقرير</button>
+  <div id="giftReportResult"></div>
+</div>
+
 </section>
 
     <section id="addEditSection" class="section">
@@ -499,8 +512,7 @@ const months=["يناير","فبراير","مارس","أبريل","مايو","ي
 fillYearSelect(document.getElementById("absenceYear"));
 fillMonthSelect(document.getElementById("absenceMonth"));
 fillYearSelect(document.getElementById("absenceReportYear"));
-
-
+fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
 
 // --- التنقل بين الأقسام ---
 document.getElementById("attendanceTab").onclick = () => {
@@ -550,6 +562,7 @@ fillYearSelect(document.getElementById("reportYear"));
 fillYearSelect(document.getElementById("childAttendanceYear"));
 fillYearSelect(document.getElementById("interactionReportYear"));
 fillYearSelect(document.getElementById("absenceReportYear"));
+fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
 
 function fillMonthSelect(sel){
   if(!sel) return;
@@ -634,6 +647,7 @@ async function initAttendance(){
   setupSuggestions(document.getElementById("absenceChildName"), document.getElementById("absenceChildSuggestions"));
   setupSuggestions(document.getElementById("absenceReportChildName"), document.getElementById("absenceReportSuggestions"));
   setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
+  setupSuggestions(document.getElementById("giftReportName"), document.getElementById("giftReportSuggestions"));
   checkAttendanceReady();
 }
 initAttendance();
@@ -1478,6 +1492,32 @@ document.getElementById("giftMonth").onchange = () => {
   fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
 };
 setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
+
+    document.getElementById("showGiftReport").addEventListener("click", async () => {
+  const name = document.getElementById("giftReportName").value.trim();
+  const year = document.getElementById("giftReportYear").value;
+  const resultDiv = document.getElementById("giftReportResult");
+
+  if (!name || !year) return alert("❗ لازم تختار الاسم والسنة");
+
+  resultDiv.innerHTML = "⏳ جاري التحميل...";
+
+  try {
+    const res = await fetch(`${apiURL}?type=giftReport&name=${encodeURIComponent(name)}&year=${year}`);
+    const data = await res.json();
+
+    if (!data.records || data.records.length === 0) {
+      resultDiv.innerHTML = "❌ لا يوجد هدايا مسجلة لهذا الطفل في هذه السنة.";
+      return;
+    }
+
+    resultDiv.innerHTML = "<ul>" + data.records.map(r =>
+      `<li>📅 ${r.day}/${r.month}/${r.year} - 🎁 بواسطة: ${r.staff}</li>`
+    ).join("") + "</ul>";
+  } catch {
+    resultDiv.innerHTML = "⚠️ حدث خطأ أثناء تحميل التقرير.";
+  }
+});
 
 </script>
 </body>
