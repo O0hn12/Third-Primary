@@ -647,9 +647,10 @@ document.getElementById("monthSelect").onchange = () => fillFridays(document.get
 // --- تحميل الأسماء ---
 let allNames = [];
 
-async function loadNames(){
+async function loadNames(groups = userGroups){
+  if (!groups || groups.length === 0) return;
   try{
-    const res = await fetch(apiURL+"?type=names&groups=" + userGroups.join(","));
+    const res = await fetch(apiURL+"?type=names&groups=" + groups.join(","));
     const data = await res.json();
     allNames = Array.isArray(data) ? data : (data.names || []);
   } catch(err){ 
@@ -666,7 +667,8 @@ const interactionReportName = document.getElementById("interactionReportName");
 // اختر مكان تنفيذ التحميل فقط مرة:
 async function initAttendance(){
   userGroups = data.groups || [];
-await loadNames(); // ننتظر تحميل الأسماء
+userGroups = data.groups || [];
+await loadNames(userGroups); // تحميل الأسماء حسب المجموعات// ننتظر تحميل الأسماء
   // بعد تحميل الأسماء نربط الاقتراحات
   setupSuggestions(nameInput, document.getElementById("nameSuggestions"));
   setupSuggestions(interactionName, document.getElementById("interactionSuggestions"));
