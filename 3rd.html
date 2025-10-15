@@ -1456,7 +1456,7 @@ const giftYearSelect = document.getElementById("giftYear");
 const giftMonthSelect = document.getElementById("giftMonth");
 const giftDaySelect = document.getElementById("giftDay");
 const giftStaffSelect = document.getElementById("giftStaff");
-const giftSubmit = document.getElementById("giftSubmit");
+const giftSubmit = document.getElementById("giftSubmit"); // لازم ييجي قبل أي استخدام
 
 function checkGiftReady() {
   const nameValid = allNames.includes(giftNameInput.value.trim());
@@ -1475,19 +1475,6 @@ giftYearSelect.addEventListener("change", checkGiftReady);
 giftMonthSelect.addEventListener("change", checkGiftReady);
 giftDaySelect.addEventListener("change", checkGiftReady);
 giftStaffSelect.addEventListener("change", checkGiftReady);
-
-    setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
-
-    fillYearSelect(document.getElementById("giftYear"), 2010, 2025);
-fillMonthSelect(document.getElementById("giftMonth"));
-fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-
-document.getElementById("giftYear").onchange = () => {
-  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-};
-document.getElementById("giftMonth").onchange = () => {
-  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-};
 
 </script>
 </body>
