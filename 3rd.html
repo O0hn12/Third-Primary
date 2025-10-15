@@ -1557,39 +1557,43 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
   }
 });
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-  const username = document.getElementById("username").value.trim();
-const password = document.getElementById("password").value.trim();
-  const errorDiv = document.getElementById("loginError");
+    window.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginBtn");
+  if (!loginBtn) return; // حماية لو مش موجود
 
-  if (!username || !password) {
-    errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
-    return;
-  }
+  loginBtn.addEventListener("click", async () => {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorDiv = document.getElementById("loginError");
 
-  errorDiv.textContent = "⏳ جاري التحقق...";
-
-  try {
-    const res = await fetch(`${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
-    const data = await res.json();
-
-    if (!data.success) {
-      errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+    if (!username || !password) {
+      errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
       return;
     }
 
-    // ✅ تسجيل الدخول ناجح
-    localStorage.setItem("username", data.username);
-    localStorage.setItem("userType", data.type);
-    localStorage.setItem("userGroups", JSON.stringify(data.groups));
+    errorDiv.textContent = "⏳ جاري التحقق...";
 
-    // إظهار الموقع بالكامل
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("mainContent").style.display = "block";
+    try {
+      const res = await fetch(`${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+      const data = await res.json();
 
-  } catch {
-    errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
-  }
+      if (!data.success) {
+        errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        return;
+      }
+
+      // ✅ تسجيل الدخول ناجح
+      localStorage.setItem("username", data.username);
+      localStorage.setItem("userType", data.type);
+      localStorage.setItem("userGroups", JSON.stringify(data.groups));
+
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("mainContent").style.display = "block";
+
+    } catch {
+      errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
+    }
+  });
 });
 
 </script>
