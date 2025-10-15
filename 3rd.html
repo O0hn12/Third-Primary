@@ -1342,7 +1342,7 @@ document.getElementById("ae_month").onchange = () => {
 };
 fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
 
-    function fillAllDays(yearSel, monthSel, dateSel){
+   function fillAllDays(yearSel, monthSel, dateSel){
   if (!yearSel || !monthSel || !dateSel) return;
   dateSel.innerHTML = "";
   const year = +yearSel.value;
@@ -1356,19 +1356,18 @@ fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_mont
   }
 }
 
-    fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
-fillMonthSelect(document.getElementById("ae_month"));
-
-document.getElementById("ae_year").onchange = () => {
+window.onload = () => {
+  fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
+  fillMonthSelect(document.getElementById("ae_month"));
   fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-document.getElementById("ae_month").onchange = () => {
-  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
 
-// تعبئة أولية عند تحميل الصفحة
-fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-
+  document.getElementById("ae_year").onchange = () => {
+    fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+  };
+  document.getElementById("ae_month").onchange = () => {
+    fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+  };
+};
 
 </script>
 </body>
