@@ -140,17 +140,19 @@ th {
 </head>
 <body>
 
-    <div id="loginSection" style="padding: 30px; max-width: 400px; margin: auto;">
-  <h2>🔐 تسجيل الدخول</h2>
-  <label>اسم المستخدم</label>
-  <input type="text" id="loginUsername" placeholder="ادخل اسم المستخدم"><br><br>
-  <label>كلمة المرور</label>
-  <input type="password" id="loginPassword" placeholder="ادخل كلمة المرور"><br><br>
-  <button id="loginBtn" class="submit-btn">دخول</button>
-  <div id="loginError" style="color:red; margin-top:10px;"></div>
-</div>
+    <body>
+  <!-- صفحة تسجيل الدخول -->
+  <div id="loginSection">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم">
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <button id="loginBtn">دخول</button>
+    <p id="loginMessage" style="color:red;display:none"></p>
+  </div>
 
-    <div id="mainApp" style="display:none;">
+  <!-- باقي الموقع -->
+  <div id="mainContent" style="display:none;">
+
 
 <header>
 <button id="attendanceTab" class="active">📋 التسجيل</button>
