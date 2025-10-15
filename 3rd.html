@@ -222,6 +222,37 @@ th {
 
   <button id="absenceSubmit" class="submit-btn" disabled>إرسال</button>
 </div>
+
+    <div class="card">
+  <h3>🎁 تسجيل هدية عيد ميلاد</h3>
+
+  <label>الاسم</label>
+  <input type="text" id="giftName" placeholder="اكتب الاسم...">
+  <div id="giftSuggestions" class="suggestions" style="display:none;"></div>
+
+  <label>هل استلم هدية؟</label>
+  <select id="giftReceived">
+    <option value="">اختر</option>
+    <option value="نعم">نعم</option>
+    <option value="لا">لا</option>
+  </select>
+
+  <label>تاريخ الاستلام</label>
+  <select id="giftYear"></select>
+  <select id="giftMonth"></select>
+  <select id="giftDay"></select>
+
+  <label>اسم الخادم</label>
+  <select id="giftStaff">
+    <option value="">اختر الخادم</option>
+    <option value="خادم1">خادم1</option>
+    <option value="خادم2">خادم2</option>
+    <option value="خادم3">خادم3</option>
+  </select>
+
+  <button id="giftSubmit" class="submit-btn" disabled>🎉 تسجيل الهدية</button>
+</div>
+
 </section>
 
 <section id="reportsSection" class="section">
