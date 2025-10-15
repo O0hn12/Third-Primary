@@ -1558,8 +1558,8 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
 });
 
     document.getElementById("loginBtn").addEventListener("click", async () => {
-  const username = document.getElementById("loginUsername").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+  const username = document.getElementById("username").value.trim();
+const password = document.getElementById("password").value.trim();
   const errorDiv = document.getElementById("loginError");
 
   if (!username || !password) {
