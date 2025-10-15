@@ -935,7 +935,8 @@ document.getElementById("birthdayShow").addEventListener("click", async () => {
     const result = await res.json();
     if (result.success) {
       alert("✅ تم تسجيل الهدية بنجاح!");
-      // تفريغ الحقول لو حبيت
+giftNameInput.value = "";
+checkGiftReady(); // علشان الزر يتقفل تاني بعد التفريغ
     } else {
       alert("❌ حدث خطأ أثناء التسجيل.");
     }
