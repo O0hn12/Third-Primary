@@ -139,15 +139,14 @@ th {
 </style>
 </head>
 <body>
-
-    <body>
+    
   <!-- صفحة تسجيل الدخول -->
   <div id="loginSection">
     <h2>تسجيل الدخول</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم">
-    <input type="password" id="password" placeholder="كلمة المرور">
-    <button id="loginBtn">دخول</button>
-    <p id="loginMessage" style="color:red;display:none"></p>
+    <input type="text" id="loginUsername" placeholder="اسم المستخدم">
+<input type="password" id="loginPassword" placeholder="كلمة المرور">
+<button id="loginBtn">دخول</button>
+<p id="loginError" style="color:red;display:none"></p>
   </div>
 
   <!-- باقي الموقع -->
@@ -1573,7 +1572,7 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
 
     // إظهار الموقع بالكامل
     document.getElementById("loginSection").style.display = "none";
-    document.getElementById("mainApp").style.display = "block";
+    document.getElementById("mainContent").style.display = "block";
 
   } catch {
     errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
