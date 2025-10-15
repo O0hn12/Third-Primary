@@ -866,6 +866,44 @@ document.getElementById("birthdayShow").addEventListener("click", async () => {
   }
 });
 
+    giftSubmit.addEventListener("click", async () => {
+  const name = giftNameInput.value.trim();
+  const received = giftReceivedSelect.value;
+  const year = giftYearSelect.value;
+  const month = giftMonthSelect.value;
+  const day = giftDaySelect.value;
+  const staff = giftStaffSelect.value;
+
+  giftSubmit.disabled = true;
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "gift",
+        name,
+        received,
+        year,
+        month,
+        day,
+        staff
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert("✅ تم تسجيل الهدية بنجاح!");
+      // تفريغ الحقول لو حبيت
+    } else {
+      alert("❌ حدث خطأ أثناء التسجيل.");
+    }
+  } catch {
+    alert("⚠️ لم يتم الاتصال بالخادم.");
+  } finally {
+    giftSubmit.disabled = false;
+  }
+});
+
 // --- تقرير الحضور ---
 document.getElementById("showCount").addEventListener("click", async () => {
   const year = document.getElementById("reportYear").value;
