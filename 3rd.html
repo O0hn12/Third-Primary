@@ -529,6 +529,55 @@ th {
   <button id="ae_abs_btn" class="submit-btn">💾 حفظ الافتقاد</button>
 </div>
 
+        <div class="card">
+  <h3>🛠️ تعديل بيانات مختارة لطفل</h3>
+
+  <label>الاسم:</label>
+  <input type="text" id="editChildName" placeholder="اكتب الاسم..." />
+  <div id="editChildSuggestions" class="suggestions" style="display:none;"></div>
+
+  <label>اختر البيانات المراد تعديلها:</label>
+  <select id="editField">
+    <option value="">اختر الحقل</option>
+    <option value="group">الفرقة</option>
+    <option value="day">اليوم</option>
+    <option value="month">الشهر</option>
+    <option value="year">السنة</option>
+    <option value="school">المدرسة</option>
+    <option value="schoolYear">السنة الدراسية</option>
+    <option value="confession">أب الاعتراف</option>
+    <option value="area">المنطقة</option>
+    <option value="street">الشارع</option>
+    <option value="near">بجوار / أعلى / أمام</option>
+    <option value="homeNum">رقم المنزل</option>
+    <option value="homePhone">تليفون المنزل</option>
+    <option value="fatherPhone">تليفون الأب</option>
+    <option value="fatherJob">عمل الأب</option>
+    <option value="motherPhone">تليفون الأم</option>
+    <option value="motherJob">عمل الأم</option>
+    <option value="brother1">اسم الأخ 1</option>
+    <option value="brother1Age">سن الأخ 1</option>
+    <option value="brother2">اسم الأخ 2</option>
+    <option value="brother2Age">سن الأخ 2</option>
+    <option value="brother3">اسم الأخ 3</option>
+    <option value="brother3Age">سن الأخ 3</option>
+    <option value="brother4">اسم الأخ 4</option>
+    <option value="brother4Age">سن الأخ 4</option>
+    <option value="brother5">اسم الأخ 5</option>
+    <option value="brother5Age">سن الأخ 5</option>
+    <option value="loveLangs">لغات الحب</option>
+    <option value="traits">السمات الشخصية</option>
+    <option value="talents">المواهب</option>
+    <option value="bestWays">أفضل الطرق للتعامل معه</option>
+    <option value="problems">المشكلات</option>
+    <option value="photo">رابط الصورة</option>
+  </select>
+
+  <label>القيمة الجديدة:</label>
+  <input type="text" id="editNewValue" placeholder="اكتب التعديل هنا..." />
+
+  <button id="editChildBtn" class="submit-btn">💾 حفظ التعديل</button>
+</div>
 
 </main>
 
@@ -676,6 +725,7 @@ async function initAttendance(){
   setupSuggestions(document.getElementById("absenceReportChildName"), document.getElementById("absenceReportSuggestions"));
   setupSuggestions(document.getElementById("giftName"), document.getElementById("giftSuggestions"));
   setupSuggestions(document.getElementById("giftReportName"), document.getElementById("giftReportSuggestions"));
+  setupSuggestions(document.getElementById("editChildName"), document.getElementById("editChildSuggestions"));
   checkAttendanceReady();
 }
 // initAttendance();
@@ -1602,6 +1652,39 @@ initAttendance();
   errorDiv.style.display = "block";
 }
   });
+});
+
+    document.getElementById("editChildBtn").addEventListener("click", async () => {
+  const name = document.getElementById("editChildName").value.trim();
+  const field = document.getElementById("editField").value;
+  const value = document.getElementById("editNewValue").value.trim();
+
+  if (!name || !field || !value) {
+    alert("❗ يرجى إدخال جميع البيانات");
+    return;
+  }
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "editField",
+        name,
+        field,
+        value
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert("✅ تم تعديل البيانات بنجاح!");
+      document.getElementById("editNewValue").value = "";
+    } else {
+      alert("❌ حدث خطأ أثناء التعديل.");
+    }
+  } catch {
+    alert("⚠️ لم يتم الاتصال بالخادم.");
+  }
 });
 
 </script>
