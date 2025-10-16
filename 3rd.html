@@ -819,7 +819,7 @@ checkAbsenceReady();
       body: JSON.stringify({
         type: "absence",
         name, year, month, date,
-        staff, absenceType: type, notes
+        serverName: staff, absenceType: type, notes
       })
     });
     const result = await res.json();
