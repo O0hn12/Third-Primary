@@ -1084,14 +1084,17 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   const record = data.records[0];
   let infoHtml = `<div class="child-info-table"><table>`;
   for (const [key, value] of Object.entries(record)) {
-        if (key === "الصورة" && value.includes("drive.google.com")) {
-          const idMatch = value.match(/\/d\/([^/]+)/);
-          const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
-          infoHtml += `<tr><th>${key}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
-        } else {
-          infoHtml += `<tr><th>${key}</th><td>${value}</td></tr>`;
-        }
-      }
+  let displayKey = key;
+  if (key === "group") displayKey = "كود المجموعة"; // ✅ ترجمة المفتاح
+
+  if (key === "الصورة" && value.includes("drive.google.com")) {
+    const idMatch = value.match(/\/d\/([^/]+)/);
+    const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
+    infoHtml += `<tr><th>${displayKey}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
+  } else {
+    infoHtml += `<tr><th>${displayKey}</th><td>${value}</td></tr>`;
+  }
+}
       infoHtml += `</table></div>`;
       container.innerHTML = infoHtml;
     } else {
