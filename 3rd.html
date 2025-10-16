@@ -376,7 +376,14 @@ th {
     <input id="ae_name" type="text" placeholder="ادخل الاسم" list="allNamesList"><br>
 
     <label>الفرقة:</label>
-    <input id="ae_group" type="text" placeholder="ادخل الفرقة"><br>
+<input id="ae_class" type="text" placeholder="مثلاً: ثالثة ابتدائي"><br>
+
+<label>المجموعة:</label>
+<select id="ae_group">
+  <option value="البابا كيرلس">البابا كيرلس</option>
+  <option value="مارمينا">مارمينا</option>
+  <option value="ماما العدرا">ماما العدرا</option>
+</select><br>
 
   <label>السنة:</label>
 <select id="ae_year"></select><br>
@@ -583,11 +590,6 @@ th {
 </main>
 
 <script>
-    const groupNames = {
-  "1": "البابا كيرلس",
-  "2": "مارمينا",
-  "3": "ماما العدرا"
-};
     let userGroups = [];
 const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 const currentYear = new Date().getFullYear();
@@ -1093,10 +1095,9 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   let displayValue = value;
 
   if (key === "group") {
-    displayKey = "اسم المجموعة";
-    displayValue = groupNames[value] || value; // ✅ تحويل الرقم إلى اسم
-  }
-
+  displayKey = "اسم المجموعة";
+  displayValue = value; // ✅ لأن القيمة بقت الاسم مباشرة
+}
   if (key === "الصورة" && value.includes("drive.google.com")) {
     const idMatch = value.match(/\/d\/([^/]+)/);
     const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
