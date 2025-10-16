@@ -583,6 +583,11 @@ th {
 </main>
 
 <script>
+    const groupNames = {
+  "1": "البابا كيرلس",
+  "2": "مارمينا",
+  "3": "ماما العدرا"
+};
     let userGroups = [];
 const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 const currentYear = new Date().getFullYear();
@@ -1085,14 +1090,19 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   let infoHtml = `<div class="child-info-table"><table>`;
   for (const [key, value] of Object.entries(record)) {
   let displayKey = key;
-  if (key === "group") displayKey = "كود المجموعة"; // ✅ ترجمة المفتاح
+  let displayValue = value;
+
+  if (key === "group") {
+    displayKey = "اسم المجموعة";
+    displayValue = groupNames[value] || value; // ✅ تحويل الرقم إلى اسم
+  }
 
   if (key === "الصورة" && value.includes("drive.google.com")) {
     const idMatch = value.match(/\/d\/([^/]+)/);
     const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
     infoHtml += `<tr><th>${displayKey}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
   } else {
-    infoHtml += `<tr><th>${displayKey}</th><td>${value}</td></tr>`;
+    infoHtml += `<tr><th>${displayKey}</th><td>${displayValue}</td></tr>`;
   }
 }
       infoHtml += `</table></div>`;
