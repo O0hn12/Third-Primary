@@ -1648,7 +1648,7 @@ try {
     errorDiv.style.display = "block";
     return;
   }
-    userGroups = data.groups || [];
+    userGroups = (data.groups || "").split(",").map(g => g.trim());
 await loadNames(userGroups);
 initAttendance();
 
