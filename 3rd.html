@@ -1129,10 +1129,9 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
   displayValue = value; // ✅ لأن القيمة بقت الاسم مباشرة
 }
   if (key === "الصورة" && value.includes("drive.google.com")) {
-    const idMatch = value.match(/\/d\/([^/]+)/);
-    const imgSrc = idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : value;
-    infoHtml += `<tr><th>${displayKey}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
-  } else {
+  const imgSrc = convertDriveLinkToImageURL(value);
+  infoHtml += `<tr><th>${displayKey}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
+} else {
     infoHtml += `<tr><th>${displayKey}</th><td>${displayValue}</td></tr>`;
   }
 }
@@ -1731,6 +1730,11 @@ initAttendance();
     alert("⚠️ لم يتم الاتصال بالخادم.");
   }
 });
+
+    function convertDriveLinkToImageURL(link) {
+  const match = link.match(/\/d\/([^\/]+)\//);
+  return match ? `https://drive.google.com/uc?export=view&id=${match[1]}` : "";
+}
 
 </script>
 </body>
