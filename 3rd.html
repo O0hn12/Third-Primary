@@ -1130,7 +1130,7 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
 }
   if (key === "الصورة" && value.includes("drive.google.com")) {
   const imgSrc = convertDriveLinkToImageURL(value);
-  infoHtml += `<tr><th>${displayKey}</th><td><img src="${imgSrc}" alt="صورة الطفل" style="width:150px;border-radius:10px"></td></tr>`;
+  infoHtml += `<tr><th>${displayKey}</th><td style="width:220px;height:220px;"><img src="${imgSrc}" alt="صورة الطفل" style="max-width:100%;max-height:100%;border-radius:10px;"></td></tr>`;
 } else {
     infoHtml += `<tr><th>${displayKey}</th><td>${displayValue}</td></tr>`;
   }
