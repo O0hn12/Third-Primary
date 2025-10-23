@@ -1147,19 +1147,20 @@ document.getElementById("showNames").addEventListener("click", async () => {
 
     function convertDriveLinkToImageURL(url) {
   if (!url) return "";
-  // تمسك أي لينك فيه "/d/<id>" سواء فيه "file" أو "open"
+  
+  // أي لينك فيه /d/<id>
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (match && match[1]) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
+  if (match && match[1]) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-  // لو الرابط بصيغة "id=" (بعض الروابط القديمة)
-  const altMatch = url.match(/id=([a-zA-Z0-9_-]+)/);
-  if (altMatch && altMatch[1]) {
-    return `https://drive.google.com/uc?export=view&id=${altMatch[1]}`;
-  }
+  // صيغة id=<id>
+  const idMatch = url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (idMatch && idMatch[1]) return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
 
-  // لو مش Google Drive
+  // صيغة uc?export=view&id=<id>
+  const ucMatch = url.match(/uc\?export=view&id=([a-zA-Z0-9_-]+)/);
+  if (ucMatch && ucMatch[1]) return `https://drive.google.com/uc?export=view&id=${ucMatch[1]}`;
+
+  // fallback
   return url;
 }
 
@@ -1167,38 +1168,72 @@ document.getElementById("showNames").addEventListener("click", async () => {
 document.getElementById("showChildInfo").addEventListener("click", async () => {
   const name = document.getElementById("childInfoName").value.trim();
   const container = document.getElementById("childInfoResult");
-  if(!name){ container.innerHTML="❌ اكتب الاسم أولًا"; return; }
+  
+  if (!name) { 
+    container.innerHTML = "❌ اكتب الاسم أولًا"; 
+    return; 
+  }
+
   container.innerHTML = "⏳ جاري تحميل البيانات...";
+  
   try {
     const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
     const data = await res.json();
-    if (data && data.records && data.records.length > 0) {
-  const record = data.records[0];
-  let infoHtml = `<div class="child-info-table"><table>`;
-  for (const [key, value] of Object.entries(record)) {
-  let displayKey = key;
-  let displayValue = value;
 
-  if (key === "group") {
-  displayKey = "اسم المجموعة";
-  displayValue = value; // ✅ لأن القيمة بقت الاسم مباشرة
-}
-  if (key === "الصورة" && value.includes("drive.google.com")) {
-  const imgSrc = convertDriveLinkToImageURL(value);
-  console.log("🔗 Image URL:", imgSrc);
-  infoHtml += `<tr><th>${displayKey}</th><td style="width:220px;height:220px;">
-    <img src="${imgSrc}" onerror="this.src='https://dummyimage.com/200x200/cccccc/000000&text=لا+توجد+صورة'"
-    alt="صورة الطفل" style="max-width:100%;max-height:100%;border-radius:10px;">
-  </td></tr>`;
-} else {
-    infoHtml += `<tr><th>${displayKey}</th><td>${displayValue}</td></tr>`;
-  }
-}
+    if (data && data.records && data.records.length > 0) {
+      const record = data.records[0];
+      let infoHtml = `<div class="child-info-table"><table>`;
+
+      for (const [key, value] of Object.entries(record)) {
+        let displayKey = key;
+        let displayValue = value;
+
+        if (key === "group") {
+          displayKey = "اسم المجموعة";
+          displayValue = value;
+        }
+
+        if (key === "الصورة" && value) {
+          const imgSrc = convertDriveLinkToImageURL(value);
+          console.log("🔗 Image URL:", imgSrc);
+          infoHtml += `
+            <tr><th>${displayKey}</th>
+            <td style="width:220px;height:220px;">
+              <img id="childPhotoPreview"
+                src="${imgSrc}"
+                alt="صورة الطفل"
+                style="max-width:100%;max-height:100%;border-radius:10px;display:none;">
+              <span id="loadingText" style="color:#777;">⏳ جاري تحميل الصورة...</span>
+            </td></tr>
+          `;
+
+          // نضيف تحميل الصورة بعد وضع HTML
+          setTimeout(() => {
+            const img = document.getElementById("childPhotoPreview");
+            const loading = document.getElementById("loadingText");
+            img.onload = () => {
+              img.style.display = "block";
+              loading.remove();
+            };
+            img.onerror = () => {
+              img.src = "https://dummyimage.com/200x200/cccccc/000000&text=لا+توجد+صورة";
+              img.style.display = "block";
+              loading.remove();
+            };
+          }, 100);
+        } 
+        else {
+          infoHtml += `<tr><th>${displayKey}</th><td>${displayValue}</td></tr>`;
+        }
+      }
+
       infoHtml += `</table></div>`;
       container.innerHTML = infoHtml;
-    } else {
+    } 
+    else {
       container.innerHTML = "❌ لم يتم العثور على بيانات لهذا الاسم.";
     }
+
   } catch (err) {
     container.innerHTML = "⚠️ حدث خطأ أثناء تحميل البيانات.";
     console.error(err);
