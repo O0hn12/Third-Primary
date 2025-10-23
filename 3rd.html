@@ -1803,64 +1803,6 @@ initAttendance();
   }
 });
 
-    let allNames = [];
-
-async function fetchNames() {
-  try {
-    const res = await fetch(`${apiURL}?type=names`);
-    const data = await res.json();
-    allNames = data.names || [];
-  } catch (err) {
-    console.error("❌ فشل تحميل الأسماء:", err);
-  }
-}
-
-function showSuggestions(inputId, suggestionsId) {
-  const input = document.getElementById(inputId);
-  const suggestionsBox = document.getElementById(suggestionsId);
-  const value = input.value.trim().toLowerCase();
-
-  if (!value) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
-
-  const matches = allNames.filter(n => n.toLowerCase().startsWith(value)).slice(0, 10);
-
-  if (matches.length === 0) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
-
-  suggestionsBox.innerHTML = "";
-  matches.forEach(name => {
-    const div = document.createElement("div");
-    div.textContent = name;
-    div.onclick = () => {
-      input.value = name;
-      suggestionsBox.style.display = "none";
-    };
-    suggestionsBox.appendChild(div);
-  });
-
-  suggestionsBox.style.display = "block";
-}
-
-// شغل الاقتراحات على كل خانة فيها أسماء
-document.getElementById("nameInput").addEventListener("input", () => showSuggestions("nameInput", "nameSuggestions"));
-document.getElementById("interactionName").addEventListener("input", () => showSuggestions("interactionName", "interactionSuggestions"));
-document.getElementById("absenceChildName").addEventListener("input", () => showSuggestions("absenceChildName", "absenceChildSuggestions"));
-document.getElementById("giftName").addEventListener("input", () => showSuggestions("giftName", "giftSuggestions"));
-document.getElementById("childInfoName").addEventListener("input", () => showSuggestions("childInfoName", "childInfoSuggestions"));
-document.getElementById("childAttendanceName").addEventListener("input", () => showSuggestions("childAttendanceName", "childAttendanceSuggestions"));
-document.getElementById("interactionReportName").addEventListener("input", () => showSuggestions("interactionReportName", "interactionReportSuggestions"));
-document.getElementById("absenceReportChildName").addEventListener("input", () => showSuggestions("absenceReportChildName", "absenceReportSuggestions"));
-document.getElementById("giftReportName").addEventListener("input", () => showSuggestions("giftReportName", "giftReportSuggestions"));
-document.getElementById("editChildName").addEventListener("input", () => showSuggestions("editChildName", "editChildSuggestions"));
-
-// تحميل الأسماء عند فتح الصفحة
-fetchNames();
-
 </script>
 </body>
 </html>
