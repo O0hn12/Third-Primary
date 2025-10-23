@@ -1786,7 +1786,7 @@ initAttendance();
 
   container.innerHTML = "⏳ جاري تحميل التقرير...";
   try {
-    const res = await fetch(`${apiURL}?type=absenceReport&year=${year}&month=${month}&staff=${encodeURIComponent(staff)}`);
+    const res = await fetch(`${apiURL}?type=ServantabsenceReport&year=${year}&month=${month}&staff=${encodeURIComponent(staff)}`);
     const data = await res.json();
 
     if (data.records && data.records.length > 0) {
