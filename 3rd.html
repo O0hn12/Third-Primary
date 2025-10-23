@@ -1147,11 +1147,20 @@ document.getElementById("showNames").addEventListener("click", async () => {
 
     function convertDriveLinkToImageURL(url) {
   if (!url) return "";
+  // تمسك أي لينك فيه "/d/<id>" سواء فيه "file" أو "open"
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
-  return url; // لو الرابط مش من Google Drive
+
+  // لو الرابط بصيغة "id=" (بعض الروابط القديمة)
+  const altMatch = url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (altMatch && altMatch[1]) {
+    return `https://drive.google.com/uc?export=view&id=${altMatch[1]}`;
+  }
+
+  // لو مش Google Drive
+  return url;
 }
 
 // --- بيانات الطفل ---
