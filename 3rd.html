@@ -787,7 +787,8 @@ const interactionReportName = document.getElementById("interactionReportName");
 
 // اختر مكان تنفيذ التحميل فقط مرة:
 async function initAttendance(){
-  // بعد تحميل الأسماء نربط الاقتراحات
+  await loadNames(); // ⬅️ ضروري جدًا تحميل الأسماء هنا
+
   setupSuggestions(nameInput, document.getElementById("nameSuggestions"));
   setupSuggestions(interactionName, document.getElementById("interactionSuggestions"));
   setupSuggestions(childInfoName, document.getElementById("childInfoSuggestions"));
@@ -800,6 +801,7 @@ async function initAttendance(){
   setupSuggestions(document.getElementById("editChildName"), document.getElementById("editChildSuggestions"));
   checkAttendanceReady();
 }
+
 initAttendance();
 
 // --- الاقتراحات ---
