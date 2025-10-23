@@ -1160,11 +1160,9 @@ document.getElementById("showNames").addEventListener("click", async () => {
   const ucMatch = url.match(/uc\?export=view&id=([a-zA-Z0-9_-]+)/);
   if (ucMatch && ucMatch[1]) return `https://drive.google.com/uc?export=view&id=${ucMatch[1]}`;
 
-  // fallback
-  return url;
+  return url; // fallback
 }
 
-// --- بيانات الطفل ---
 document.getElementById("showChildInfo").addEventListener("click", async () => {
   const name = document.getElementById("childInfoName").value.trim();
   const container = document.getElementById("childInfoResult");
@@ -1190,7 +1188,6 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
 
         if (key === "group") {
           displayKey = "اسم المجموعة";
-          displayValue = value;
         }
 
         if (key === "الصورة" && value) {
@@ -1198,39 +1195,37 @@ document.getElementById("showChildInfo").addEventListener("click", async () => {
           console.log("🔗 Image URL:", imgSrc);
           infoHtml += `
             <tr><th>${displayKey}</th>
-            <td style="width:220px;height:220px;">
+            <td style="width:220px;height:220px;position:relative;text-align:center;">
+              <span id="loadingText" style="color:#777;">⏳ جاري تحميل الصورة...</span>
               <img id="childPhotoPreview"
                 src="${imgSrc}"
                 alt="صورة الطفل"
                 style="max-width:100%;max-height:100%;border-radius:10px;display:none;">
-              <span id="loadingText" style="color:#777;">⏳ جاري تحميل الصورة...</span>
-            </td></tr>
-          `;
-
-          // نضيف تحميل الصورة بعد وضع HTML
-          setTimeout(() => {
-            const img = document.getElementById("childPhotoPreview");
-            const loading = document.getElementById("loadingText");
-            img.onload = () => {
-              img.style.display = "block";
-              loading.remove();
-            };
-            img.onerror = () => {
-              img.src = "https://dummyimage.com/200x200/cccccc/000000&text=لا+توجد+صورة";
-              img.style.display = "block";
-              loading.remove();
-            };
-          }, 100);
-        } 
-        else {
+            </td></tr>`;
+        } else {
           infoHtml += `<tr><th>${displayKey}</th><td>${displayValue}</td></tr>`;
         }
       }
 
       infoHtml += `</table></div>`;
-      container.innerHTML = infoHtml;
-    } 
-    else {
+      container.innerHTML = infoHtml; // ✅ أضفنا الـ HTML أولاً
+
+      // ✨ الآن نتعامل مع الصورة بعد ما بقت موجودة في الـ DOM
+      const img = document.getElementById("childPhotoPreview");
+      const loading = document.getElementById("loadingText");
+      if (img && loading) {
+        img.onload = () => {
+          img.style.display = "block";
+          loading.remove();
+        };
+        img.onerror = () => {
+          img.src = "https://dummyimage.com/200x200/cccccc/000000&text=لا+توجد+صورة";
+          img.style.display = "block";
+          loading.remove();
+        };
+      }
+
+    } else {
       container.innerHTML = "❌ لم يتم العثور على بيانات لهذا الاسم.";
     }
 
