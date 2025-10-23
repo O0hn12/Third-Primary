@@ -774,6 +774,7 @@ async function loadNames(groups = userGroups){
     const res = await fetch(apiURL+"?type=names&groups=" + groups.join(","));
     const data = await res.json();
     allNames = Array.isArray(data) ? data : (data.names || []);
+      console.log("✅ allNames loaded:", allNames);
   } catch(err){ 
     console.warn(err); 
   }
