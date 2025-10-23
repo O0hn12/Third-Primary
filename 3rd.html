@@ -1787,7 +1787,7 @@ initAttendance();
     const data = await res.json();
 
     if (data.records && data.records.length > 0) {
-      let html = `<p>عدد الافتقادات: ${data.count}</p>`;
+      let html = `<p>عدد الافتقادات: ${data.records.length}</p>`;
       html += `<table><tr><th>التاريخ</th><th>الطفل</th><th>النوع</th><th>الملاحظات</th></tr>`;
       data.records.forEach(r => {
         html += `<tr><td>${r.date}/${r.month}/${r.year}</td><td>${r.name}</td><td>${r.absenceType}</td><td>${r.notes || "-"}</td></tr>`;
