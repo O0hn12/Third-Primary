@@ -1145,6 +1145,15 @@ document.getElementById("showNames").addEventListener("click", async () => {
   }
 });
 
+    function convertDriveLinkToImageURL(url) {
+  if (!url) return "";
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  }
+  return url; // لو الرابط مش من Google Drive
+}
+
 // --- بيانات الطفل ---
 document.getElementById("showChildInfo").addEventListener("click", async () => {
   const name = document.getElementById("childInfoName").value.trim();
@@ -1767,11 +1776,6 @@ initAttendance();
     alert("⚠️ لم يتم الاتصال بالخادم.");
   }
 });
-
-    function convertDriveLinkToImageURL(link) {
-  const match = link.match(/\/d\/([^\/]+)\//);
-  return match ? `https://drive.google.com/uc?export=view&id=${match[1]}` : "";
-}
 
     document.getElementById("showStaffReport").addEventListener("click", async () => {
   const staff = document.getElementById("staffReportName").value.trim();
