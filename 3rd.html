@@ -385,6 +385,37 @@ th {
   <div id="giftReportResult"></div>
 </div>
 
+    <div class="card">
+  <h3>📞 تقرير افتقاد خدام</h3>
+
+  <label>اختر اسم الخادم</label>
+  <select id="staffReportName">
+    <option value="">اختر الخادم</option>
+    <option value="جوليا شنودة">جوليا شنودة</option>
+    <option value="مريم ايمن">مريم ايمن</option>
+    <option value="اوليفيا حنا">اوليفيا حنا</option>
+    <option value="كريستى صبرى">كريستى صبرى</option>
+    <option value="مرفت اشرف">مرفت اشرف</option>
+    <option value="جاسنتا بولس">جاسنتا بولس</option>
+    <option value="جيسيكا ملاك">جيسيكا ملاك</option>
+    <option value="مريم نشأت">مريم نشأت</option>
+    <option value="مريم ثروت">مريم ثروت</option>
+    <option value="فيرونا ماهر">فيرونا ماهر</option>
+    <option value="حنان فيكتور">حنان فيكتور</option>
+    <option value="منار نصيف">منار نصيف</option>
+    <option value="مريم مرقس">مريم مرقس</option>
+  </select>
+
+  <label>السنة</label>
+  <select id="staffReportYear"></select>
+
+  <label>الشهر</label>
+  <select id="staffReportMonth"></select>
+
+  <button id="showStaffReport" class="submit-btn">عرض التقرير</button>
+  <div id="staffReportResult"></div>
+</div>
+
 </section>
 
     <section id="addEditSection" class="section">
@@ -678,6 +709,8 @@ fillYearSelect(document.getElementById("childAttendanceYear"));
 fillYearSelect(document.getElementById("interactionReportYear"));
 fillYearSelect(document.getElementById("absenceReportYear"));
 fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
+fillYearSelect(document.getElementById("staffReportYear"));
+fillMonthSelect(document.getElementById("staffReportMonth"));
 
 function fillMonthSelect(sel){
   if(!sel) return;
@@ -1735,6 +1768,38 @@ initAttendance();
   const match = link.match(/\/d\/([^\/]+)\//);
   return match ? `https://drive.google.com/uc?export=view&id=${match[1]}` : "";
 }
+
+    document.getElementById("showStaffReport").addEventListener("click", async () => {
+  const staff = document.getElementById("staffReportName").value.trim();
+  const year = document.getElementById("staffReportYear").value;
+  const month = document.getElementById("staffReportMonth").value;
+  const container = document.getElementById("staffReportResult");
+
+  if (!staff || !year || !month) {
+    container.innerHTML = "❌ اختر كل البيانات أولًا";
+    return;
+  }
+
+  container.innerHTML = "⏳ جاري تحميل التقرير...";
+  try {
+    const res = await fetch(`${apiURL}?type=absenceReport&year=${year}&month=${month}&staff=${encodeURIComponent(staff)}`);
+    const data = await res.json();
+
+    if (data.records && data.records.length > 0) {
+      let html = `<table><tr><th>التاريخ</th><th>الطفل</th><th>النوع</th><th>الملاحظات</th></tr>`;
+      data.records.forEach(r => {
+        html += `<tr><td>${r.date}/${r.month}/${r.year}</td><td>${r.name}</td><td>${r.absenceType}</td><td>${r.notes || "-"}</td></tr>`;
+      });
+      html += `</table>`;
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = "❌ لا يوجد افتقادات لهذا الخادم في هذا الشهر.";
+    }
+  } catch (err) {
+    container.innerHTML = "⚠️ حدث خطأ أثناء تحميل التقرير.";
+    console.error(err);
+  }
+});
 
 </script>
 </body>
