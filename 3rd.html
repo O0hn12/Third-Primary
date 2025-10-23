@@ -1150,7 +1150,7 @@ document.getElementById("showNames").addEventListener("click", async () => {
   
   // أي لينك فيه /d/<id>
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (match && match[1]) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  if (match && match[1]) return `https://lh3.googleusercontent.com/d/${match[1]}=s600`;
 
   // صيغة id=<id>
   const idMatch = url.match(/id=([a-zA-Z0-9_-]+)/);
