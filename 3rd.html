@@ -316,7 +316,7 @@ th {
 <label>قيمة Minus:</label>
 <input id="minusValue" type="text" placeholder="اكتب القيمة..."><br>
 
-<button id="saveMinus">💾 حفظ Minus</button>
+<button id="saveMinus" class="submit-btn" disabled> حفظ Minus</button>
 <p id="minusStatus"></p>
 
 </section>
@@ -1924,6 +1924,30 @@ initAttendance();
     minusStatusBox.textContent = "❌ فشل الاتصال بالسيرفر";
     console.error(err);
   }
+});
+
+    const minusNameEl = document.getElementById("minusName");
+const minusYearEl = document.getElementById("minusYear");
+const minusMonthEl = document.getElementById("minusMonth");
+const minusDateEl = document.getElementById("minusDate");
+const minusValueEl = document.getElementById("minusValue");
+const saveMinusBtn = document.getElementById("saveMinus");
+
+function checkMinusReady() {
+  const ready =
+    minusNameEl.value.trim() &&
+    minusYearEl.value &&
+    minusMonthEl.value &&
+    minusDateEl.value &&
+    minusValueEl.value.trim();
+
+  saveMinusBtn.disabled = !ready;
+}
+
+// ✅ شغّل التحقق عند كل تغيير
+[minusNameEl, minusYearEl, minusMonthEl, minusDateEl, minusValueEl].forEach(el => {
+  el.addEventListener("input", checkMinusReady);
+  el.addEventListener("change", checkMinusReady);
 });
 
 </script>
