@@ -750,15 +750,11 @@ document.getElementById("addEditTab").onclick = () => {
   document.getElementById("addEditTab").classList.add("active");
 };
 
-    document.getElementById("galleryTab").onclick = () => {
-  document.getElementById("attendanceSection").classList.remove("active");
-  document.getElementById("reportsSection").classList.remove("active");
-  document.getElementById("addEditSection").classList.remove("active");
+   document.getElementById("galleryTab").onclick = () => {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById("gallerySection").classList.add("active");
 
-  document.getElementById("attendanceTab").classList.remove("active");
-  document.getElementById("reportsTab").classList.remove("active");
-  document.getElementById("addEditTab").classList.remove("active");
+  document.querySelectorAll("header button").forEach(b => b.classList.remove("active"));
   document.getElementById("galleryTab").classList.add("active");
 };
     
