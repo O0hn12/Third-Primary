@@ -2096,6 +2096,15 @@ document.querySelectorAll(".giftQty").forEach(input => {
     document.getElementById("gallerySubmitBtn").disabled = galleryGiftPointsTotal > galleryAvailablePoints;
   });
 });
+    document.getElementById("galleryTab").addEventListener("click", async () => {
+  activateTab("galleryTab", "gallerySection");
+
+  if (galleryNames.length === 0) {
+    const res = await fetch(`${apiURL}?type=names&groups=${userGroups.join(",")}`);
+    const data = await res.json();
+    galleryNames = data.names || [];
+  }
+});
 </script>
 </body>
 </html>
