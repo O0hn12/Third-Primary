@@ -1920,8 +1920,8 @@ initAttendance();
     const data = await res.json();
     if (data.success) {
   minusStatusBox.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
-  minusNameEl.value = "";
-  minusValueEl.value = "";
+  document.getElementById("minusName").value = "";
+document.getElementById("minusValue").value = "";
   checkMinusReady();
   setTimeout(() => {
     minusStatusBox.textContent = "";
