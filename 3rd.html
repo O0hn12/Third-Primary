@@ -1916,7 +1916,14 @@ initAttendance();
     });
     const data = await res.json();
     if (data.success) {
-      minusStatusBox.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
+  minusStatusBox.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
+  minusNameEl.value = "";
+  minusValueEl.value = "";
+  checkMinusReady();
+  setTimeout(() => {
+    minusStatusBox.textContent = "";
+  }, 3000);
+}
     } else {
       minusStatusBox.textContent = data.error || "⚠️ حدث خطأ أثناء الحفظ";
     }
