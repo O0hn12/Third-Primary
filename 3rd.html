@@ -693,12 +693,12 @@ th {
 
     <h4>اختر الهدايا</h4>
     <div id="giftOptions">
-      <label><input type="checkbox" value="لعبة" data-points="4"> لعبة (4 نقاط)</label><br>
-      <label><input type="checkbox" value="كراسة رسم" data-points="3"> كراسة رسم (3 نقاط)</label><br>
-      <label><input type="checkbox" value="ألوان" data-points="2"> ألوان (2 نقاط)</label><br>
-      <label><input type="checkbox" value="ستيكرات" data-points="1"> ستيكرات (1 نقطة)</label><br>
-      <label><input type="checkbox" value="كتاب صغير" data-points="5"> كتاب صغير (5 نقاط)</label><br>
-    </div>
+  <label>لعبة (4 نقاط): <input type="number" min="0" value="0" data-points="4" class="giftQty"></label><br>
+  <label>كراسة رسم (3 نقاط): <input type="number" min="0" value="0" data-points="3" class="giftQty"></label><br>
+  <label>ألوان (2 نقاط): <input type="number" min="0" value="0" data-points="2" class="giftQty"></label><br>
+  <label>ستيكرات (1 نقطة): <input type="number" min="0" value="0" data-points="1" class="giftQty"></label><br>
+  <label>كتاب صغير (5 نقاط): <input type="number" min="0" value="0" data-points="5" class="giftQty"></label><br>
+</div>
 
     <p id="giftTotal" style="margin-top:10px;">إجمالي نقاط الهدايا: 0</p>
 
@@ -2053,8 +2053,9 @@ function checkMinusReady() {
   const name = document.getElementById("galleryChildName").value.trim();
   const month = document.getElementById("galleryMonthSelect").value;
   const year = new Date().getFullYear();
-  const selectedGifts = Array.from(document.querySelectorAll("#giftOptions input[type='checkbox']:checked"))
-                             .map(el => el.value);
+  const selectedGifts = Array.from(document.querySelectorAll(".giftQty"))
+  .filter(el => Number(el.value) > 0)
+  .map(el => `${el.value} × ${el.previousSibling.textContent.trim()}`);
 
   const res = await fetch(apiURL, {
     method: "POST",
@@ -2073,6 +2074,43 @@ function checkMinusReady() {
   else alert("❌ حدث خطأ أثناء التسجيل.");
 });
 
+    document.getElementById("galleryChildName").addEventListener("input", async (e) => {
+  const val = e.target.value.trim();
+  const box = document.getElementById("gallerySuggestions");
+  box.innerHTML = "";
+  box.style.display = "none";
+
+  if (val.length < 2) return;
+
+  const res = await fetch(`${apiURL}?type=names&groups=${userGroups.join(",")}`);
+  const data = await res.json();
+  const matches = data.names.filter(n => n.includes(val));
+
+  if (matches.length === 0) return;
+
+  matches.forEach(name => {
+    const div = document.createElement("div");
+    div.textContent = name;
+    div.onclick = () => {
+      document.getElementById("galleryChildName").value = name;
+      box.style.display = "none";
+    };
+    box.appendChild(div);
+  });
+
+  box.style.display = "block";
+});
+    document.querySelectorAll(".giftQty").forEach(input => {
+  input.addEventListener("input", () => {
+    const total = Array.from(document.querySelectorAll(".giftQty"))
+      .reduce((sum, el) => sum + (Number(el.value) * Number(el.dataset.points)), 0);
+
+    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا: ${total}`;
+
+    const net = Number(document.getElementById("galleryResult").dataset.net || 0);
+    document.getElementById("gallerySubmitBtn").disabled = total > net;
+  });
+});
 </script>
 </body>
 </html>
