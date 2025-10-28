@@ -1870,44 +1870,46 @@ initAttendance();
 });
 
     document.getElementById("saveMinus").addEventListener("click", async () => {
-  const year = document.getElementById("minusYear").value;
-const month = document.getElementById("minusMonth").value;
-const date = document.getElementById("minusDate").value;
-  const date = document.getElementById("minusDate").value.trim();
-  const minus = document.getElementById("minusValue").value.trim();
-  const status = document.getElementById("minusStatus");
+  const minusNameInput = document.getElementById("minusName").value.trim();
+  const minusYearValue = document.getElementById("minusYear").value;
+  const minusMonthValue = document.getElementById("minusMonth").value;
+  const minusDayValue = document.getElementById("minusDate").value;
+  const minusAmount = document.getElementById("minusValue").value.trim();
+  const minusStatusBox = document.getElementById("minusStatus");
 
-  if (!name || !year || !month || !date || !minus) {
-    status.textContent = "⚠️ من فضلك املأ كل الخانات";
+  if (!minusNameInput || !minusYearValue || !minusMonthValue || !minusDayValue || !minusAmount) {
+    minusStatusBox.textContent = "⚠️ من فضلك املأ كل الخانات";
     return;
   }
 
-  status.textContent = "⏳ جاري الحفظ...";
+  minusStatusBox.textContent = "⏳ جاري الحفظ...";
 
   try {
     const res = await fetch(apiURL, {
       method: "POST",
       body: JSON.stringify({
         type: "minus",
-        name,
-        year,
-        month,
-        date,
-        minus
+        name: minusNameInput,
+        year: minusYearValue,
+        month: minusMonthValue,
+        date: minusDayValue,
+        minus: minusAmount
       })
     });
     const data = await res.json();
     if (data.success) {
-      status.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
+      minusStatusBox.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
     } else {
-      status.textContent = data.error || "⚠️ حدث خطأ أثناء الحفظ";
+      minusStatusBox.textContent = data.error || "⚠️ حدث خطأ أثناء الحفظ";
     }
   } catch (err) {
-    status.textContent = "❌ فشل الاتصال بالسيرفر";
+    minusStatusBox.textContent = "❌ فشل الاتصال بالسيرفر";
     console.error(err);
   }
 });
-    document.getElementById("minusName").addEventListener("input", () => {
+
+// ✅ تشغيل الاقتراحات عند الكتابة في خانة الاسم
+document.getElementById("minusName").addEventListener("input", () => {
   showSuggestions("minusName", "minusSuggestions");
 });
 
