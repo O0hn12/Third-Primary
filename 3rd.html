@@ -851,6 +851,7 @@ setupSuggestions(document.getElementById("interactionName"),document.getElementB
 setupSuggestions(document.getElementById("childInfoName"),document.getElementById("childInfoSuggestions"));
 setupSuggestions(document.getElementById("childAttendanceName"),document.getElementById("childAttendanceSuggestions"));
 setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
+setupSuggestions(document.getElementById("minusName"), document.getElementById("minusSuggestions"));
 
     const absenceSubmit = document.getElementById("absenceSubmit");
     const giftNameInput = document.getElementById("giftName");
@@ -1906,11 +1907,6 @@ initAttendance();
     minusStatusBox.textContent = "❌ فشل الاتصال بالسيرفر";
     console.error(err);
   }
-});
-
-// ✅ تشغيل الاقتراحات عند الكتابة في خانة الاسم
-document.getElementById("minusName").addEventListener("input", () => {
-  showSuggestions("minusName", "minusSuggestions");
 });
 
 </script>
