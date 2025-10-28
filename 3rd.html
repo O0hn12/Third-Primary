@@ -1906,34 +1906,36 @@ initAttendance();
   minusStatusBox.textContent = "⏳ جاري الحفظ...";
 
   try {
-    const res = await fetch(apiURL, {
-      method: "POST",
-      body: JSON.stringify({
-        type: "minus",
-        name: minusNameInput,
-        year: minusYearValue,
-        month: minusMonthValue,
-        date: minusDayValue,
-        minus: minusAmount
-      })
-    });
-    const data = await res.json();
-    if (data.success) {
-  minusStatusBox.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
-  document.getElementById("minusName").value = "";
-document.getElementById("minusValue").value = "";
-  checkMinusReady();
-  setTimeout(() => {
-    minusStatusBox.textContent = "";
-  }, 3000);
-}
-    } else {
-      minusStatusBox.textContent = data.error || "⚠️ حدث خطأ أثناء الحفظ";
-    }
-  } catch (err) {
-    minusStatusBox.textContent = "❌ فشل الاتصال بالسيرفر";
-    console.error(err);
+  const res = await fetch(apiURL, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "minus",
+      name: minusNameInput,
+      year: minusYearValue,
+      month: minusMonthValue,
+      date: minusDayValue,
+      minus: minusAmount
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    minusStatusBox.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
+    document.getElementById("minusName").value = "";
+    document.getElementById("minusValue").value = "";
+    checkMinusReady();
+    setTimeout(() => {
+      minusStatusBox.textContent = "";
+    }, 3000);
+  } else {
+    minusStatusBox.textContent = data.error || "⚠️ حدث خطأ أثناء الحفظ";
   }
+
+} catch (err) {
+  minusStatusBox.textContent = "❌ فشل الاتصال بالسيرفر";
+  console.error(err);
+}
 });
 
     const minusNameEl = document.getElementById("minusName");
