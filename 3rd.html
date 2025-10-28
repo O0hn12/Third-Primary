@@ -303,6 +303,22 @@ th {
   <button id="giftSubmit" class="submit-btn" disabled>🎉 تسجيل الهدية</button>
 </div>
 
+    <h3>🧾 تسجيل Minus</h3>
+<label>اسم الطفل:</label>
+<input id="minusName" type="text" list="nameSuggestions" placeholder="اكتب الاسم..."><br>
+    <div id="minusSuggestions" class="suggestions" style="display:none;"></div>
+
+<label>التاريخ:</label>
+<select id="minusYear"></select>
+<select id="minusMonth"></select>
+<select id="minusDate"></select><br>
+
+<label>قيمة Minus:</label>
+<input id="minusValue" type="text" placeholder="اكتب القيمة..."><br>
+
+<button id="saveMinus">💾 حفظ Minus</button>
+<p id="minusStatus"></p>
+
 </section>
 
 <section id="reportsSection" class="section">
@@ -486,27 +502,27 @@ th {
 <label>اسم الأخ 1:</label>
 <input id="ae_brother1" type="text"><br>
 <label>سن الأخ 1:</label>
-<input id="ae_brother1Age" type="number"><br>
+<input id="ae_brother1Age" type="text"><br>
 
 <label>اسم الأخ 2:</label>
 <input id="ae_brother2" type="text"><br>
 <label>سن الأخ 2:</label>
-<input id="ae_brother2Age" type="number"><br>
+<input id="ae_brother2Age" type="text"><br>
 
 <label>اسم الأخ 3:</label>
 <input id="ae_brother3" type="text"><br>
 <label>سن الأخ 3:</label>
-<input id="ae_brother3Age" type="number"><br>
+<input id="ae_brother3Age" type="text"><br>
 
 <label>اسم الأخ 4:</label>
 <input id="ae_brother4" type="text"><br>
 <label>سن الأخ 4:</label>
-<input id="ae_brother4Age" type="number"><br>
+<input id="ae_brother4Age" type="text"><br>
 
 <label>اسم الأخ 5:</label>
 <input id="ae_brother5" type="text"><br>
 <label>سن الأخ 5:</label>
-<input id="ae_brother5Age" type="number"><br>
+<input id="ae_brother5Age" type="text"><br>
 
 <!-- السمات -->
 <label>لغات الحب:</label>
@@ -1851,6 +1867,48 @@ initAttendance();
     container.innerHTML = "⚠️ حدث خطأ أثناء تحميل التقرير.";
     console.error(err);
   }
+});
+
+    document.getElementById("saveMinus").addEventListener("click", async () => {
+  const year = document.getElementById("minusYear").value;
+const month = document.getElementById("minusMonth").value;
+const date = document.getElementById("minusDate").value;
+  const date = document.getElementById("minusDate").value.trim();
+  const minus = document.getElementById("minusValue").value.trim();
+  const status = document.getElementById("minusStatus");
+
+  if (!name || !year || !month || !date || !minus) {
+    status.textContent = "⚠️ من فضلك املأ كل الخانات";
+    return;
+  }
+
+  status.textContent = "⏳ جاري الحفظ...";
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "minus",
+        name,
+        year,
+        month,
+        date,
+        minus
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      status.textContent = data.message || "✅ تم حفظ الـ Minus بنجاح";
+    } else {
+      status.textContent = data.error || "⚠️ حدث خطأ أثناء الحفظ";
+    }
+  } catch (err) {
+    status.textContent = "❌ فشل الاتصال بالسيرفر";
+    console.error(err);
+  }
+});
+    document.getElementById("minusName").addEventListener("input", () => {
+  showSuggestions("minusName", "minusSuggestions");
 });
 
 </script>
