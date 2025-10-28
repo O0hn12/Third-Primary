@@ -747,6 +747,22 @@ fillMonthSelect(document.getElementById("childAttendanceMonth"));
 fillMonthSelect(document.getElementById("interactionReportMonth"));
 fillMonthSelect(document.getElementById("birthdayMonth"));
 fillMonthSelect(document.getElementById("absenceReportMonth"));
+    
+    const minusYear = document.getElementById("minusYear");
+const minusMonth = document.getElementById("minusMonth");
+const minusDate = document.getElementById("minusDate");
+
+    fillYearSelect(minusYear);
+fillMonthSelect(minusMonth);
+    fillFridays(minusYear, minusMonth, minusDate);
+    minusYear.onchange = () => {
+  fillFridays(minusYear, minusMonth, minusDate);
+};
+
+minusMonth.onchange = () => {
+  fillFridays(minusYear, minusMonth, minusDate);
+};
+    
     fillYearSelect(document.getElementById("giftYear"));
 fillMonthSelect(document.getElementById("giftMonth"));
 fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
@@ -780,6 +796,7 @@ function fillFridays(yearSel, monthSel, dateSel){
 fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 document.getElementById("yearSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 document.getElementById("monthSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+
 
 // --- تحميل الأسماء ---
 let allNames = [];
