@@ -2058,23 +2058,24 @@ function checkMinusReady() {
 });
 
     document.getElementById("gallerySubmitBtn").addEventListener("click", async () => {
-  const name = document.getElementById("galleryChildName").value.trim();
-  const month = document.getElementById("galleryMonthSelect").value;
-  const year = new Date().getFullYear();
-  const selectedGifts = Array.from(document.querySelectorAll(".giftQty"))
-  .filter(el => Number(el.value) > 0)
-  .map(el => `${el.value} × ${el.previousSibling.textContent.trim()}`);
+  const galleryChildName = document.getElementById("galleryChildName").value.trim();
+  const gallerySelectedMonth = document.getElementById("galleryMonthSelect").value;
+  const galleryCurrentYear = new Date().getFullYear();
+
+  const galleryGiftList = Array.from(document.querySelectorAll(".giftQty"))
+    .filter(el => Number(el.value) > 0)
+    .map(el => `${el.value} × ${el.previousSibling.textContent.trim()}`);
 
   const res = await fetch(apiURL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-  type: "feriaGifts", // ← بدل galleryGifts
-  name,
-  year,
-  month,
-  gifts: selectedGifts
-})
+      type: "feriaGifts",
+      name: galleryChildName,
+      year: galleryCurrentYear,
+      month: gallerySelectedMonth,
+      gifts: galleryGiftList
+    })
   });
 
   const result = await res.json();
@@ -2082,41 +2083,42 @@ function checkMinusReady() {
   else alert("❌ حدث خطأ أثناء التسجيل.");
 });
 
-    document.getElementById("galleryChildName").addEventListener("input", async (e) => {
-  const val = e.target.value.trim();
-  const box = document.getElementById("gallerySuggestions");
-  box.innerHTML = "";
-  box.style.display = "none";
+document.getElementById("galleryChildName").addEventListener("input", async (e) => {
+  const galleryTypedName = e.target.value.trim();
+  const gallerySuggestionBox = document.getElementById("gallerySuggestions");
+  gallerySuggestionBox.innerHTML = "";
+  gallerySuggestionBox.style.display = "none";
 
-  if (val.length < 2) return;
+  if (galleryTypedName.length < 2) return;
 
   const res = await fetch(`${apiURL}?type=names&groups=${userGroups.join(",")}`);
   const data = await res.json();
-  const matches = data.names.filter(n => n.includes(val));
+  const galleryMatchedNames = data.names.filter(n => n.includes(galleryTypedName));
 
-  if (matches.length === 0) return;
+  if (galleryMatchedNames.length === 0) return;
 
-  matches.forEach(name => {
+  galleryMatchedNames.forEach(name => {
     const div = document.createElement("div");
     div.textContent = name;
     div.onclick = () => {
       document.getElementById("galleryChildName").value = name;
-      box.style.display = "none";
+      gallerySuggestionBox.style.display = "none";
     };
-    box.appendChild(div);
+    gallerySuggestionBox.appendChild(div);
   });
 
-  box.style.display = "block";
+  gallerySuggestionBox.style.display = "block";
 });
-    document.querySelectorAll(".giftQty").forEach(input => {
+
+document.querySelectorAll(".giftQty").forEach(input => {
   input.addEventListener("input", () => {
-    const total = Array.from(document.querySelectorAll(".giftQty"))
+    const galleryGiftPointsTotal = Array.from(document.querySelectorAll(".giftQty"))
       .reduce((sum, el) => sum + (Number(el.value) * Number(el.dataset.points)), 0);
 
-    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا: ${total}`;
+    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا: ${galleryGiftPointsTotal}`;
 
-    const net = Number(document.getElementById("galleryResult").dataset.net || 0);
-    document.getElementById("gallerySubmitBtn").disabled = total > net;
+    const galleryAvailablePoints = Number(document.getElementById("galleryResult").dataset.net || 0);
+    document.getElementById("gallerySubmitBtn").disabled = galleryGiftPointsTotal > galleryAvailablePoints;
   });
 });
 </script>
