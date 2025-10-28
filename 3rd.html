@@ -968,6 +968,9 @@ attendanceSubmit.addEventListener("click", async ()=>{
   const name=nameInput.value.trim();
   const attendance=document.querySelector('input[name="attendance"]:checked').value;
   const notebook=document.querySelector('input[name="notebook"]:checked').value;
+  let interactionPoints = 0;
+if (attendance === "حضر") interactionPoints += 2;
+if (notebook === "نعم") interactionPoints += 2;
   const year=document.getElementById("yearSelect").value;
   const month=document.getElementById("monthSelect").value;
   const date=document.getElementById("dateSelect").value;
@@ -986,7 +989,7 @@ try {
 }
 
   attendanceSubmit.disabled=true;
-  const data={ type:"attendance", year, month, date, name, attendance, notebook };
+  const data = { type:"attendance", year, month, date, name, attendance, notebook, interactionPoints };
   try{
     const res=await fetch(apiURL, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data) });
     const result=await res.json();
