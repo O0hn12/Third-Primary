@@ -665,6 +665,40 @@ th {
   <button id="editChildBtn" class="submit-btn">💾 حفظ التعديل</button>
 </div>
 
+        <button id="galleryTab">🎨 المعرض</button>
+<section id="gallerySection" class="section">
+  <div class="card">
+    <h3>🎁 معرض الهدايا</h3>
+
+    <label>اختر الشهر</label>
+    <select id="galleryMonthSelect"></select>
+
+    <label>اسم الطفل</label>
+    <input type="text" id="galleryChildName" placeholder="اكتب الاسم...">
+    <div id="gallerySuggestions" class="suggestions" style="display:none;"></div>
+
+    <button id="galleryCheckBtn" class="submit-btn">عرض النقاط</button>
+
+    <div id="galleryResult" style="margin-top:10px;font-weight:bold;"></div>
+
+    <hr>
+
+    <h4>اختر الهدايا</h4>
+    <div id="giftOptions">
+      <label><input type="checkbox" value="لعبة" data-points="4"> لعبة (4 نقاط)</label><br>
+      <label><input type="checkbox" value="كراسة رسم" data-points="3"> كراسة رسم (3 نقاط)</label><br>
+      <label><input type="checkbox" value="ألوان" data-points="2"> ألوان (2 نقاط)</label><br>
+      <label><input type="checkbox" value="ستيكرات" data-points="1"> ستيكرات (1 نقطة)</label><br>
+      <label><input type="checkbox" value="كتاب صغير" data-points="5"> كتاب صغير (5 نقاط)</label><br>
+    </div>
+
+    <p id="giftTotal" style="margin-top:10px;">إجمالي نقاط الهدايا: 0</p>
+
+    <button id="gallerySubmitBtn" class="submit-btn" disabled>تسجيل الهدايا</button>
+  </div>
+</section>
+
+
 </main>
 
 <script>
@@ -707,6 +741,18 @@ document.getElementById("addEditTab").onclick = () => {
   document.getElementById("reportsTab").classList.remove("active");
   document.getElementById("addEditTab").classList.add("active");
 };
+
+    document.getElementById("galleryTab").onclick = () => {
+  document.getElementById("attendanceSection").classList.remove("active");
+  document.getElementById("reportsSection").classList.remove("active");
+  document.getElementById("addEditSection").classList.remove("active");
+  document.getElementById("gallerySection").classList.add("active");
+
+  document.getElementById("attendanceTab").classList.remove("active");
+  document.getElementById("reportsTab").classList.remove("active");
+  document.getElementById("addEditTab").classList.remove("active");
+  document.getElementById("galleryTab").classList.add("active");
+};
     
 // --- تعبئة السنوات والشهور ---
 function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
@@ -728,6 +774,7 @@ fillYearSelect(document.getElementById("absenceReportYear"));
 fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
 fillYearSelect(document.getElementById("staffReportYear"));
 fillMonthSelect(document.getElementById("staffReportMonth"));
+fillMonthSelect(document.getElementById("galleryMonthSelect"));
 
 function fillMonthSelect(sel){
   if(!sel) return;
@@ -1960,6 +2007,68 @@ function checkMinusReady() {
 [minusNameEl, minusYearEl, minusMonthEl, minusDateEl, minusValueEl].forEach(el => {
   el.addEventListener("input", checkMinusReady);
   el.addEventListener("change", checkMinusReady);
+});
+
+    document.getElementById("galleryCheckBtn").addEventListener("click", async () => {
+  const name = document.getElementById("galleryChildName").value.trim();
+  const month = document.getElementById("galleryMonthSelect").value;
+  const year = new Date().getFullYear(); // أو اختياري من المستخدم
+
+  if (!name || !month) return;
+
+  const res1 = await fetch(`${apiURL}?type=interactionReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
+  const res2 = await fetch(`${apiURL}?type=childAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
+
+  const data1 = await res1.json();
+  const data2 = await res2.json();
+
+  const interactionTotal = data1.records.reduce((sum, r) => sum + Number(r.points || 0), 0);
+  const minusTotal = data2.records.reduce((sum, r) => sum + Number(r.minus || 0), 0); // لو minus موجود في نفس الصف
+
+  const netPoints = interactionTotal - minusTotal;
+
+  document.getElementById("galleryResult").innerHTML = `
+    نقاط التفاعل: ${interactionTotal}<br>
+    نقاط Minus: ${minusTotal}<br>
+    <strong>المحصلة: ${netPoints}</strong>
+  `;
+
+  document.getElementById("galleryResult").dataset.net = netPoints;
+});
+
+    document.querySelectorAll("#giftOptions input[type='checkbox']").forEach(cb => {
+  cb.addEventListener("change", () => {
+    const selected = Array.from(document.querySelectorAll("#giftOptions input[type='checkbox']:checked"));
+    const total = selected.reduce((sum, el) => sum + Number(el.dataset.points), 0);
+    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا: ${total}`;
+
+    const net = Number(document.getElementById("galleryResult").dataset.net || 0);
+    document.getElementById("gallerySubmitBtn").disabled = total > net;
+  });
+});
+
+    document.getElementById("gallerySubmitBtn").addEventListener("click", async () => {
+  const name = document.getElementById("galleryChildName").value.trim();
+  const month = document.getElementById("galleryMonthSelect").value;
+  const year = new Date().getFullYear();
+  const selectedGifts = Array.from(document.querySelectorAll("#giftOptions input[type='checkbox']:checked"))
+                             .map(el => el.value);
+
+  const res = await fetch(apiURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+  type: "feriaGifts", // ← بدل galleryGifts
+  name,
+  year,
+  month,
+  gifts: selectedGifts
+})
+  });
+
+  const result = await res.json();
+  if (result.success) alert("✅ تم تسجيل الهدايا بنجاح!");
+  else alert("❌ حدث خطأ أثناء التسجيل.");
 });
 
 </script>
