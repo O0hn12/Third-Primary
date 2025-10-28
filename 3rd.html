@@ -890,7 +890,8 @@ initAttendance();
 
 // --- الاقتراحات ---
 function setupSuggestions(inputEl, suggestionsEl){
-  inputEl.addEventListener("input",()=>{
+  if (!inputEl || !suggestionsEl) return;
+inputEl.addEventListener("input", () => {
     const q=inputEl.value.trim().toLowerCase();
     if(!q) return suggestionsEl.style.display="none";
     const filtered=allNames.filter(n=>n.toLowerCase().includes(q)).slice(0,10);
@@ -1004,7 +1005,7 @@ checkAbsenceReady();
 });
 
 // --- تفعيل زر الحضور ---
-const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+let attendanceRadios = document.querySelectorAll('input[name="attendance"]');
 const notebookRadios = document.querySelectorAll('input[name="notebook"]');
 const attendanceSubmit = document.getElementById("attendanceSubmit");
 
@@ -1052,7 +1053,7 @@ try {
     if(result.success){
       alert("✅ تم تسجيل الحضور بنجاح!");
       nameInput.value="";
-      attendanceRadios.forEach(r=>r.checked=false);
+      .forEach(r=>r.checked=false);
       notebookRadios.forEach(r=>r.checked=false);
       checkAttendanceReady();
     }else alert("❌ حدث خطأ أثناء التسجيل.");
