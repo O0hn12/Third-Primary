@@ -2096,32 +2096,6 @@ document.querySelectorAll(".giftQty").forEach(input => {
     document.getElementById("gallerySubmitBtn").disabled = galleryGiftPointsTotal > galleryAvailablePoints;
   });
 });
-    document.getElementById("galleryChildName").addEventListener("input", async (e) => {
-  const val = e.target.value.trim();
-  const box = document.getElementById("gallerySuggestions");
-  box.innerHTML = "";
-  box.style.display = "none";
-
-  if (val.length < 2) return;
-
-  const res = await fetch(`${apiURL}?type=names&groups=${userGroups.join(",")}`);
-  const data = await res.json();
-  const matches = data.names.filter(n => n.includes(val));
-
-  if (matches.length === 0) return;
-
-  matches.forEach(name => {
-    const div = document.createElement("div");
-    div.textContent = name;
-    div.onclick = () => {
-      document.getElementById("galleryChildName").value = name;
-      box.style.display = "none";
-    };
-    box.appendChild(div);
-  });
-
-  box.style.display = "block";
-});
 </script>
 </body>
 </html>
