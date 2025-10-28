@@ -909,7 +909,11 @@ function setupSuggestions(inputEl, suggestionsEl){
     suggestionsEl.style.display="block";
   });
   document.addEventListener("click",(e)=>{
-    if(!inputEl.contains(e.target)&&!suggestionsEl.contains(e.target))
+    if (
+  inputEl && suggestionsEl &&
+  !inputEl.contains(e.target) &&
+  !suggestionsEl.contains(e.target)
+)
       suggestionsEl.style.display="none";
   });
 }
