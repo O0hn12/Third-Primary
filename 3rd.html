@@ -718,43 +718,18 @@ fillYearSelect(document.getElementById("absenceReportYear"));
 fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
 
 // --- التنقل بين الأقسام ---
-document.getElementById("attendanceTab").onclick = () => {
-  document.getElementById("attendanceSection").classList.add("active");
-  document.getElementById("reportsSection").classList.remove("active");
-  document.getElementById("addEditSection").classList.remove("active");
+function activateTab(tabId, sectionId) {
+  document.querySelectorAll("header button").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
 
-  document.getElementById("attendanceTab").classList.add("active");
-  document.getElementById("reportsTab").classList.remove("active");
-  document.getElementById("addEditTab").classList.remove("active");
-};
+  document.getElementById(tabId).classList.add("active");
+  document.getElementById(sectionId).classList.add("active");
+}
 
-document.getElementById("reportsTab").onclick = () => {
-  document.getElementById("attendanceSection").classList.remove("active");
-  document.getElementById("reportsSection").classList.add("active");
-  document.getElementById("addEditSection").classList.remove("active");
-
-  document.getElementById("attendanceTab").classList.remove("active");
-  document.getElementById("reportsTab").classList.add("active");
-  document.getElementById("addEditTab").classList.remove("active");
-};
-
-document.getElementById("addEditTab").onclick = () => {
-  document.getElementById("attendanceSection").classList.remove("active");
-  document.getElementById("reportsSection").classList.remove("active");
-  document.getElementById("addEditSection").classList.add("active");
-
-  document.getElementById("attendanceTab").classList.remove("active");
-  document.getElementById("reportsTab").classList.remove("active");
-  document.getElementById("addEditTab").classList.add("active");
-};
-
-   document.getElementById("galleryTab").onclick = () => {
-  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.getElementById("gallerySection").classList.add("active");
-
-  document.querySelectorAll("header button").forEach(b => b.classList.remove("active"));
-  document.getElementById("galleryTab").classList.add("active");
-};
+document.getElementById("attendanceTab").onclick = () => activateTab("attendanceTab", "attendanceSection");
+document.getElementById("reportsTab").onclick = () => activateTab("reportsTab", "reportsSection");
+document.getElementById("addEditTab").onclick = () => activateTab("addEditTab", "addEditSection");
+document.getElementById("galleryTab").onclick = () => activateTab("galleryTab", "gallerySection");
     
 // --- تعبئة السنوات والشهور ---
 function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
