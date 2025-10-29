@@ -1980,11 +1980,6 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
     errorDiv.style.display = "block";
 
     try {
-      if (!navigator.onLine) {
-        errorDiv.textContent = "⚠️ لا يمكن تسجيل الدخول بدون اتصال بالإنترنت";
-        errorDiv.style.display = "block";
-        return;
-      }
 
       const res = await fetch(
         `${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
