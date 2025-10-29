@@ -183,6 +183,29 @@ th {
   text-align: center;
   outline: none; /* ← يشيل الحواف الزرقاء وقت الكتابة */
 }
+    .gift-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.gift-controls button {
+  background: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.gift-controls button:hover {
+  background: #005fa3;
+}
 </style>
 </head>
 <body>
@@ -736,27 +759,51 @@ th {
   <div class="gift-card">
     <h4>🎮 لعبة</h4>
     <p>4 نقاط</p>
-    <input type="number" min="0" value="0" data-points="4" class="giftQty">
+    <div class="gift-controls">
+      <button class="gift-minus">−</button>
+      <input type="number" min="0" value="0" data-points="4" class="giftQty">
+      <button class="gift-plus">+</button>
+    </div>
   </div>
+
   <div class="gift-card">
     <h4>🎨 كراسة رسم</h4>
     <p>3 نقاط</p>
-    <input type="number" min="0" value="0" data-points="3" class="giftQty">
+    <div class="gift-controls">
+      <button class="gift-minus">−</button>
+      <input type="number" min="0" value="0" data-points="3" class="giftQty">
+      <button class="gift-plus">+</button>
+    </div>
   </div>
+
   <div class="gift-card">
     <h4>🖍️ ألوان</h4>
     <p>2 نقاط</p>
-    <input type="number" min="0" value="0" data-points="2" class="giftQty">
+    <div class="gift-controls">
+      <button class="gift-minus">−</button>
+      <input type="number" min="0" value="0" data-points="2" class="giftQty">
+      <button class="gift-plus">+</button>
+    </div>
   </div>
+
   <div class="gift-card">
     <h4>✨ ستيكرات</h4>
     <p>1 نقطة</p>
-    <input type="number" min="0" value="0" data-points="1" class="giftQty">
+    <div class="gift-controls">
+      <button class="gift-minus">−</button>
+      <input type="number" min="0" value="0" data-points="1" class="giftQty">
+      <button class="gift-plus">+</button>
+    </div>
   </div>
+
   <div class="gift-card">
     <h4>📘 كتاب صغير</h4>
     <p>5 نقاط</p>
-    <input type="number" min="0" value="0" data-points="5" class="giftQty">
+    <div class="gift-controls">
+      <button class="gift-minus">−</button>
+      <input type="number" min="0" value="0" data-points="5" class="giftQty">
+      <button class="gift-plus">+</button>
+    </div>
   </div>
 </div>
 
@@ -2159,6 +2206,23 @@ document.querySelectorAll(".giftQty").forEach(input => {
     const data = await res.json();
     galleryNames = data.names || [];
   }
+});
+    document.querySelectorAll(".gift-card").forEach(card => {
+  const input = card.querySelector(".giftQty");
+  const plus = card.querySelector(".gift-plus");
+  const minus = card.querySelector(".gift-minus");
+
+  plus.addEventListener("click", () => {
+    input.value = Number(input.value) + 1;
+    input.dispatchEvent(new Event("input")); // علشان يتحدث الإجمالي
+  });
+
+  minus.addEventListener("click", () => {
+    if (Number(input.value) > 0) {
+      input.value = Number(input.value) - 1;
+      input.dispatchEvent(new Event("input"));
+    }
+  });
 });
     
 </script>
