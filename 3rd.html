@@ -146,6 +146,41 @@ th {
 #gallerySection.active {
   display: block;
 }
+    .gift-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.gift-card {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px;
+  width: 150px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.gift-card h4 {
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
+.gift-card p {
+  margin: 0 0 10px;
+  color: #555;
+}
+
+.gift-card input {
+  width: 60px;
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -692,12 +727,32 @@ th {
     <hr>
 
     <h4>اختر الهدايا</h4>
-    <div id="giftOptions">
-  <label>لعبة (4 نقاط): <input type="number" min="0" value="0" data-points="4" class="giftQty"></label><br>
-  <label>كراسة رسم (3 نقاط): <input type="number" min="0" value="0" data-points="3" class="giftQty"></label><br>
-  <label>ألوان (2 نقاط): <input type="number" min="0" value="0" data-points="2" class="giftQty"></label><br>
-  <label>ستيكرات (1 نقطة): <input type="number" min="0" value="0" data-points="1" class="giftQty"></label><br>
-  <label>كتاب صغير (5 نقاط): <input type="number" min="0" value="0" data-points="5" class="giftQty"></label><br>
+    <div id="giftOptions" class="gift-grid">
+  <div class="gift-card">
+    <h4>🎮 لعبة</h4>
+    <p>4 نقاط</p>
+    <input type="number" min="0" value="0" data-points="4" class="giftQty">
+  </div>
+  <div class="gift-card">
+    <h4>🎨 كراسة رسم</h4>
+    <p>3 نقاط</p>
+    <input type="number" min="0" value="0" data-points="3" class="giftQty">
+  </div>
+  <div class="gift-card">
+    <h4>🖍️ ألوان</h4>
+    <p>2 نقاط</p>
+    <input type="number" min="0" value="0" data-points="2" class="giftQty">
+  </div>
+  <div class="gift-card">
+    <h4>✨ ستيكرات</h4>
+    <p>1 نقطة</p>
+    <input type="number" min="0" value="0" data-points="1" class="giftQty">
+  </div>
+  <div class="gift-card">
+    <h4>📘 كتاب صغير</h4>
+    <p>5 نقاط</p>
+    <input type="number" min="0" value="0" data-points="5" class="giftQty">
+  </div>
 </div>
 
     <p id="giftTotal" style="margin-top:10px;">إجمالي نقاط الهدايا: 0</p>
