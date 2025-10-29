@@ -150,6 +150,7 @@ th {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
+  justify-content: center; /* ← دي اللي بتخليهم في النص */
   margin-top: 10px;
 }
 
@@ -175,11 +176,12 @@ th {
 
 .gift-card input {
   width: 60px;
-  padding: 5px;
-  font-size: 14px;
+  padding: 8px; /* ← أكبر شوية */
+  font-size: 16px; /* ← أوضح للعين */
   border-radius: 8px;
   border: 1px solid #aaa;
   text-align: center;
+  outline: none; /* ← يشيل الحواف الزرقاء وقت الكتابة */
 }
 </style>
 </head>
