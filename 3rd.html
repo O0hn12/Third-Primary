@@ -2390,7 +2390,7 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
     alert("✅ تم حفظ البيانات مؤقتًا، وسيتم إرسالها تلقائيًا عند توفر الإنترنت");
   }
 }
-      }
+
     window.addEventListener("online", () => {
   const pending = JSON.parse(localStorage.getItem("pendingData") || "[]");
   if (pending.length === 0) return;
