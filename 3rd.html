@@ -620,6 +620,7 @@ th {
         <div class="card">
   <h3>📋 تعديل / إضافة حضور</h3>
   <label>الاسم:</label><input id="ae_att_name" type="text"><br>
+  <div id="ae_att_suggestions" class="suggestions" style="display:none;"></div>
   <label>السنة:</label><select id="ae_att_year"></select>
   <label>الشهر:</label><select id="ae_att_month"></select>
   <label>اليوم:</label><select id="ae_att_day"></select>
@@ -639,6 +640,7 @@ th {
 <div class="card">
   <h3>✨ تعديل / إضافة تفاعل</h3>
   <label>الاسم:</label><input id="ae_interact_name" type="text"><br>
+    <div id="ae_interact_suggestions" class="suggestions" style="display:none;"></div>
   <label>السنة:</label><select id="ae_interact_year"></select>
   <label>الشهر:</label><select id="ae_interact_month"></select>
   <label>اليوم:</label><select id="ae_interact_day"></select>
@@ -649,6 +651,7 @@ th {
 <div class="card">
   <h3>📞 تعديل / إضافة افتقاد</h3>
   <label>الاسم:</label><input id="ae_abs_name" type="text"><br>
+    <div id="ae_abs_suggestions" class="suggestions" style="display:none;"></div>
   <label>السنة:</label>
 <select id="ae_abs_year"></select><br>
 
@@ -967,6 +970,9 @@ async function initAttendance(){
   setupSuggestions(document.getElementById("giftReportName"), document.getElementById("giftReportSuggestions"));
   setupSuggestions(document.getElementById("editChildName"), document.getElementById("editChildSuggestions"));
   setupSuggestions(document.getElementById("galleryChildName"), document.getElementById("galleryChildSuggestions"));
+setupSuggestions("ae_att_name", "ae_att_suggestions", galleryNames);
+setupSuggestions("ae_interact_name", "ae_interact_suggestions", galleryNames);
+setupSuggestions("ae_abs_name", "ae_abs_suggestions", galleryNames);
   checkAttendanceReady();
 }
 
