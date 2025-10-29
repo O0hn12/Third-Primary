@@ -2170,7 +2170,11 @@ function checkMinusReady() {
 
   const gifts = Array.from(document.querySelectorAll(".giftQty"))
     .filter(el => Number(el.value) > 0)
-    .map(el => `${el.value} × ${el.previousSibling.textContent.trim()}`);
+    .map(el => {
+  const card = el.closest(".gift-card");
+  const giftName = card.querySelector("h4")?.textContent?.trim();
+  return `${el.value} × ${giftName}`;
+});
 
   const res = await fetch(apiURL, {
     method: "POST",
