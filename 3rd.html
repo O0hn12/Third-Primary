@@ -1998,14 +1998,6 @@ try {
       return;
     }
 
-    // ✅ حفظ بيانات الدخول محليًا
-    localStorage.setItem("userLogin", JSON.stringify({
-      username: data.username,
-      password: p,
-      groups: data.groups,
-      type: data.type
-    }));
-
     userGroups = (data.groups || []).map(g => g.trim());
     await loadNames(userGroups);
     initAttendance();
@@ -2372,50 +2364,6 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
 
   container.appendChild(table);
 });
-
-    function sendOrStore(type, payload, successMessage) {
-  if (navigator.onLine) {
-    fetch(apiURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    }).then(res => res.json()).then(result => {
-      if (result.success) alert(successMessage);
-      else alert("❌ حدث خطأ أثناء التسجيل.");
-    });
-  } else {
-    const pending = JSON.parse(localStorage.getItem("pendingData") || "[]");
-    pending.push({ type, payload, successMessage });
-    localStorage.setItem("pendingData", JSON.stringify(pending));
-    alert("✅ تم حفظ البيانات مؤقتًا، وسيتم إرسالها تلقائيًا عند توفر الإنترنت");
-  }
-}
-
-    window.addEventListener("online", () => {
-  const pending = JSON.parse(localStorage.getItem("pendingData") || "[]");
-  if (pending.length === 0) return;
-
-  pending.forEach(entry => {
-    fetch(apiURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(entry.payload)
-    })
-      .then(res => res.json())
-      .then(result => {
-        if (result.success) console.log("✅ تم إرسال:", entry.type);
-      });
-  });
-
-  localStorage.removeItem("pendingData");
-  alert("📡 تم إرسال البيانات المحفوظة بنجاح بعد عودة الإنترنت");
-}); // ✅ هنا كانت المشكلة، لازم القوس ده يكون قبل startApp
-
-    function startApp(username, groups) {
-  document.getElementById("loginSection").style.display = "none";
-  document.getElementById("mainContent").style.display = "block";
-  userGroups = groups || [];
-}
 
 </script>
 </body>
