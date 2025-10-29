@@ -1104,18 +1104,22 @@ checkAbsenceReady();
 });
 
 // --- تفعيل زر الحضور ---
-window.addEventListener("DOMContentLoaded", () => {
+function checkAttendanceReady() {
+  const nameInput = document.getElementById("nameInput");
   const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
   const notebookRadios = document.querySelectorAll('input[name="notebook"]');
   const attendanceSubmit = document.getElementById("attendanceSubmit");
-  const nameInput = document.getElementById("nameInput");
 
-  function checkAttendanceReady(){
-    const validName = allNames.includes(nameInput.value.trim());
-    const attendanceChecked = Array.from(attendanceRadios).some(r=>r.checked);
-    const notebookChecked = Array.from(notebookRadios).some(r=>r.checked);
-    attendanceSubmit.disabled = !(validName && attendanceChecked && notebookChecked);
-  }
+  const validName = allNames.includes(nameInput.value.trim());
+  const attendanceChecked = Array.from(attendanceRadios).some(r=>r.checked);
+  const notebookChecked = Array.from(notebookRadios).some(r=>r.checked);
+  attendanceSubmit.disabled = !(validName && attendanceChecked && notebookChecked);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const nameInput = document.getElementById("nameInput");
+  const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+  const notebookRadios = document.querySelectorAll('input[name="notebook"]');
 
   nameInput.addEventListener("input", checkAttendanceReady);
   attendanceRadios.forEach(r=>r.addEventListener("change", checkAttendanceReady));
