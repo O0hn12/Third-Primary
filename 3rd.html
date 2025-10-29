@@ -1998,25 +1998,21 @@ function checkMinusReady() {
     document.getElementById("galleryCheckBtn").addEventListener("click", async () => {
   const name = document.getElementById("galleryChildName").value.trim();
   const month = document.getElementById("galleryMonthSelect").value;
-  const year = new Date().getFullYear(); // أو اختياري من المستخدم
+  const year = new Date().getFullYear();
 
-  if (!name || !month) return;
+  const res = await fetch(`${apiURL}?type=galleryPoints&name=${name}&month=${month}&year=${year}`);
+  const data = await res.json();
 
-  const res1 = await fetch(`${apiURL}?type=interactionReport&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
-  const res2 = await fetch(`${apiURL}?type=childAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}`);
-
-  const data1 = await res1.json();
-  const data2 = await res2.json();
-
-  const interactionTotal = data1.records.reduce((sum, r) => sum + Number(r.points || 0), 0);
-  const minusTotal = data2.records.reduce((sum, r) => sum + Number(r.minus || 0), 0); // لو minus موجود في نفس الصف
-
-  const netPoints = interactionTotal - minusTotal;
+  const totalPoints = data.total || 0;     // إجمالي النقاط
+  const usedPoints = data.used || 0;       // المستخدم في الهدايا
+  const minusPoints = data.minus || 0;     // الخصم
+  const netPoints = totalPoints - usedPoints - minusPoints;
 
   document.getElementById("galleryResult").innerHTML = `
-    نقاط التفاعل: ${interactionTotal}<br>
-    نقاط Minus: ${minusTotal}<br>
-    <strong>المحصلة: ${netPoints}</strong>
+    🟢 إجمالي النقاط: ${totalPoints}<br>
+    🎁 المستخدم في الهدايا: ${usedPoints}<br>
+    ❌ نقاط Minus: ${minusPoints}<br>
+    <strong>💡 المحصلة النهائية: ${netPoints}</strong>
   `;
 
   document.getElementById("galleryResult").dataset.net = netPoints;
@@ -2086,13 +2082,13 @@ document.getElementById("galleryChildName").addEventListener("input", async (e) 
 
 document.querySelectorAll(".giftQty").forEach(input => {
   input.addEventListener("input", () => {
-    const galleryGiftPointsTotal = Array.from(document.querySelectorAll(".giftQty"))
+    const usedNow = Array.from(document.querySelectorAll(".giftQty"))
       .reduce((sum, el) => sum + (Number(el.value) * Number(el.dataset.points)), 0);
 
-    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا: ${galleryGiftPointsTotal}`;
+    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا المختارة: ${usedNow}`;
 
-    const galleryAvailablePoints = Number(document.getElementById("galleryResult").dataset.net || 0);
-    document.getElementById("gallerySubmitBtn").disabled = galleryGiftPointsTotal > galleryAvailablePoints;
+    const available = Number(document.getElementById("galleryResult").dataset.net || 0);
+    document.getElementById("gallerySubmitBtn").disabled = usedNow > available;
   });
 });
     document.getElementById("galleryTab").addEventListener("click", async () => {
