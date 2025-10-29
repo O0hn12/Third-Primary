@@ -2058,25 +2058,24 @@ function checkMinusReady() {
 
     document.getElementById("galleryCheckBtn").addEventListener("click", async () => {
   const name = document.getElementById("galleryChildName").value.trim();
-  const month = document.getElementById("galleryMonthSelect").value;
-  const year = new Date().getFullYear();
+  if (!name) return alert("⚠️ من فضلك اكتب اسم الطفل");
 
-  const res = await fetch(`${apiURL}?type=galleryPoints&name=${name}&month=${month}&year=${year}`);
+  const res = await fetch(`${apiURL}?type=galleryPoints&name=${encodeURIComponent(name)}`);
   const data = await res.json();
 
-  const totalPoints = data.total || 0;     // إجمالي النقاط
-  const usedPoints = data.used || 0;       // المستخدم في الهدايا
-  const minusPoints = data.minus || 0;     // الخصم
-  const netPoints = totalPoints - usedPoints - minusPoints;
+  const earned = data.earned || 0;
+  const used = data.used || 0;
+  const minus = data.minus || 0;
+  const net = earned - used - minus;
 
   document.getElementById("galleryResult").innerHTML = `
-    🟢 إجمالي النقاط: ${totalPoints}<br>
-    🎁 المستخدم في الهدايا: ${usedPoints}<br>
-    ❌ نقاط Minus: ${minusPoints}<br>
-    <strong>💡 المحصلة النهائية: ${netPoints}</strong>
+    🟢 النقاط المكتسبة: ${earned}<br>
+    🎁 النقاط المستخدمة: ${used}<br>
+    ❌ نقاط Minus: ${minus}<br>
+    <strong>💡 المحصلة النهائية: ${net}</strong>
   `;
 
-  document.getElementById("galleryResult").dataset.net = netPoints;
+  document.getElementById("galleryResult").dataset.net = net;
 });
 
     document.querySelectorAll("#giftOptions input[type='checkbox']").forEach(cb => {
@@ -2091,11 +2090,11 @@ function checkMinusReady() {
 });
 
     document.getElementById("gallerySubmitBtn").addEventListener("click", async () => {
-  const galleryChildName = document.getElementById("galleryChildName").value.trim();
-  const gallerySelectedMonth = document.getElementById("galleryMonthSelect").value;
-  const gallerySelectedYear = document.getElementById("galleryYearSelect").value;
+  const name = document.getElementById("galleryChildName").value.trim();
+  const month = document.getElementById("galleryMonthSelect").value;
+  const year = document.getElementById("galleryYearSelect").value;
 
-  const galleryGiftList = Array.from(document.querySelectorAll(".giftQty"))
+  const gifts = Array.from(document.querySelectorAll(".giftQty"))
     .filter(el => Number(el.value) > 0)
     .map(el => `${el.value} × ${el.previousSibling.textContent.trim()}`);
 
@@ -2104,10 +2103,10 @@ function checkMinusReady() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       type: "feriaGifts",
-      name: galleryChildName,
-      year: gallerySelectedYear,
-      month: gallerySelectedMonth,
-      gifts: galleryGiftList
+      name,
+      year,
+      month,
+      gifts
     })
   });
 
@@ -2146,7 +2145,7 @@ document.querySelectorAll(".giftQty").forEach(input => {
     const usedNow = Array.from(document.querySelectorAll(".giftQty"))
       .reduce((sum, el) => sum + (Number(el.value) * Number(el.dataset.points)), 0);
 
-    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا المختارة: ${usedNow}`;
+    document.getElementById("giftTotal").textContent = `إجمالي نقاط الهدايا: ${usedNow}`;
 
     const available = Number(document.getElementById("galleryResult").dataset.net || 0);
     document.getElementById("gallerySubmitBtn").disabled = usedNow > available;
