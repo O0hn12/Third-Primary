@@ -1013,9 +1013,18 @@ setupSuggestions(document.getElementById("childAttendanceName"),document.getElem
 setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
 setupSuggestions(document.getElementById("minusName"), document.getElementById("minusSuggestions"));
 setupSuggestions(document.getElementById("galleryName"), document.getElementById("gallerySuggestions"));
-setupSuggestions("ae_att_name", "ae_att_suggestions", galleryNames);
-setupSuggestions("ae_interact_name", "ae_interact_suggestions", galleryNames);
-setupSuggestions("ae_abs_name", "ae_abs_suggestions", galleryNames);
+setupSuggestions(
+  document.getElementById("ae_att_name"),
+  document.getElementById("ae_att_suggestions")
+);
+setupSuggestions(
+  document.getElementById("ae_interact_name"),
+  document.getElementById("ae_interact_suggestions")
+);
+setupSuggestions(
+  document.getElementById("ae_abs_name"),
+  document.getElementById("ae_abs_suggestions")
+);
 
     const absenceSubmit = document.getElementById("absenceSubmit");
     const giftNameInput = document.getElementById("giftName");
