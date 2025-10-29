@@ -2067,9 +2067,7 @@ document.getElementById("galleryChildName").addEventListener("input", async (e) 
 
   if (galleryTypedName.length < 2) return;
 
-  const res = await fetch(`${apiURL}?type=names&groups=${userGroups.join(",")}`);
-  const data = await res.json();
-  const galleryMatchedNames = data.names.filter(n => n.includes(galleryTypedName));
+  const galleryMatchedNames = galleryNames.filter(n => n.includes(galleryTypedName));
 
   if (galleryMatchedNames.length === 0) return;
 
@@ -2106,6 +2104,7 @@ document.querySelectorAll(".giftQty").forEach(input => {
     galleryNames = data.names || [];
   }
 });
+    
 </script>
 </body>
 </html>
