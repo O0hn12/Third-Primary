@@ -1963,7 +1963,7 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
 
     window.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("loginBtn");
-  if (!loginBtn) return; // حماية لو مش موجود
+  if (!loginBtn) return; // حماية لو الزر مش موجود
 
   loginBtn.addEventListener("click", async () => {
     const username = document.getElementById("username").value.trim();
@@ -1971,52 +1971,34 @@ setupSuggestions(document.getElementById("giftName"), document.getElementById("g
     const errorDiv = document.getElementById("loginError");
 
     if (!username || !password) {
-  errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
-  errorDiv.style.display = "block";
-  return;
-}
-
-errorDiv.textContent = "⏳ جاري التحقق...";
-errorDiv.style.display = "block";
-
-try {
-  const u = document.getElementById("username").value.trim();
-  const p = document.getElementById("password").value.trim();
-  const errorDiv = document.getElementById("loginError");
-
-  if (!u || !p) return alert("⚠️ من فضلك أدخل اسم المستخدم وكلمة المرور");
-
-  if (navigator.onLine) {
-    const res = await fetch(`${apiURL}?type=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
-    const data = await res.json();
-
-    console.log("🔍 login result:", data);
-
-    if (!data.success) {
-      errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+      errorDiv.textContent = "❗ أدخل اسم المستخدم وكلمة المرور";
       errorDiv.style.display = "block";
       return;
     }
 
-    userGroups = (data.groups || []).map(g => g.trim());
-    await loadNames(userGroups);
-    initAttendance();
+    errorDiv.textContent = "⏳ جاري التحقق...";
+    errorDiv.style.display = "block";
 
-    // ✅ تسجيل الدخول ناجح
-    errorDiv.style.display = "none";
-    const login = document.getElementById("loginSection");
-    const main = document.getElementById("mainContent");
-    login.style.opacity = "0";
-    login.style.transition = "opacity 0.5s";
-    setTimeout(() => {
-      login.style.display = "none";
-      main.style.display = "block";
-    }, 500);
-  } else {
-    // 📴 Offline Mode
-    const saved = JSON.parse(localStorage.getItem("userLogin") || "{}");
-    if (saved.username?.toLowerCase() === u.toLowerCase() && saved.password === p) {
-      userGroups = (saved.groups || []).map(g => g.trim());
+    try {
+      if (!navigator.onLine) {
+        errorDiv.textContent = "⚠️ لا يمكن تسجيل الدخول بدون اتصال بالإنترنت";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      const res = await fetch(
+        `${apiURL}?type=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+      );
+      const data = await res.json();
+
+      if (!data.success) {
+        errorDiv.textContent = "❌ اسم المستخدم أو كلمة المرور غير صحيحة";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      // ✅ تسجيل الدخول ناجح
+      userGroups = (data.groups || []).map(g => g.trim());
       await loadNames(userGroups);
       initAttendance();
 
@@ -2030,17 +2012,13 @@ try {
         main.style.display = "block";
       }, 500);
 
-      alert("📴 تم تسجيل الدخول بدون إنترنت");
-    } else {
-      errorDiv.textContent = "❌ لا يمكن تسجيل الدخول بدون إنترنت إلا إذا سجلت مسبقًا";
+    } catch (err) {
+      console.error(err);
+      errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
       errorDiv.style.display = "block";
     }
-  }
-} catch {
-  const errorDiv = document.getElementById("loginError");
-  errorDiv.textContent = "⚠️ حدث خطأ أثناء الاتصال بالخادم";
-  errorDiv.style.display = "block";
-}
+  });
+});
 
     document.getElementById("editChildBtn").addEventListener("click", async () => {
   const name = document.getElementById("editChildName").value.trim();
