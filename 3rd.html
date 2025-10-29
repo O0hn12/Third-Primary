@@ -716,8 +716,11 @@ th {
   <div class="card">
     <h3>🎁 معرض الهدايا</h3>
 
-    <label>اختر الشهر</label>
-    <select id="galleryMonthSelect"></select>
+    <label>اختر السنة</label>
+<select id="galleryYearSelect"></select>
+
+<label>اختر الشهر</label>
+<select id="galleryMonthSelect"></select>
 
     <label>اسم الطفل</label>
     <input type="text" id="galleryChildName" placeholder="اكتب الاسم...">
@@ -856,6 +859,7 @@ document.getElementById("giftMonth").onchange = () => {
   fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
 };
 
+ fillYearSelect(document.getElementById("galleryYearSelect"), 2020, new Date().getFullYear() + 1);
 
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
@@ -2089,7 +2093,7 @@ function checkMinusReady() {
     document.getElementById("gallerySubmitBtn").addEventListener("click", async () => {
   const galleryChildName = document.getElementById("galleryChildName").value.trim();
   const gallerySelectedMonth = document.getElementById("galleryMonthSelect").value;
-  const galleryCurrentYear = new Date().getFullYear();
+  const gallerySelectedYear = document.getElementById("galleryYearSelect").value;
 
   const galleryGiftList = Array.from(document.querySelectorAll(".giftQty"))
     .filter(el => Number(el.value) > 0)
@@ -2101,7 +2105,7 @@ function checkMinusReady() {
     body: JSON.stringify({
       type: "feriaGifts",
       name: galleryChildName,
-      year: galleryCurrentYear,
+      year: gallerySelectedYear,
       month: gallerySelectedMonth,
       gifts: galleryGiftList
     })
