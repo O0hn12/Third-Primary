@@ -970,9 +970,6 @@ async function initAttendance(){
   setupSuggestions(document.getElementById("giftReportName"), document.getElementById("giftReportSuggestions"));
   setupSuggestions(document.getElementById("editChildName"), document.getElementById("editChildSuggestions"));
   setupSuggestions(document.getElementById("galleryChildName"), document.getElementById("galleryChildSuggestions"));
-setupSuggestions("ae_att_name", "ae_att_suggestions", galleryNames);
-setupSuggestions("ae_interact_name", "ae_interact_suggestions", galleryNames);
-setupSuggestions("ae_abs_name", "ae_abs_suggestions", galleryNames);
   checkAttendanceReady();
 }
 
@@ -1016,6 +1013,9 @@ setupSuggestions(document.getElementById("childAttendanceName"),document.getElem
 setupSuggestions(document.getElementById("interactionReportName"),document.getElementById("interactionReportSuggestions"));
 setupSuggestions(document.getElementById("minusName"), document.getElementById("minusSuggestions"));
 setupSuggestions(document.getElementById("galleryName"), document.getElementById("gallerySuggestions"));
+setupSuggestions("ae_att_name", "ae_att_suggestions", galleryNames);
+setupSuggestions("ae_interact_name", "ae_interact_suggestions", galleryNames);
+setupSuggestions("ae_abs_name", "ae_abs_suggestions", galleryNames);
 
     const absenceSubmit = document.getElementById("absenceSubmit");
     const giftNameInput = document.getElementById("giftName");
