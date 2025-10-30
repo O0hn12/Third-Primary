@@ -2208,7 +2208,18 @@ function checkMinusReady() {
 }, "✅ تم تسجيل الهدايا بنجاح!");
 
   const result = await res.json();
-  if (result.success) alert("✅ تم تسجيل الهدايا بنجاح!");
+  if (result.success) {
+  alert("✅ تم تسجيل الهدايا بنجاح!");
+
+  // تفريغ الاسم
+  document.getElementById("galleryChildName").value = "";
+
+  // تصفير كميات الهدايا
+  document.querySelectorAll(".giftQty").forEach(input => input.value = 0);
+
+  // تصفير إجمالي النقاط
+  document.getElementById("giftTotal").textContent = "إجمالي نقاط الهدايا: 0";
+}
   else alert("❌ حدث خطأ أثناء التسجيل.");
 });
 
