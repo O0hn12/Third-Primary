@@ -2194,33 +2194,38 @@ function checkMinusReady() {
   const gifts = Array.from(document.querySelectorAll(".giftQty"))
     .filter(el => Number(el.value) > 0)
     .map(el => {
-  const card = el.closest(".gift-card");
-  const giftName = card.querySelector("h4")?.textContent?.trim();
-  return `${el.value} × ${giftName}`;
-});
+      const card = el.closest(".gift-card");
+      const giftName = card.querySelector("h4")?.textContent?.trim();
+      return `${el.value} × ${giftName}`;
+    });
 
-  const res = await sendOrStore("feriaGifts", {
-  type: "feriaGifts",
-  name,
-  year,
-  month,
-  gifts
-}, "✅ تم تسجيل الهدايا بنجاح!");
+  const res = await fetch(apiURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "feriaGifts",
+      name,
+      year,
+      month,
+      gifts
+    })
+  });
 
   const result = await res.json();
   if (result.success) {
-  alert("✅ تم تسجيل الهدايا بنجاح!");
+    alert("✅ تم تسجيل الهدايا بنجاح!");
 
-  // تفريغ الاسم
-  document.getElementById("galleryChildName").value = "";
+    // تفريغ الاسم
+    document.getElementById("galleryChildName").value = "";
 
-  // تصفير كميات الهدايا
-  document.querySelectorAll(".giftQty").forEach(input => input.value = 0);
+    // تصفير كميات الهدايا
+    document.querySelectorAll(".giftQty").forEach(input => input.value = 0);
 
-  // تصفير إجمالي النقاط
-  document.getElementById("giftTotal").textContent = "إجمالي نقاط الهدايا: 0";
-}
-  else alert("❌ حدث خطأ أثناء التسجيل.");
+    // تصفير إجمالي النقاط
+    document.getElementById("giftTotal").textContent = "إجمالي نقاط الهدايا: 0";
+  } else {
+    alert("❌ حدث خطأ أثناء التسجيل.");
+  }
 });
 
 document.getElementById("galleryChildName").addEventListener("input", async (e) => {
