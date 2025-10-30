@@ -1089,7 +1089,8 @@ checkAbsenceReady();
     absenceSubmit.addEventListener("click", async () => {
   const name = absenceChildNameInput.value.trim();
   const year = document.getElementById("absenceYear").value;
-  const month = document.getElementById("absenceMonth").value;
+  const rawMonth = document.getElementById("absenceMonth").value;
+const month = normalizeMonth(rawMonth);
   const date = document.getElementById("absenceDate").value;
   const staff = absenceStaffSelect.value;
   const type = document.getElementById("absenceType").value;
@@ -1157,7 +1158,8 @@ attendanceSubmit.addEventListener("click", async () => {
   if (!attendance || !notebook) return alert("⚠️ يجب اختيار الحضور والنوتة");
 
   const year = yearSelect.value;
-  const month = monthSelect.value;
+  const rawMonth = monthSelect.value;
+const month = normalizeMonth(rawMonth);
   const date = dateSelect.value;
 
   let interactionPoints = 0;
@@ -2363,6 +2365,16 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
 
   container.appendChild(table);
 });
+
+    function normalizeMonth(month) {
+  const map = {
+    "يناير": "1", "فبراير": "2", "مارس": "3", "أبريل": "4", "مايو": "5",
+    "يونيو": "6", "يوليو": "7", "أغسطس": "8", "سبتمبر": "9", "أكتوبر": "10",
+    "اكتوبر": "10", // تصحيح الخطأ
+    "نوفمبر": "11", "ديسمبر": "12"
+  };
+  return map[month] || month; // لو مكتوب رقم، يرجعه زي ما هو
+}
 
 </script>
 </body>
