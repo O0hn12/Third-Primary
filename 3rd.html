@@ -1148,47 +1148,54 @@ window.addEventListener("DOMContentLoaded", () => {
   checkAttendanceReady();
 });
 
-// --- إرسال الحضور ---
-attendanceSubmit.addEventListener("click", async ()=>{
-  const name=nameInput.value.trim();
-  const attendance=document.querySelector('input[name="attendance"]:checked').value;
-  const notebook=document.querySelector('input[name="notebook"]:checked').value;
+attendanceSubmit.addEventListener("click", async () => {
+  const name = nameInput.value.trim();
+  if (!name) return alert("⚠️ الاسم مطلوب");
+
+  const attendance = document.querySelector('input[name="attendance"]:checked')?.value;
+  const notebook = document.querySelector('input[name="notebook"]:checked')?.value;
+  if (!attendance || !notebook) return alert("⚠️ يجب اختيار الحضور والنوتة");
+
+  const year = yearSelect.value;
+  const month = monthSelect.value;
+  const date = dateSelect.value;
+
   let interactionPoints = 0;
-if (attendance === "حضر") interactionPoints += 2;
-if (notebook === "نعم") interactionPoints += 2;
-  const year=document.getElementById("yearSelect").value;
-  const month=document.getElementById("monthSelect").value;
-  const date=document.getElementById("dateSelect").value;
+  if (attendance === "حضر") interactionPoints += 2;
+  if (notebook === "نعم") interactionPoints += 2;
 
-  // --- تحقق مسبق للتأكد من عدم تكرار الحضور ---
-try {
-  const checkRes = await fetch(`${apiURL}?type=checkAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${encodeURIComponent(date)}`);
-  const checkData = await checkRes.json();
-  if(checkData.exists) {
-    alert(`❌ لا يمكن تسجيل الحضور مرة ثانية: ${name}`);
-    return; // توقف التنفيذ هنا
-  }
-} catch {
-  alert("⚠️ لم يتم الاتصال بالخادم للتحقق من الحضور.");
-  return;
-}
+  attendanceSubmit.textContent = "جارٍ التسجيل...";
+  attendanceSubmit.disabled = true;
 
-  attendanceSubmit.disabled=true;
-  const data = { type:"attendance", year, month, date, name, attendance, notebook, interactionPoints };
-  try{
-    const res=await fetch(apiURL, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(data) });
-    const result=await res.json();
-    if(result.success){
+  try {
+    const checkRes = await fetch(`${apiURL}?type=checkAttendance&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${encodeURIComponent(date)}`);
+    const checkData = await checkRes.json();
+    if (checkData.exists) return alert(`❌ لا يمكن تسجيل الحضور مرة ثانية: ${name}`);
+
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "attendance", year, month, date, name, attendance, notebook, interactionPoints })
+    });
+
+    const result = await res.json();
+    if (result.success) {
       alert("✅ تم تسجيل الحضور بنجاح!");
       nameInput.value = "";
-attendanceRadios.forEach(r => r.checked = false);
-notebookRadios.forEach(r => r.checked = false);
+      attendanceRadios.forEach(r => r.checked = false);
+      notebookRadios.forEach(r => r.checked = false);
       checkAttendanceReady();
-    }else alert("❌ حدث خطأ أثناء التسجيل.");
-  }catch{ alert("⚠️ لم يتم الاتصال بالخادم."); }
-  finally{ attendanceSubmit.disabled=false; }
+    } else {
+      alert("❌ حدث خطأ أثناء التسجيل.");
+    }
+  } catch {
+    alert("⚠️ لم يتم الاتصال بالخادم.");
+  } finally {
+    attendanceSubmit.textContent = "إرسال";
+    attendanceSubmit.disabled = false;
+  }
 });
-
+    
 // --- تفعيل زر التفاعل ---
 const interactionPoints=document.getElementById("interactionPoints");
 const interactionSubmit=document.getElementById("interactionSubmit");
