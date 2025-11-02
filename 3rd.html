@@ -1047,6 +1047,30 @@ setupSuggestions(
   document.getElementById("gallerySuggestions")
 );
 
+    function showSuccessMessage(msg) {
+  showMessage(msg, "#d4edda", "#155724");
+}
+function showErrorMessage(msg) {
+  showMessage(msg, "#f8d7da", "#721c24");
+}
+function showMessage(msg, bgColor, textColor) {
+  const box = document.createElement("div");
+  box.textContent = msg;
+  box.style.position = "fixed";
+  box.style.bottom = "20px";
+  box.style.left = "50%";
+  box.style.transform = "translateX(-50%)";
+  box.style.backgroundColor = bgColor;
+  box.style.color = textColor;
+  box.style.padding = "10px 20px";
+  box.style.borderRadius = "8px";
+  box.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+  box.style.zIndex = "9999";
+  box.style.fontWeight = "bold";
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 3000);
+}
+
     const absenceSubmit = document.getElementById("absenceSubmit");
     const giftNameInput = document.getElementById("giftName");
 const giftReceivedSelect = document.getElementById("giftReceived");
@@ -1110,14 +1134,14 @@ const month = normalizeMonth(rawMonth);
     });
     const result = await res.json();
     if(result.success){
-      alert("✅ تم تسجيل الافتقاد بنجاح!");
-      absenceChildNameInput.value = "";
-      absenceStaffSelect.value = "";
-      document.getElementById("absenceNotes").value = "";
-      checkAbsenceReady();
-    } else {
-      alert("❌ حدث خطأ أثناء التسجيل.");
-    }
+  showSuccessMessage("✅ تم تسجيل الافتقاد بنجاح!");
+  absenceChildNameInput.value = "";
+  absenceStaffSelect.value = "";
+  document.getElementById("absenceNotes").value = "";
+  checkAbsenceReady();
+} else {
+  showErrorMessage("❌ حدث خطأ أثناء التسجيل.");
+}
   } catch {
     alert("⚠️ لم يتم الاتصال بالخادم.");
   } finally {
