@@ -1740,6 +1740,33 @@ document.getElementById("ae_abs_year").onchange = () =>
 document.getElementById("ae_abs_month").onchange = () =>
   fillAllDays(document.getElementById("ae_abs_year"), document.getElementById("ae_abs_month"), document.getElementById("ae_abs_day"));
 
+    // تعبئة السنوات والشهور للتفاعل
+fillYearSelect(document.getElementById("interactionYearSelect"));
+fillMonthSelect(document.getElementById("interactionMonthSelect"));
+
+// تعبئة أيام الجمعة فقط
+fillFridays(
+  document.getElementById("interactionYearSelect"),
+  document.getElementById("interactionMonthSelect"),
+  document.getElementById("interactionDateSelect")
+);
+
+// تحديث الأيام عند تغيير السنة أو الشهر
+document.getElementById("interactionYearSelect").onchange = () => {
+  fillFridays(
+    document.getElementById("interactionYearSelect"),
+    document.getElementById("interactionMonthSelect"),
+    document.getElementById("interactionDateSelect")
+  );
+};
+document.getElementById("interactionMonthSelect").onchange = () => {
+  fillFridays(
+    document.getElementById("interactionYearSelect"),
+    document.getElementById("interactionMonthSelect"),
+    document.getElementById("interactionDateSelect")
+  );
+};
+
     function clearAddEditForm(){
   const fields = [
     "ae_name", "ae_group", "ae_school", "ae_schoolYear", "ae_confession", "ae_area",
