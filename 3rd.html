@@ -1546,7 +1546,7 @@ fillMonthSelect(document.getElementById("interactionMonthSelect"));
     if(date.getDay() === 5){ // يوم الجمعة
       const opt = document.createElement("option");
       opt.value = d;
-      opt.textContent = `${d}/${month+1}/${year}`;
+      opt.textContent = `${d}/${monthSel.value}/${year}`;
       dateSel.appendChild(opt);
     }
   }
