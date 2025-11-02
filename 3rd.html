@@ -2273,6 +2273,43 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
   return map[month] || month; // لو مكتوب رقم، يرجعه زي ما هو
 }
 
+    document.getElementById("ae_interact_btn").addEventListener("click", async () => {
+  const name = document.getElementById("ae_interact_name").value.trim();
+  const year = document.getElementById("ae_interact_year").value;
+  const month = document.getElementById("ae_interact_month").value;
+  const date = document.getElementById("ae_interact_day").value;
+  const points = document.getElementById("ae_interact_points").value;
+
+  if (!name || !year || !month || !date) {
+    return alert("⚠️ لازم تدخل الاسم والتاريخ كامل");
+  }
+
+  try {
+    // 1️⃣ check الأول
+    const checkRes = await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${date}`);
+    const checkData = await checkRes.json();
+
+    // 2️⃣ حدد نوع العملية
+    const actionType = checkData.exists ? "updateInteraction" : "interaction";
+
+    // 3️⃣ نفذ العملية
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: actionType, name, year, month, date, points })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      alert(checkData.exists ? "✅ تم تعديل التفاعل" : "✅ تم إضافة التفاعل");
+    } else {
+      alert("❌ حصل خطأ أثناء الحفظ");
+    }
+  } catch (err) {
+    alert("⚠️ لم يتم الاتصال بالخادم");
+  }
+});
+
 </script>
 </body>
 </html>
