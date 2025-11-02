@@ -1528,36 +1528,36 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     // تعبئة السنوات للشهور الخاصة بالتفاعل
-fillYearSelect(document.getElementById("interactionYearSelect"));
+//fillYearSelect(document.getElementById("interactionYearSelect"));
 
 // تعبئة الشهور للشهور الخاصة بالتفاعل
-fillMonthSelect(document.getElementById("interactionMonthSelect"));
+//fillMonthSelect(document.getElementById("interactionMonthSelect"));
     
-    function fillInteractionFridays() {
-  const yearSel = document.getElementById("interactionYearSelect");
-  const monthSel = document.getElementById("interactionMonthSelect");
-  const dateSel = document.getElementById("interactionDateSelect");
-  dateSel.innerHTML = "";
-  const year = +yearSel.value;
-  const month = +monthSel.value - 1;
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  for(let d=1; d<=daysInMonth; d++){
-    const date = new Date(year, month, d);
-    if(date.getDay() === 5){ // يوم الجمعة
-      const opt = document.createElement("option");
-      opt.value = d;
-      opt.textContent = `${d}/${monthSel.value}/${year}`;
-      dateSel.appendChild(opt);
-    }
-  }
-}
+    //function fillInteractionFridays() {
+  //const yearSel = document.getElementById("interactionYearSelect");
+  //const monthSel = document.getElementById("interactionMonthSelect");
+  //const dateSel = document.getElementById("interactionDateSelect");
+  //dateSel.innerHTML = "";
+  //const year = +yearSel.value;
+  //const month = +monthSel.value - 1;
+  //const daysInMonth = new Date(year, month+1, 0).getDate();
+  //for(let d=1; d<=daysInMonth; d++){
+    //const date = new Date(year, month, d);
+    //if(date.getDay() === 5){ // يوم الجمعة
+      //const opt = document.createElement("option");
+      //opt.value = d;
+      //opt.textContent = `${d}/${monthSel.value}/${year}`;
+      //dateSel.appendChild(opt);
+    //}
+  //}
+//}
 
 // استدعاء عند تغيير السنة أو الشهر
-document.getElementById("interactionYearSelect").onchange = fillInteractionFridays;
-document.getElementById("interactionMonthSelect").onchange = fillInteractionFridays;
+//document.getElementById("interactionYearSelect").onchange = fillInteractionFridays;
+//document.getElementById("interactionMonthSelect").onchange = fillInteractionFridays;
 
 // استدعاء عند تحميل الصفحة
-fillInteractionFridays();
+//fillInteractionFridays();
 
     document.getElementById("showAbsenceReport").addEventListener("click", async () => {
   const name = document.getElementById("absenceReportChildName").value.trim();
@@ -1731,141 +1731,46 @@ fillAbsenceDates();
   btn.disabled = false;
 });
 
-    fillYearSelect(document.getElementById("ae_att_year"));
+   // 🟢 تسجيل الحضور
+fillYearSelect(document.getElementById("ae_att_year"));
 fillMonthSelect(document.getElementById("ae_att_month"));
-fillFridays(document.getElementById("ae_att_year"), document.getElementById("ae_att_month"), document.getElementById("ae_att_day"));
-document.getElementById("ae_att_year").onchange = () => fillFridays(document.getElementById("ae_att_year"), document.getElementById("ae_att_month"), document.getElementById("ae_att_day"));
-document.getElementById("ae_att_month").onchange = () => fillFridays(document.getElementById("ae_att_year"), document.getElementById("ae_att_month"), document.getElementById("ae_att_day"));
+fillFridays(
+  document.getElementById("ae_att_year"),
+  document.getElementById("ae_att_month"),
+  document.getElementById("ae_att_day")
+);
+document.getElementById("ae_att_year").onchange = () => 
+  fillFridays(document.getElementById("ae_att_year"), document.getElementById("ae_att_month"), document.getElementById("ae_att_day"));
+document.getElementById("ae_att_month").onchange = () => 
+  fillFridays(document.getElementById("ae_att_year"), document.getElementById("ae_att_month"), document.getElementById("ae_att_day"));
 
+
+// 🟣 تسجيل التفاعل (الجمعة فقط)
 fillYearSelect(document.getElementById("ae_interact_year"));
 fillMonthSelect(document.getElementById("ae_interact_month"));
-fillFridays(document.getElementById("ae_interact_year"), document.getElementById("ae_interact_month"), document.getElementById("ae_interact_day"));
+fillFridays(
+  document.getElementById("ae_interact_year"),
+  document.getElementById("ae_interact_month"),
+  document.getElementById("ae_interact_day")
+);
+document.getElementById("ae_interact_year").onchange = () => 
+  fillFridays(document.getElementById("ae_interact_year"), document.getElementById("ae_interact_month"), document.getElementById("ae_interact_day"));
+document.getElementById("ae_interact_month").onchange = () => 
+  fillFridays(document.getElementById("ae_interact_year"), document.getElementById("ae_interact_month"), document.getElementById("ae_interact_day"));
 
+
+// 🟠 تسجيل الافتقاد (كل الأيام)
 fillYearSelect(document.getElementById("ae_abs_year"));
 fillMonthSelect(document.getElementById("ae_abs_month"));
-fillFridays(document.getElementById("ae_abs_year"), document.getElementById("ae_abs_month"), document.getElementById("ae_abs_day"));
-
-// زر حفظ الحضور
-document.getElementById("ae_att_btn").addEventListener("click", async () => {
-  const name = document.getElementById("ae_att_name").value.trim();
-  const year = document.getElementById("ae_att_year").value;
-  const month = document.getElementById("ae_att_month").value;
-  const date = document.getElementById("ae_att_day").value;
-  const attendance = document.querySelector('input[name="ae_att_status"]:checked')?.value || "";
-  const notebook = document.querySelector('input[name="ae_att_notebook"]:checked')?.value || "";
-
-  await fetch(apiURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "updateAttendance", name, year, month, date, attendance, notebook })
-  });
-});
-
-// زر حفظ التفاعل
-document.getElementById("ae_interact_btn").addEventListener("click", async () => {
-  const name = document.getElementById("ae_interact_name").value.trim();
-  const year = document.getElementById("ae_interact_year").value;
-  const month = document.getElementById("ae_interact_month").value;
-  const date = document.getElementById("ae_interact_day").value;
-  const points = document.getElementById("ae_interact_points").value;
-
-  await fetch(apiURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "updateInteraction", name, year, month, date, points })
-  });
-});
-
-// زر حفظ الافتقاد
-document.getElementById("ae_abs_btn").addEventListener("click", async () => {
-  const name = document.getElementById("ae_abs_name").value.trim();
-  const year = document.getElementById("ae_abs_year").value;
-  const month = document.getElementById("ae_abs_month").value;
-  const date = document.getElementById("ae_abs_day").value;
-  const absenceType = document.getElementById("ae_abs_type").value;
-  const staff = document.getElementById("ae_abs_staff").value;
-  const notes = document.getElementById("ae_abs_notes").value.trim();
-
-  await fetch(apiURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "updateAbsence", name, year, month, date, absenceType, staff, notes })
-  });
-});
-
-    // تعبئة السنوات
-fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
-
-// تعبئة الشهور
-fillMonthSelect(document.getElementById("ae_month"));
-
-// تعبئة أيام الجمعة تلقائيًا حسب السنة والشهر
-document.getElementById("ae_year").onchange = () => {
-  fillFridays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-document.getElementById("ae_month").onchange = () => {
-  fillFridays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-
-// تعبئة أولية
-fillFridays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-
-    fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
-fillMonthSelect(document.getElementById("ae_month"));
-
-document.getElementById("ae_year").onchange = () => {
-  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-document.getElementById("ae_month").onchange = () => {
-  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-
-// تعبئة أولية عند تحميل الصفحة
-fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-
-document.getElementById("ae_year").onchange = () => {
-  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-document.getElementById("ae_month").onchange = () => {
-  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-};
-fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-
-
-    document.getElementById("absenceYear").onchange = () => {
-  fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
-};
-document.getElementById("absenceMonth").onchange = () => {
-  fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
-};
-fillAllDays(document.getElementById("absenceYear"), document.getElementById("absenceMonth"), document.getElementById("absenceDate"));
-
-    // تعبئة السنوات والشهور لتعديل الافتقاد
-fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
-fillMonthSelect(document.getElementById("ae_month"));
-
-// تعبئة الأيام تلقائيًا عند تغيير السنة أو الشهر
-document.getElementById("ae_year").onchange = () => {
-  fillAllDays(
-    document.getElementById("ae_year"),
-    document.getElementById("ae_month"),
-    document.getElementById("ae_day")
-  );
-};
-document.getElementById("ae_month").onchange = () => {
-  fillAllDays(
-    document.getElementById("ae_year"),
-    document.getElementById("ae_month"),
-    document.getElementById("ae_day")
-  );
-};
-
-// تعبئة أولية عند تحميل الصفحة
 fillAllDays(
-  document.getElementById("ae_year"),
-  document.getElementById("ae_month"),
-  document.getElementById("ae_day")
+  document.getElementById("ae_abs_year"),
+  document.getElementById("ae_abs_month"),
+  document.getElementById("ae_abs_day")
 );
+document.getElementById("ae_abs_year").onchange = () =>
+  fillAllDays(document.getElementById("ae_abs_year"), document.getElementById("ae_abs_month"), document.getElementById("ae_abs_day"));
+document.getElementById("ae_abs_month").onchange = () =>
+  fillAllDays(document.getElementById("ae_abs_year"), document.getElementById("ae_abs_month"), document.getElementById("ae_abs_day"));
 
     function clearAddEditForm(){
   const fields = [
@@ -1911,18 +1816,18 @@ fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_mont
   }
 }
 
-window.onload = () => {
-  fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
-  fillMonthSelect(document.getElementById("ae_month"));
-  fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+//window.onload = () => {
+  //fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
+  //fillMonthSelect(document.getElementById("ae_month"));
+  //fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
 
-  document.getElementById("ae_year").onchange = () => {
-    fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-  };
-  document.getElementById("ae_month").onchange = () => {
-    fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-  };
-};
+  //document.getElementById("ae_year").onchange = () => {
+    //fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+  //};
+  //document.getElementById("ae_month").onchange = () => {
+    //fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
+  //};
+//};
 
     fillYearSelect(document.getElementById("giftYear"));
 fillMonthSelect(document.getElementById("giftMonth"));
