@@ -206,6 +206,49 @@ th {
 .gift-controls button:hover {
   background: #005fa3;
 }
+
+    .custom-toast {
+  position: fixed;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 250px;
+  max-width: 400px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.custom-toast.show {
+  bottom: 30px;
+  opacity: 1;
+}
+
+.custom-toast.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.custom-toast.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.custom-toast.warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.custom-toast .icon {
+  font-size: 18px;
+}
 </style>
 </head>
 <body>
@@ -1047,28 +1090,34 @@ setupSuggestions(
   document.getElementById("gallerySuggestions")
 );
 
-    function showSuccessMessage(msg) {
-  showMessage(msg, "#d4edda", "#155724");
+    function showMessage(msg, type = "success") {
+  const box = document.createElement("div");
+  box.className = `custom-toast ${type}`;
+  box.innerHTML = `
+    <span class="icon">${type === "success" ? "✅" : type === "error" ? "❌" : "⚠️"}</span>
+    <span class="text">${msg}</span>
+  `;
+
+  document.body.appendChild(box);
+
+  // حركة دخول
+  setTimeout(() => box.classList.add("show"), 50);
+
+  // إزالة بعد 3 ثواني
+  setTimeout(() => {
+    box.classList.remove("show");
+    setTimeout(() => box.remove(), 300);
+  }, 3000);
+}
+
+function showSuccessMessage(msg) {
+  showMessage(msg, "success");
 }
 function showErrorMessage(msg) {
-  showMessage(msg, "#f8d7da", "#721c24");
+  showMessage(msg, "error");
 }
-function showMessage(msg, bgColor, textColor) {
-  const box = document.createElement("div");
-  box.textContent = msg;
-  box.style.position = "fixed";
-  box.style.bottom = "20px";
-  box.style.left = "50%";
-  box.style.transform = "translateX(-50%)";
-  box.style.backgroundColor = bgColor;
-  box.style.color = textColor;
-  box.style.padding = "10px 20px";
-  box.style.borderRadius = "8px";
-  box.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
-  box.style.zIndex = "9999";
-  box.style.fontWeight = "bold";
-  document.body.appendChild(box);
-  setTimeout(() => box.remove(), 3000);
+function showWarningMessage(msg) {
+  showMessage(msg, "warning");
 }
 
     const absenceSubmit = document.getElementById("absenceSubmit");
@@ -1211,14 +1260,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const result = await res.json();
       if (result.success) {
-        alert("✅ تم تسجيل الحضور بنجاح!");
-        nameInput.value = "";
-        attendanceRadios.forEach(r => r.checked = false);
-        notebookRadios.forEach(r => r.checked = false);
-        checkAttendanceReady();
-      } else {
-        alert("❌ حدث خطأ أثناء التسجيل.");
-      }
+  showSuccessMessage("✅ تم تسجيل الحضور بنجاح!");
+  nameInput.value = "";
+  attendanceRadios.forEach(r => r.checked = false);
+  notebookRadios.forEach(r => r.checked = false);
+  checkAttendanceReady();
+} else {
+  showErrorMessage("❌ حدث خطأ أثناء التسجيل.");
+}
     } catch {
       alert("⚠️ لم يتم الاتصال بالخادم.");
     } finally {
@@ -1272,13 +1321,13 @@ interactionSubmit.addEventListener("click", async ()=> {
 
     const result = await res.json();
     if(result.success){
-      alert("✅ تم تسجيل التفاعل بنجاح!");
-      interactionName.value = "";
-      interactionPoints.value = "";
-      checkInteractionReady();
-    } else {
-      alert("❌ حدث خطأ أثناء التسجيل.");
-    }
+  showSuccessMessage("✅ تم تسجيل التفاعل بنجاح!");
+  interactionName.value = "";
+  interactionPoints.value = "";
+  checkInteractionReady();
+} else {
+  showErrorMessage("❌ حدث خطأ أثناء التسجيل.");
+}
   } catch {
     alert("⚠️ لم يتم الاتصال بالخادم.");
   } finally {
@@ -1348,12 +1397,12 @@ document.getElementById("birthdayShow").addEventListener("click", async () => {
     });
     const result = await res.json();
     if (result.success) {
-      alert("✅ تم تسجيل الهدية بنجاح!");
-giftNameInput.value = "";
-checkGiftReady(); // علشان الزر يتقفل تاني بعد التفريغ
-    } else {
-      alert("❌ حدث خطأ أثناء التسجيل.");
-    }
+  showSuccessMessage("✅ تم تسجيل الهدية بنجاح!");
+  giftNameInput.value = "";
+  checkGiftReady();
+} else {
+  showErrorMessage("❌ حدث خطأ أثناء التسجيل.");
+}
   } catch {
     alert("⚠️ لم يتم الاتصال بالخادم.");
   } finally {
@@ -2312,13 +2361,13 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
 
     const result = await res.json();
     if (result.success) {
-      alert(checkData.exists ? "✅ تم تعديل التفاعل" : "✅ تم إضافة التفاعل");
-      // 🧹 تفريغ الحقول بعد النجاح
+  showSuccessMessage(checkData.exists ? "✅ تم تعديل التفاعل" : "✅ تم إضافة التفاعل");
       nameInput.value = "";
       pointsInput.value = "";
-    } else {
-      alert("❌ حصل خطأ أثناء الحفظ");
-    }
+} else {
+  showErrorMessage("❌ حصل خطأ أثناء الحفظ");
+}
+
   } catch (err) {
     alert("⚠️ لم يتم الاتصال بالخادم");
   } finally {
