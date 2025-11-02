@@ -1527,38 +1527,6 @@ window.addEventListener("DOMContentLoaded", () => {
   fillFridaysForReport();
 });
 
-    // تعبئة السنوات للشهور الخاصة بالتفاعل
-//fillYearSelect(document.getElementById("interactionYearSelect"));
-
-// تعبئة الشهور للشهور الخاصة بالتفاعل
-//fillMonthSelect(document.getElementById("interactionMonthSelect"));
-    
-    //function fillInteractionFridays() {
-  //const yearSel = document.getElementById("interactionYearSelect");
-  //const monthSel = document.getElementById("interactionMonthSelect");
-  //const dateSel = document.getElementById("interactionDateSelect");
-  //dateSel.innerHTML = "";
-  //const year = +yearSel.value;
-  //const month = +monthSel.value - 1;
-  //const daysInMonth = new Date(year, month+1, 0).getDate();
-  //for(let d=1; d<=daysInMonth; d++){
-    //const date = new Date(year, month, d);
-    //if(date.getDay() === 5){ // يوم الجمعة
-      //const opt = document.createElement("option");
-      //opt.value = d;
-      //opt.textContent = `${d}/${monthSel.value}/${year}`;
-      //dateSel.appendChild(opt);
-    //}
-  //}
-//}
-
-// استدعاء عند تغيير السنة أو الشهر
-//document.getElementById("interactionYearSelect").onchange = fillInteractionFridays;
-//document.getElementById("interactionMonthSelect").onchange = fillInteractionFridays;
-
-// استدعاء عند تحميل الصفحة
-//fillInteractionFridays();
-
     document.getElementById("showAbsenceReport").addEventListener("click", async () => {
   const name = document.getElementById("absenceReportChildName").value.trim();
   const year = document.getElementById("absenceReportYear").value;
@@ -1815,19 +1783,6 @@ fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_mont
     dateSel.appendChild(opt);
   }
 }
-
-//window.onload = () => {
-  //fillYearSelect(document.getElementById("ae_year"), 2010, 2025);
-  //fillMonthSelect(document.getElementById("ae_month"));
-  //fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-
-  //document.getElementById("ae_year").onchange = () => {
-    //fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-  //};
-  //document.getElementById("ae_month").onchange = () => {
-    //fillAllDays(document.getElementById("ae_year"), document.getElementById("ae_month"), document.getElementById("ae_day"));
-  //};
-//};
 
     fillYearSelect(document.getElementById("giftYear"));
 fillMonthSelect(document.getElementById("giftMonth"));
@@ -2274,25 +2229,30 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
 }
 
     document.getElementById("ae_interact_btn").addEventListener("click", async () => {
-  const name = document.getElementById("ae_interact_name").value.trim();
+  const btn = document.getElementById("ae_interact_btn");
+  const nameInput = document.getElementById("ae_interact_name");
   const year = document.getElementById("ae_interact_year").value;
   const month = document.getElementById("ae_interact_month").value;
   const date = document.getElementById("ae_interact_day").value;
-  const points = document.getElementById("ae_interact_points").value;
+  const pointsInput = document.getElementById("ae_interact_points");
+
+  const name = nameInput.value.trim();
+  const points = pointsInput.value;
 
   if (!name || !year || !month || !date) {
     return alert("⚠️ لازم تدخل الاسم والتاريخ كامل");
   }
 
+  btn.textContent = "جارٍ الحفظ...";
+  btn.disabled = true;
+
   try {
-    // 1️⃣ check الأول
+    // check الأول
     const checkRes = await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${date}`);
     const checkData = await checkRes.json();
 
-    // 2️⃣ حدد نوع العملية
     const actionType = checkData.exists ? "updateInteraction" : "interaction";
 
-    // 3️⃣ نفذ العملية
     const res = await fetch(apiURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2302,11 +2262,17 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
     const result = await res.json();
     if (result.success) {
       alert(checkData.exists ? "✅ تم تعديل التفاعل" : "✅ تم إضافة التفاعل");
+      // 🧹 تفريغ الحقول بعد النجاح
+      nameInput.value = "";
+      pointsInput.value = "";
     } else {
       alert("❌ حصل خطأ أثناء الحفظ");
     }
   } catch (err) {
     alert("⚠️ لم يتم الاتصال بالخادم");
+  } finally {
+    btn.textContent = "حفظ التفاعل"; // يرجع النص الأصلي
+    btn.disabled = false;
   }
 });
 
