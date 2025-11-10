@@ -1446,7 +1446,7 @@ document.getElementById("showCount").addEventListener("click", async () => {
   const container = document.getElementById("attendanceReportResult");
   container.innerHTML = "جاري التحميل...";
   try {
-    const res = await fetch(`${apiURL}?type=attendanceCount&year=${year}&month=${month}&date=${date}`);
+    const res = await fetch(`${apiURL}?type=attendanceNamesOrCount&year=${year}&month=${month}&date=${date}&type=count`);
     const data = await res.json();
     container.innerHTML = `عدد الحضور: ${data.count || 0}`;
   } catch {
