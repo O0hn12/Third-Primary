@@ -1449,7 +1449,7 @@ document.getElementById("showCount").addEventListener("click", async () => {
   const groupsParam = userGroups.join(","); // ✅ أضف ده
 
   try {
-    const res = await fetch(`${apiURL}?type=attendanceNamesOrCount&year=${year}&month=${month}&date=${date}&type=count&groups=${groupsParam}`);
+    fetch(`${apiURL}?type=attendanceCount&year=${year}&month=${month}&date=${date}&groups=${groupsParam}`);
     const data = await res.json();
     container.innerHTML = `عدد الحضور: ${data.count || 0}`;
   } catch {
