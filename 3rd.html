@@ -1363,16 +1363,19 @@ function renderArrayOfObjectsAsTable(container, arr, headers){
 }
   // --- أعياد الميلاد ---
 document.getElementById("birthdayShow").addEventListener("click", async () => {
-  const monthIndex = document.getElementById("birthdayMonth").value; // ده رقم الشهر 1-12
+  const monthIndex = document.getElementById("birthdayMonth").value;
   const container = document.getElementById("birthdayResult");
   container.innerHTML = "جاري التحميل...";
+
+  const groupsParam = userGroups.join(","); // ✅ تحويل المجموعات لسلسلة نصية
+
   try {
-    const res = await fetch(`${apiURL}?type=birthdaysReport&month=${monthIndex}`);
+    const res = await fetch(`${apiURL}?type=birthdaysReport&month=${monthIndex}&groups=${groupsParam}`);
     const data = await res.json();
-    // هنا نعرض النتائج في جدول
-    if(data.records && data.records.length > 0){
+
+    if (data.records && data.records.length > 0) {
       container.innerHTML = `<table><tr><th>اسم الطفل</th><th>اليوم</th><th>الشهر</th><th>السنة</th></tr>` +
-        data.records.map(r=>`<tr><td>${r.name}</td><td>${r.day}</td><td>${r.month}</td><td>${r.year}</td></tr>`).join("") +
+        data.records.map(r => `<tr><td>${r.name}</td><td>${r.day}</td><td>${r.month}</td><td>${r.year}</td></tr>`).join("") +
         `</table>`;
     } else {
       container.innerHTML = "لا توجد بيانات لهذا الشهر";
@@ -1444,8 +1447,11 @@ document.getElementById("showNames").addEventListener("click", async () => {
   const date = document.getElementById("reportDate").value;
   const container = document.getElementById("attendanceReportResult");
   container.innerHTML = "جاري التحميل...";
+
+  const groupsParam = userGroups.join(","); // ✅ تحويل المجموعات لسلسلة نصية
+
   try {
-    const res = await fetch(`${apiURL}?type=attendanceNames&year=${year}&month=${month}&date=${date}`);
+    const res = await fetch(`${apiURL}?type=attendanceNames&year=${year}&month=${month}&date=${date}&groups=${groupsParam}`);
     const data = await res.json();
     renderListAsTable(container, data.names || [], "اسم الطفل");
   } catch {
