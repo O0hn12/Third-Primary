@@ -1840,6 +1840,23 @@ document.getElementById("interactionMonthSelect").onchange = () => {
   );
 };
 
+    const aeYear = document.getElementById("ae_year");
+const aeMonth = document.getElementById("ae_month");
+const aeDay = document.getElementById("ae_day");
+
+// تعبئة السنوات من 2010 لغاية السنة الحالية
+fillYearSelect(aeYear, 2010, currentYear);
+
+// تعبئة الشهور
+fillMonthSelect(aeMonth);
+
+// تعبئة الأيام حسب السنة والشهر
+fillAllDays(aeYear, aeMonth, aeDay);
+
+// تحديث الأيام عند تغيير السنة أو الشهر
+aeYear.onchange = () => fillAllDays(aeYear, aeMonth, aeDay);
+aeMonth.onchange = () => fillAllDays(aeYear, aeMonth, aeDay);
+
     function clearAddEditForm(){
   const fields = [
     "ae_name", "ae_group", "ae_school", "ae_schoolYear", "ae_confession", "ae_area",
