@@ -1452,9 +1452,10 @@ document.getElementById("showCount").addEventListener("click", async () => {
     fetch(`${apiURL}?type=attendanceCount&year=${year}&month=${month}&date=${date}&groups=${groupsParam}`);
     const data = await res.json();
     container.innerHTML = `عدد الحضور: ${data.count || 0}`;
-  } catch {
-    container.innerHTML = "❌ لم يتم الاتصال بالخادم.";
-  }
+  } catch (err) {
+  console.error("❌ Error:", err);
+  container.innerHTML = "❌ حصل خطأ: " + err.message;
+}
 });
 
 document.getElementById("showNames").addEventListener("click", async () => {
