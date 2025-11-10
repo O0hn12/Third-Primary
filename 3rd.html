@@ -1292,20 +1292,32 @@ interactionName.addEventListener("input", checkInteractionReady);
 interactionPoints.addEventListener("input", checkInteractionReady);
 checkInteractionReady();
 
-interactionSubmit.addEventListener("click", async ()=> {
+interactionSubmit.addEventListener("click", async () => {
   const name = interactionName.value.trim();
   const year = Number(document.getElementById("interactionYearSelect").value);
   const month = Number(document.getElementById("interactionMonthSelect").value);
   const date = Number(document.getElementById("interactionDateSelect").value);
   const points = Number(interactionPoints.value);
 
-  if(!name || !date || !month || !year || isNaN(points) || points < 0 || points > 5){
-    return alert("تأكد من إدخال الاسم والتاريخ والنقاط بشكل صحيح");
+  if (!name || !date || !month || !year || isNaN(points) || points < 0 || points > 5) {
+    showWarningMessage("⚠️ تأكد من إدخال الاسم والتاريخ والنقاط بشكل صحيح");
+    return;
   }
 
   interactionSubmit.disabled = true;
 
   try {
+    // ✅ تحقق أولاً هل فيه تفاعل سابق في نفس التاريخ
+    const checkRes = await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${date}`);
+    const checkData = await checkRes.json();
+
+    if (checkData.exists && checkData.source === "manual") {
+      showErrorMessage("❌ لا يمكن تسجيل تفاعل عادي مرتين في نفس اليوم لهذا الطفل.");
+      interactionSubmit.disabled = false;
+      return;
+    }
+
+    // ✅ لو مفيش تفاعل يدوي سابق، سجل التفاعل
     const res = await fetch(apiURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1320,16 +1332,16 @@ interactionSubmit.addEventListener("click", async ()=> {
     });
 
     const result = await res.json();
-    if(result.success){
-  showSuccessMessage("✅ تم تسجيل التفاعل بنجاح!");
-  interactionName.value = "";
-  interactionPoints.value = "";
-  checkInteractionReady();
-} else {
-  showErrorMessage("❌ حدث خطأ أثناء التسجيل.");
-}
+    if (result.success) {
+      showSuccessMessage("✅ تم تسجيل التفاعل بنجاح!");
+      interactionName.value = "";
+      interactionPoints.value = "";
+      checkInteractionReady();
+    } else {
+      showErrorMessage("❌ حدث خطأ أثناء التسجيل.");
+    }
   } catch {
-    alert("⚠️ لم يتم الاتصال بالخادم.");
+    showWarningMessage("⚠️ لم يتم الاتصال بالخادم.");
   } finally {
     interactionSubmit.disabled = false;
   }
