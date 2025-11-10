@@ -1445,8 +1445,11 @@ document.getElementById("showCount").addEventListener("click", async () => {
   const date = document.getElementById("reportDate").value;
   const container = document.getElementById("attendanceReportResult");
   container.innerHTML = "جاري التحميل...";
+
+  const groupsParam = userGroups.join(","); // ✅ أضف ده
+
   try {
-    const res = await fetch(`${apiURL}?type=attendanceNamesOrCount&year=${year}&month=${month}&date=${date}&type=count`);
+    const res = await fetch(`${apiURL}?type=attendanceNamesOrCount&year=${year}&month=${month}&date=${date}&type=count&groups=${groupsParam}`);
     const data = await res.json();
     container.innerHTML = `عدد الحضور: ${data.count || 0}`;
   } catch {
