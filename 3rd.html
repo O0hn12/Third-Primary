@@ -2484,6 +2484,62 @@ document.getElementById("ae_att_btn").addEventListener("click", async () => {
     btn.disabled = false;
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const today = new Date();
+
+  // 🟢 احسب أقرب جمعة جاية
+  const nextFriday = new Date(today);
+  const dayOfWeek = today.getDay(); // الأحد=0 ... السبت=6
+  const daysUntilFriday = (5 - dayOfWeek + 7) % 7 || 7;
+  nextFriday.setDate(today.getDate() + daysUntilFriday);
+
+  // 🟢 دالة تظبط الـ selects لو موجودة
+  function setDate(yearId, monthId, dayId, dateObj) {
+    const yearEl = document.getElementById(yearId);
+    const monthEl = document.getElementById(monthId);
+    const dayEl = document.getElementById(dayId);
+
+    if (yearEl) yearEl.value = dateObj.getFullYear();
+    if (monthEl) monthEl.value = dateObj.getMonth() + 1;
+    if (dayEl) dayEl.value = dateObj.getDate();
+  }
+
+  // 🟢 دالة تظبط الشهر فقط
+  function setMonth(monthId, dateObj) {
+    const monthEl = document.getElementById(monthId);
+    if (monthEl) monthEl.value = dateObj.getMonth() + 1;
+  }
+
+  // 🟢 دالة تظبط السنة فقط
+  function setYear(yearId, dateObj) {
+    const yearEl = document.getElementById(yearId);
+    if (yearEl) yearEl.value = dateObj.getFullYear();
+  }
+
+  // ✅ التواريخ اليومية
+  setDate("absenceYear", "absenceMonth", "absenceDate", today);
+  setDate("giftYear", "giftMonth", "giftDay", today);
+  setDate("ae_year", "ae_month", "ae_day", today);
+  setDate("ae_abs_year", "ae_abs_month", "ae_abs_day", today);
+
+  // ✅ التواريخ الأسبوعية (الجمعة الجاية)
+  setDate("reportYear", "reportMonth", "reportDate", nextFriday);
+  setDate("ae_att_year", "ae_att_month", "ae_att_day", nextFriday);
+  setDate("ae_interact_year", "ae_interact_month", "ae_interact_day", nextFriday);
+
+  // ✅ التواريخ الشهرية
+  setMonth("birthdayMonth", today);
+  setDate("childAttendanceYear", "childAttendanceMonth", null, today);
+  setDate("absenceReportYear", "absenceReportMonth", null, today);
+  setYear("giftReportYear", today);
+  setDate("staffReportYear", "staffReportMonth", null, today);
+  setDate("galleryYearSelect", "galleryMonthSelect", null, today);
+
+  // ✅ التواريخ السنوية
+  setYear("interactionReportYear", today);
+});
+
 </script>
 </body>
 </html>
