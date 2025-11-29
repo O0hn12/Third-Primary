@@ -2403,7 +2403,9 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
     const checkRes = await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${date}`);
     const checkData = await checkRes.json();
 
-    const actionType = checkData.exists ? "updateInteraction" : "interaction";
+    const actionType = (checkData.exists && checkData.source === "manual") 
+  ? "updateInteraction" 
+  : "interaction";
 
     const res = await fetch(apiURL, {
       method: "POST",
