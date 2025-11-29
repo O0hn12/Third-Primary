@@ -2430,6 +2430,60 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
   }
 });
 
+document.getElementById("ae_att_btn").addEventListener("click", async () => {
+  const btn = document.getElementById("ae_att_btn");
+  const name = document.getElementById("ae_att_name").value.trim();
+  const year = document.getElementById("ae_att_year").value;
+  const month = document.getElementById("ae_att_month").value;
+  const date = document.getElementById("ae_att_day").value;
+
+  // الحضور (راديو)
+  const attendance = document.querySelector('input[name="ae_att_status"]:checked')?.value || "";
+  // النوتة (راديو)
+  const notebook = document.querySelector('input[name="ae_att_notebook"]:checked')?.value || "";
+
+  if (!name || !year || !month || !date) {
+    return alert("⚠️ لازم تدخل الاسم والتاريخ كامل");
+  }
+
+  btn.textContent = "جارٍ الحفظ...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "updateAttendance",
+        name,
+        year,
+        month,
+        date,
+        attendance,
+        notebook
+      })
+    });
+
+    const result = await res.json();
+    console.log("📩 Response:", result);
+
+    if (result.success) {
+      alert("✅ تم تسجيل الحضور بنجاح");
+      // تفريغ الحقول بعد الحفظ
+      document.getElementById("ae_att_name").value = "";
+      document.querySelectorAll('input[name="ae_att_status"]').forEach(r => r.checked = false);
+      document.querySelectorAll('input[name="ae_att_notebook"]').forEach(r => r.checked = false);
+    } else {
+      alert("❌ حصل خطأ أثناء الحفظ");
+    }
+  } catch (err) {
+    console.error("❌ Error:", err);
+    alert("⚠️ لم يتم الاتصال بالخادم: " + err.message);
+  } finally {
+    btn.textContent = "💾 حفظ الحضور"; // يرجع النص الأصلي
+    btn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
