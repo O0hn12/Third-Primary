@@ -2517,7 +2517,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (yearEl) yearEl.value = dateObj.getFullYear();
   }
 
-  // ✅ التواريخ اليومية
+  // ✅ التواريخ اليومية (اليوم الحالي)
   setDate("absenceYear", "absenceMonth", "absenceDate", today);
   setDate("giftYear", "giftMonth", "giftDay", today);
   setDate("ae_year", "ae_month", "ae_day", today);
@@ -2527,6 +2527,15 @@ document.addEventListener("DOMContentLoaded", () => {
   setDate("reportYear", "reportMonth", "reportDate", nextFriday);
   setDate("ae_att_year", "ae_att_month", "ae_att_day", nextFriday);
   setDate("ae_interact_year", "ae_interact_month", "ae_interact_day", nextFriday);
+
+  // 🟢 تسجيل الحضور والنوتة (card الأساسي)
+  setDate("yearSelect", "monthSelect", "dateSelect", nextFriday);
+
+  // 🟢 تسجيل التفاعل (card الأساسي)
+  setDate("interactionYearSelect", "interactionMonthSelect", "interactionDateSelect", nextFriday);
+
+  // 🟢 تسجيل Minus
+  setDate("minusYear", "minusMonth", "minusDate", nextFriday);
 
   // ✅ التواريخ الشهرية
   setMonth("birthdayMonth", today);
