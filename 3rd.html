@@ -927,19 +927,9 @@ function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
   }
 }
 
-fillYearSelect(document.getElementById("yearSelect"));
-fillYearSelect(document.getElementById("reportYear"));
-fillYearSelect(document.getElementById("childAttendanceYear"));
-fillYearSelect(document.getElementById("interactionReportYear"));
-fillYearSelect(document.getElementById("absenceReportYear"));
-fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
-fillYearSelect(document.getElementById("staffReportYear"));
-fillMonthSelect(document.getElementById("staffReportMonth"));
-fillMonthSelect(document.getElementById("galleryMonthSelect"));
-
 function fillMonthSelect(sel){
   if(!sel) return;
-  sel.innerHTML = ""; // إزالة أي خيارات موجودة
+  sel.innerHTML = "";
   months.forEach((m,i)=>{
     const opt = document.createElement("option");
     opt.value = i+1;
@@ -948,45 +938,9 @@ function fillMonthSelect(sel){
   });
 }
 
-
-fillMonthSelect(document.getElementById("monthSelect"));
-fillMonthSelect(document.getElementById("reportMonth"));
-fillMonthSelect(document.getElementById("childAttendanceMonth"));
-fillMonthSelect(document.getElementById("interactionReportMonth"));
-fillMonthSelect(document.getElementById("birthdayMonth"));
-fillMonthSelect(document.getElementById("absenceReportMonth"));
-    
-    const minusYear = document.getElementById("minusYear");
-const minusMonth = document.getElementById("minusMonth");
-const minusDate = document.getElementById("minusDate");
-
-    fillYearSelect(minusYear);
-fillMonthSelect(minusMonth);
-    fillFridays(minusYear, minusMonth, minusDate);
-    minusYear.onchange = () => {
-  fillFridays(minusYear, minusMonth, minusDate);
-};
-
-minusMonth.onchange = () => {
-  fillFridays(minusYear, minusMonth, minusDate);
-};
-    
-    fillYearSelect(document.getElementById("giftYear"));
-fillMonthSelect(document.getElementById("giftMonth"));
-fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-
-document.getElementById("giftYear").onchange = () => {
-  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-};
-document.getElementById("giftMonth").onchange = () => {
-  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-};
-
- fillYearSelect(document.getElementById("galleryYearSelect"), 2020, new Date().getFullYear() + 1);
-
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
-  if (!yearSel || !monthSel || !dateSel) return; // حماية من null
+  if (!yearSel || !monthSel || !dateSel) return;
   dateSel.innerHTML = "";
   const year = +yearSel.value;
   const month = +monthSel.value - 1;
@@ -1002,11 +956,83 @@ function fillFridays(yearSel, monthSel, dateSel){
   }
 }
 
-fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
-document.getElementById("yearSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
-document.getElementById("monthSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+// --- تعبئة كل الأيام ---
+function fillAllDays(yearSel, monthSel, daySel){
+  if (!yearSel || !monthSel || !daySel) return;
+  daySel.innerHTML = "";
+  const year = +yearSel.value;
+  const month = +monthSel.value - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for(let d = 1; d <= daysInMonth; d++){
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = d;
+    daySel.appendChild(opt);
+  }
+}
 
+// --- دالة لضبط التاريخ بعد تعبئة الأيام ---
+function safeSetDate(yearId, monthId, dayId, dateObj, fillDaysFn) {
+  const yearEl = document.getElementById(yearId);
+  const monthEl = document.getElementById(monthId);
+  const dayEl = document.getElementById(dayId);
+  if (yearEl && monthEl && dayEl) {
+    yearEl.value = dateObj.getFullYear();
+    monthEl.value = dateObj.getMonth() + 1;
+    fillDaysFn(yearEl, monthEl, dayEl);
+    setTimeout(() => {
+      dayEl.value = dateObj.getDate();
+    }, 0);
+  }
+}
 
+// --- تعبئة كل العناصر ---
+fillYearSelect(document.getElementById("yearSelect"));
+fillMonthSelect(document.getElementById("monthSelect"));
+safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
+
+fillYearSelect(document.getElementById("reportYear"));
+fillMonthSelect(document.getElementById("reportMonth"));
+
+fillYearSelect(document.getElementById("childAttendanceYear"));
+fillMonthSelect(document.getElementById("childAttendanceMonth"));
+
+fillYearSelect(document.getElementById("interactionReportYear"));
+fillMonthSelect(document.getElementById("interactionReportMonth"));
+
+fillYearSelect(document.getElementById("absenceReportYear"));
+fillMonthSelect(document.getElementById("absenceReportMonth"));
+
+fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
+
+fillYearSelect(document.getElementById("staffReportYear"));
+fillMonthSelect(document.getElementById("staffReportMonth"));
+
+fillMonthSelect(document.getElementById("birthdayMonth"));
+fillMonthSelect(document.getElementById("galleryMonthSelect"));
+fillYearSelect(document.getElementById("galleryYearSelect"), 2020, new Date().getFullYear() + 1);
+
+// Minus
+const minusYear = document.getElementById("minusYear");
+const minusMonth = document.getElementById("minusMonth");
+const minusDate = document.getElementById("minusDate");
+fillYearSelect(minusYear);
+fillMonthSelect(minusMonth);
+safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
+minusYear.onchange = () => fillFridays(minusYear, minusMonth, minusDate);
+minusMonth.onchange = () => fillFridays(minusYear, minusMonth, minusDate);
+
+// 🎁 هدية عيد ميلاد
+fillYearSelect(document.getElementById("giftYear"));
+fillMonthSelect(document.getElementById("giftMonth"));
+safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
+document.getElementById("giftYear").onchange = () => {
+  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+};
+document.getElementById("giftMonth").onchange = () => {
+  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+};
+    
 // --- تحميل الأسماء ---
 let allNames = [];
 
