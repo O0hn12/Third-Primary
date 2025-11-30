@@ -1017,16 +1017,16 @@ function fillFridays(yearSel, monthSel, dateSel){
 }
 
 // --- تعبئة كل الأيام ---
-function fillAllDays(yearSel, monthSel, daySel){
+function fillAllDays(yearSel, monthSel, daySel) {
   if (!yearSel || !monthSel || !daySel) return;
   daySel.innerHTML = "";
   const year = +yearSel.value;
   const month = +monthSel.value - 1;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  for(let d = 1; d <= daysInMonth; d++){
+  for (let d = 1; d <= daysInMonth; d++) {
     const opt = document.createElement("option");
-    opt.value = d;
-    opt.textContent = d;
+    opt.value = String(d);      // ← القيمة كنص
+    opt.textContent = String(d);
     daySel.appendChild(opt);
   }
 }
