@@ -923,7 +923,18 @@ document.getElementById("attendanceTab").onclick = () => activateTab("attendance
 document.getElementById("reportsTab").onclick = () => activateTab("reportsTab", "reportsSection");
 document.getElementById("addEditTab").onclick = () => activateTab("addEditTab", "addEditSection");
 document.getElementById("galleryTab").onclick = () => activateTab("galleryTab", "gallerySection");
-    
+
+    // دالة ضبط القيم مباشرة
+function setDate(yearId, monthId, dayId, dateObj) {
+  const yearEl = document.getElementById(yearId);
+  const monthEl = document.getElementById(monthId);
+  const dayEl = dayId ? document.getElementById(dayId) : null;
+
+  if (yearEl) yearEl.value = dateObj.getFullYear();
+  if (monthEl) monthEl.value = dateObj.getMonth() + 1;
+  if (dayEl) dayEl.value = dateObj.getDate();
+}
+
 // --- تعبئة السنوات والشهور ---
 function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
   if (!sel) return;
