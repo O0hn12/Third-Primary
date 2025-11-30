@@ -894,6 +894,15 @@ th {
     let userGroups = [];
 const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 let galleryNames = [];
+// 🟢 التاريخ الحالي
+const today = new Date();
+
+// 🟢 احسب أقرب جمعة جاية
+const nextFriday = new Date(today);
+const dayOfWeek = today.getDay(); // الأحد=0 ... السبت=6
+const daysUntilFriday = (5 - dayOfWeek + 7) % 7 || 7;
+nextFriday.setDate(today.getDate() + daysUntilFriday);
+
 const currentYear = new Date().getFullYear();
 const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 fillYearSelect(document.getElementById("absenceYear"));
