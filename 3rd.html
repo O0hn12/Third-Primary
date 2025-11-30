@@ -1067,6 +1067,7 @@ minusYear.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 minusMonth.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 
 // عناصر هدية عيد الميلاد (تأكد من وجودها)
+// عناصر هدية عيد الميلاد
 const giftYearEl = document.getElementById("giftYear");
 const giftMonthEl = document.getElementById("giftMonth");
 const giftDayEl = document.getElementById("giftDay");
@@ -1076,27 +1077,22 @@ if (giftYearEl && giftMonthEl && giftDayEl) {
   fillYearSelect(giftYearEl);
   fillMonthSelect(giftMonthEl);
 
-  // تأكد أن fillAllDays يضع opt.value كنص (String)
+  // أول مرة: املأ الأيام ثم عيّن اليوم الحالي
   fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
+  giftDayEl.value = String(today.getDate());
 
-  // اضبط التاريخ الافتراضي بأمان (safeSetDate يجب أن يستدعي fillAllDays داخله)
-  safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
-
-  // عند تغيير السنة أو الشهر: أعد التعبئة ثم حاول استعادة/تعيين اليوم المناسب
+  // عند تغيير السنة أو الشهر: أعد التعبئة ثم عيّن اليوم الحالي أو أول يوم صالح
   giftYearEl.addEventListener("change", () => {
-    const prev = giftDayEl.value; // حاول الاحتفاظ بالاختيار السابق إن أمكن
     fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-    // استعادة الاختيار السابق إن كان صالحاً، وإلا ضع اليوم الأول
-    giftDayEl.value = (Array.from(giftDayEl.options).some(o => o.value === prev) ? prev : String(Math.min(Number(prev) || 1, giftDayEl.options.length)));
+    giftDayEl.value = String(today.getDate());
+    if (!giftDayEl.value) giftDayEl.value = "1";
   });
 
   giftMonthEl.addEventListener("change", () => {
-    const prev = giftDayEl.value;
     fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-    giftDayEl.value = (Array.from(giftDayEl.options).some(o => o.value === prev) ? prev : String(Math.min(Number(prev) || 1, giftDayEl.options.length)));
+    giftDayEl.value = String(today.getDate());
+    if (!giftDayEl.value) giftDayEl.value = "1";
   });
-} else {
-  console.warn("gift elements missing:", { giftYearEl, giftMonthEl, giftDayEl });
 }
     
 // --- تحميل الأسماء ---
