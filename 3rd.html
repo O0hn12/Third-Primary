@@ -1002,6 +1002,8 @@ safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
 
 fillYearSelect(document.getElementById("reportYear"));
 fillMonthSelect(document.getElementById("reportMonth"));
+// بعد تعبئة reportYear و reportMonth
+safeSetDate("reportYear", "reportMonth", "reportDate", nextFriday, fillFridaysForReport);
 
 fillYearSelect(document.getElementById("childAttendanceYear"));
 fillMonthSelect(document.getElementById("childAttendanceMonth"));
@@ -1864,6 +1866,8 @@ fillFridays(
   document.getElementById("ae_interact_month"),
   document.getElementById("ae_interact_day")
 );
+    setDate("ae_interact_year", "ae_interact_month", "ae_interact_day", nextFriday);
+    
 document.getElementById("ae_interact_year").onchange = () => 
   fillFridays(document.getElementById("ae_interact_year"), document.getElementById("ae_interact_month"), document.getElementById("ae_interact_day"));
 document.getElementById("ae_interact_month").onchange = () => 
@@ -1883,16 +1887,10 @@ document.getElementById("ae_abs_year").onchange = () =>
 document.getElementById("ae_abs_month").onchange = () =>
   fillAllDays(document.getElementById("ae_abs_year"), document.getElementById("ae_abs_month"), document.getElementById("ae_abs_day"));
 
-    // تعبئة السنوات والشهور للتفاعل
+// تعبئة التفاعل (جمعة) بضبط القيم أولًا
 fillYearSelect(document.getElementById("interactionYearSelect"));
 fillMonthSelect(document.getElementById("interactionMonthSelect"));
-
-// تعبئة أيام الجمعة فقط
-fillFridays(
-  document.getElementById("interactionYearSelect"),
-  document.getElementById("interactionMonthSelect"),
-  document.getElementById("interactionDateSelect")
-);
+safeSetDate("interactionYearSelect", "interactionMonthSelect", "interactionDateSelect", nextFriday, fillFridays);
 
 // تحديث الأيام عند تغيير السنة أو الشهر
 document.getElementById("interactionYearSelect").onchange = () => {
