@@ -1066,24 +1066,38 @@ safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
 minusYear.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 minusMonth.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 
-// 🎁 هدية عيد ميلاد
-// عناصر هدية عيد الميلاد
+// عناصر هدية عيد الميلاد (تأكد من وجودها)
 const giftYearEl = document.getElementById("giftYear");
 const giftMonthEl = document.getElementById("giftMonth");
 const giftDayEl = document.getElementById("giftDay");
 
-// املأ السنة والشهر ثم الأيام ثم عيّن اليوم الافتراضي
-fillYearSelect(giftYearEl);
-fillMonthSelect(giftMonthEl);
-safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
+if (giftYearEl && giftMonthEl && giftDayEl) {
+  // املأ السنة والشهر
+  fillYearSelect(giftYearEl);
+  fillMonthSelect(giftMonthEl);
 
-// حدث إعادة تعبئة الأيام عند تغيير السنة أو الشهر
-giftYearEl.onchange = () => {
+  // تأكد أن fillAllDays يضع opt.value كنص (String)
   fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-};
-giftMonthEl.onchange = () => {
-  fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-};
+
+  // اضبط التاريخ الافتراضي بأمان (safeSetDate يجب أن يستدعي fillAllDays داخله)
+  safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
+
+  // عند تغيير السنة أو الشهر: أعد التعبئة ثم حاول استعادة/تعيين اليوم المناسب
+  giftYearEl.addEventListener("change", () => {
+    const prev = giftDayEl.value; // حاول الاحتفاظ بالاختيار السابق إن أمكن
+    fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
+    // استعادة الاختيار السابق إن كان صالحاً، وإلا ضع اليوم الأول
+    giftDayEl.value = (Array.from(giftDayEl.options).some(o => o.value === prev) ? prev : String(Math.min(Number(prev) || 1, giftDayEl.options.length)));
+  });
+
+  giftMonthEl.addEventListener("change", () => {
+    const prev = giftDayEl.value;
+    fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
+    giftDayEl.value = (Array.from(giftDayEl.options).some(o => o.value === prev) ? prev : String(Math.min(Number(prev) || 1, giftDayEl.options.length)));
+  });
+} else {
+  console.warn("gift elements missing:", { giftYearEl, giftMonthEl, giftDayEl });
+}
     
 // --- تحميل الأسماء ---
 let allNames = [];
