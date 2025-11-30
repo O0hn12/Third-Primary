@@ -1011,28 +1011,10 @@ function fillAllDays(yearSel, monthSel, daySel){
   }
 }
 
-// --- دالة لضبط التاريخ بعد تعبئة الأيام ---
-function safeSetDate(yearId, monthId, dayId, dateObj, fillDaysFn) {
-  const yearEl = document.getElementById(yearId);
-  const monthEl = document.getElementById(monthId);
-  const dayEl = document.getElementById(dayId);
-  if (yearEl && monthEl && dayEl) {
-    yearEl.value = dateObj.getFullYear();
-    monthEl.value = dateObj.getMonth() + 1;
-    fillDaysFn(yearEl, monthEl, dayEl);
-    setTimeout(() => {
-      dayEl.value = dateObj.getDate();
-    }, 0);
-  }
-}
-
 // --- تعبئة كل العناصر ---
 fillYearSelect(document.getElementById("yearSelect"));
 fillMonthSelect(document.getElementById("monthSelect"));
-fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
-setDate("yearSelect", "monthSelect", "dateSelect", nextFriday);
-// أو لو تريد ضمان الملء قبل التعيين:
-// safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
+safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
 
 fillYearSelect(document.getElementById("reportYear"));
 fillMonthSelect(document.getElementById("reportMonth"));
@@ -1061,25 +1043,16 @@ fillMonthSelect(document.getElementById("galleryMonthSelect"));
 fillYearSelect(document.getElementById("galleryYearSelect"), 2020, new Date().getFullYear() + 1);
 
 // Minus
-const minusYear = document.getElementById("minusYear");
-const minusMonth = document.getElementById("minusMonth");
-const minusDate = document.getElementById("minusDate");
 fillYearSelect(minusYear);
 fillMonthSelect(minusMonth);
-fillFridays(minusYear, minusMonth, minusDate);
-setDate("minusYear", "minusMonth", "minusDate", nextFriday);
-// أو:
-// safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
+safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
 minusYear.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 minusMonth.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 
 // 🎁 هدية عيد ميلاد
 fillYearSelect(document.getElementById("giftYear"));
 fillMonthSelect(document.getElementById("giftMonth"));
-fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
-setDate("giftYear", "giftMonth", "giftDay", today);
-// أو:
-// safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
+safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
 
 document.getElementById("giftYear").onchange = () => {
   fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
