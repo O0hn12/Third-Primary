@@ -924,7 +924,7 @@ document.getElementById("reportsTab").onclick = () => activateTab("reportsTab", 
 document.getElementById("addEditTab").onclick = () => activateTab("addEditTab", "addEditSection");
 document.getElementById("galleryTab").onclick = () => activateTab("galleryTab", "gallerySection");
 
-    // دالة ضبط القيم مباشرة
+// دالة بسيطة لضبط السنة والشهر واليوم في selects
 function setDate(yearId, monthId, dayId, dateObj) {
   const yearEl = document.getElementById(yearId);
   const monthEl = document.getElementById(monthId);
@@ -933,6 +933,26 @@ function setDate(yearId, monthId, dayId, dateObj) {
   if (yearEl) yearEl.value = dateObj.getFullYear();
   if (monthEl) monthEl.value = dateObj.getMonth() + 1;
   if (dayEl) dayEl.value = dateObj.getDate();
+}
+
+// دالة آمنة تضمن تعبئة الأيام قبل تعيين اليوم
+function safeSetDate(yearId, monthId, dayId, dateObj, fillDaysFn) {
+  const yearEl = document.getElementById(yearId);
+  const monthEl = document.getElementById(monthId);
+  const dayEl = dayId ? document.getElementById(dayId) : null;
+  if (!yearEl || !monthEl) return;
+
+  yearEl.value = dateObj.getFullYear();
+  monthEl.value = dateObj.getMonth() + 1;
+
+  if (typeof fillDaysFn === "function" && dayEl) {
+    fillDaysFn(yearEl, monthEl, dayEl);
+    setTimeout(() => {
+      dayEl.value = dateObj.getDate();
+    }, 0);
+  } else if (dayEl) {
+    dayEl.value = dateObj.getDate();
+  }
 }
 
 // --- تعبئة السنوات والشهور ---
@@ -1009,10 +1029,16 @@ function safeSetDate(yearId, monthId, dayId, dateObj, fillDaysFn) {
 // --- تعبئة كل العناصر ---
 fillYearSelect(document.getElementById("yearSelect"));
 fillMonthSelect(document.getElementById("monthSelect"));
-safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
+fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+setDate("yearSelect", "monthSelect", "dateSelect", nextFriday);
+// أو لو تريد ضمان الملء قبل التعيين:
+// safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
 
 fillYearSelect(document.getElementById("reportYear"));
 fillMonthSelect(document.getElementById("reportMonth"));
+safeSetDate("reportYear", "reportMonth", "reportDate", nextFriday, fillFridays);
+// احتفظ بالـ onchange handlers كما هم
+
 // بعد تعبئة reportYear و reportMonth
 safeSetDate("reportYear", "reportMonth", "reportDate", nextFriday, fillFridaysForReport);
 
@@ -1040,14 +1066,21 @@ const minusMonth = document.getElementById("minusMonth");
 const minusDate = document.getElementById("minusDate");
 fillYearSelect(minusYear);
 fillMonthSelect(minusMonth);
-safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
-minusYear.onchange = () => fillFridays(minusYear, minusMonth, minusDate);
-minusMonth.onchange = () => fillFridays(minusYear, minusMonth, minusDate);
+fillFridays(minusYear, minusMonth, minusDate);
+setDate("minusYear", "minusMonth", "minusDate", nextFriday);
+// أو:
+// safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
+minusYear.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
+minusMonth.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 
 // 🎁 هدية عيد ميلاد
 fillYearSelect(document.getElementById("giftYear"));
 fillMonthSelect(document.getElementById("giftMonth"));
-safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
+fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+setDate("giftYear", "giftMonth", "giftDay", today);
+// أو:
+// safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
+
 document.getElementById("giftYear").onchange = () => {
   fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
 };
@@ -1902,6 +1935,13 @@ document.getElementById("ae_abs_month").onchange = () =>
 fillYearSelect(document.getElementById("interactionYearSelect"));
 fillMonthSelect(document.getElementById("interactionMonthSelect"));
 safeSetDate("interactionYearSelect", "interactionMonthSelect", "interactionDateSelect", nextFriday, fillFridays);
+
+document.getElementById("interactionYearSelect").onchange = () => {
+  fillFridays(document.getElementById("interactionYearSelect"), document.getElementById("interactionMonthSelect"), document.getElementById("interactionDateSelect"));
+};
+document.getElementById("interactionMonthSelect").onchange = () => {
+  fillFridays(document.getElementById("interactionYearSelect"), document.getElementById("interactionMonthSelect"), document.getElementById("interactionDateSelect"));
+};
 
 // تحديث الأيام عند تغيير السنة أو الشهر
 document.getElementById("interactionYearSelect").onchange = () => {
