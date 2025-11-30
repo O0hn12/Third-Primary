@@ -905,8 +905,28 @@ nextFriday.setDate(today.getDate() + daysUntilFriday);
 
 const currentYear = new Date().getFullYear();
 const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-fillYearSelect(document.getElementById("absenceYear"));
-fillMonthSelect(document.getElementById("absenceMonth"));
+// --- إعداد عناصر تسجيل الافتقاد ---
+const absenceYear = document.getElementById("absenceYear");
+const absenceMonth = document.getElementById("absenceMonth");
+const absenceDate = document.getElementById("absenceDate");
+
+// املأ السنة والشهر
+fillYearSelect(absenceYear);
+fillMonthSelect(absenceMonth);
+
+// املأ أيام الشهر (يومي) وتأكد أن قيمة option رقم كنص
+fillAllDays(absenceYear, absenceMonth, absenceDate);
+
+// اضبط التاريخ الافتراضي على اليوم الحالي
+safeSetDate("absenceYear", "absenceMonth", "absenceDate", today, fillAllDays);
+
+// حدث إعادة تعبئة الأيام لو المستخدم غيّر السنة أو الشهر
+absenceYear.onchange = () => {
+  fillAllDays(absenceYear, absenceMonth, absenceDate);
+};
+absenceMonth.onchange = () => {
+  fillAllDays(absenceYear, absenceMonth, absenceDate);
+};
 fillYearSelect(document.getElementById("absenceReportYear"));
 fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
 
@@ -1047,15 +1067,22 @@ minusYear.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 minusMonth.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
 
 // 🎁 هدية عيد ميلاد
-fillYearSelect(document.getElementById("giftYear"));
-fillMonthSelect(document.getElementById("giftMonth"));
+// عناصر هدية عيد الميلاد
+const giftYearEl = document.getElementById("giftYear");
+const giftMonthEl = document.getElementById("giftMonth");
+const giftDayEl = document.getElementById("giftDay");
+
+// املأ السنة والشهر ثم الأيام ثم عيّن اليوم الافتراضي
+fillYearSelect(giftYearEl);
+fillMonthSelect(giftMonthEl);
 safeSetDate("giftYear", "giftMonth", "giftDay", today, fillAllDays);
 
-document.getElementById("giftYear").onchange = () => {
-  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+// حدث إعادة تعبئة الأيام عند تغيير السنة أو الشهر
+giftYearEl.onchange = () => {
+  fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
 };
-document.getElementById("giftMonth").onchange = () => {
-  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+giftMonthEl.onchange = () => {
+  fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
 };
     
 // --- تحميل الأسماء ---
