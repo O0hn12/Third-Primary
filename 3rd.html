@@ -561,6 +561,12 @@ th {
   <div id="staffReportResult"></div>
 </div>
 
+    <div class="card">
+  <h3>📊 تقرير كل الدرجات</h3>
+  <button id="showAllScoresBtn" class="submit-btn">عرض كل الدرجات</button>
+  <div id="allScoresResult" style="margin-top:10px;"></div>
+</div>
+
 </section>
 
     <section id="addEditSection" class="section">
@@ -2638,6 +2644,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ التواريخ السنوية
   setYear("interactionReportYear", today);
+});
+    
+// تجميع كل الدرجات مع أسماء الأطفال والمجموعات
+async function buildAllScoresReport(groups) {
+  const names = await fetchAllNames(groups);
+
+  const results = await Promise.all(
+    names.map(async (name) => {
+      const [net, group] = await Promise.all([
+        fetchNetPoints(name),
+        fetchChildGroup(name)
+      ]);
+      return { name, group, net };
+    })
+  );
+
+  // خريطة: الدرجة → قائمة الأطفال
+  const scoreMap = new Map();
+  results.forEach(r => {
+    const score = Number(r.net) || 0;
+    if (!scoreMap.has(score)) scoreMap.set(score, []);
+    scoreMap.get(score).push(r);
+  });
+
+  // ترتيب الدرجات تصاعدي
+  const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
+
+  // بناء جدول HTML
+  const tableHtml = `
+    <table>
+      <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء والمجموعات</th></tr>
+      ${sorted.map(([score, kids]) => `
+        <tr>
+          <td>${score}</td>
+          <td>${kids.length}</td>
+          <td>
+            ${kids.map(k => `${k.name} (${k.group})`).join("<br>")}
+          </td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+
+  return { html: tableHtml, map: scoreMap, list: sorted };
+}
+
+// تفعيل زر "عرض كل الدرجات"
+document.getElementById("showAllScoresBtn").addEventListener("click", async () => {
+  const box = document.getElementById("allScoresResult");
+  box.innerHTML = "⏳ جاري التحميل...";
+
+  try {
+    const { html } = await buildAllScoresReport(userGroups);
+    box.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    box.innerHTML = "❌ حصل خطأ أثناء تحميل التقرير";
+  }
 });
 
 </script>
