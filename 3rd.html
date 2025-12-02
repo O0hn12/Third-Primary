@@ -2645,7 +2645,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ التواريخ السنوية
   setYear("interactionReportYear", today);
 });
-    
+
+    // Endpoint الأساسي
+const apiURL = "https://3rd.johnmamdouh777.workers.dev/";
+
+// تجيب كل الأسماء حسب مجموعات المستخدم
+async function fetchAllNames(groups) {
+  const res = await fetch(`${apiURL}?type=names&groups=${encodeURIComponent((groups || []).join(","))}`);
+  const data = await res.json();
+  return data.names || data || [];
+}
+
+// تجيب محصلة النقاط النهائية للطفل (earned - used - minus)
+async function fetchNetPoints(name) {
+  const res = await fetch(`${apiURL}?type=galleryPoints&name=${encodeURIComponent(name)}`);
+  const data = await res.json();
+  const earned = Number(data.earned || 0);
+  const used   = Number(data.used   || 0);
+  const minus  = Number(data.minus  || 0);
+  return earned - used - minus;
+}
+
+// تجيب مجموعة الطفل
+async function fetchChildGroup(name) {
+  const res = await fetch(`${apiURL}?type=childInfo&name=${encodeURIComponent(name)}`);
+  const data = await res.json();
+  const record = (data && data.records && data.records[0]) || {};
+  return record.group || record["اسم المجموعة"] || "-";
+}
+
 // تجميع كل الدرجات مع أسماء الأطفال والمجموعات
 async function buildAllScoresReport(groups) {
   const names = await fetchAllNames(groups);
