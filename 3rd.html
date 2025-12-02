@@ -2646,9 +2646,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setYear("interactionReportYear", today);
 });
 
-    // Endpoint الأساسي
-const apiURL = "https://3rd.johnmamdouh777.workers.dev/";
-
 // تجيب كل الأسماء حسب مجموعات المستخدم
 async function fetchAllNames(groups) {
   const res = await fetch(`${apiURL}?type=names&groups=${encodeURIComponent((groups || []).join(","))}`);
