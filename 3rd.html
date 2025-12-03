@@ -561,7 +561,7 @@ th {
   <div id="staffReportResult"></div>
 </div>
 
-    <div class="card">
+<div class="card">
   <h3>📊 تقرير كل الدرجات</h3>
   <button id="showAllScoresBtn" class="submit-btn">عرض كل الدرجات</button>
   <div id="allScoresResult" style="margin-top:10px;"></div>
@@ -900,39 +900,10 @@ th {
     let userGroups = [];
 const apiURL="https://3rd.johnmamdouh777.workers.dev/";
 let galleryNames = [];
-// 🟢 التاريخ الحالي
-const today = new Date();
-
-// 🟢 احسب أقرب جمعة جاية
-const nextFriday = new Date(today);
-const dayOfWeek = today.getDay(); // الأحد=0 ... السبت=6
-const daysUntilFriday = (5 - dayOfWeek + 7) % 7 || 7;
-nextFriday.setDate(today.getDate() + daysUntilFriday);
-
 const currentYear = new Date().getFullYear();
 const months=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-// --- إعداد عناصر تسجيل الافتقاد ---
-const absenceYear = document.getElementById("absenceYear");
-const absenceMonth = document.getElementById("absenceMonth");
-const absenceDate = document.getElementById("absenceDate");
-
-// املأ السنة والشهر
-fillYearSelect(absenceYear);
-fillMonthSelect(absenceMonth);
-
-// املأ أيام الشهر (يومي) وتأكد أن قيمة option رقم كنص
-fillAllDays(absenceYear, absenceMonth, absenceDate);
-
-// اضبط التاريخ الافتراضي على اليوم الحالي
-safeSetDate("absenceYear", "absenceMonth", "absenceDate", today, fillAllDays);
-
-// حدث إعادة تعبئة الأيام لو المستخدم غيّر السنة أو الشهر
-absenceYear.onchange = () => {
-  fillAllDays(absenceYear, absenceMonth, absenceDate);
-};
-absenceMonth.onchange = () => {
-  fillAllDays(absenceYear, absenceMonth, absenceDate);
-};
+fillYearSelect(document.getElementById("absenceYear"));
+fillMonthSelect(document.getElementById("absenceMonth"));
 fillYearSelect(document.getElementById("absenceReportYear"));
 fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
 
@@ -949,38 +920,7 @@ document.getElementById("attendanceTab").onclick = () => activateTab("attendance
 document.getElementById("reportsTab").onclick = () => activateTab("reportsTab", "reportsSection");
 document.getElementById("addEditTab").onclick = () => activateTab("addEditTab", "addEditSection");
 document.getElementById("galleryTab").onclick = () => activateTab("galleryTab", "gallerySection");
-
-// دالة بسيطة لضبط السنة والشهر واليوم في selects
-function setDate(yearId, monthId, dayId, dateObj) {
-  const yearEl = document.getElementById(yearId);
-  const monthEl = document.getElementById(monthId);
-  const dayEl = dayId ? document.getElementById(dayId) : null;
-
-  if (yearEl) yearEl.value = dateObj.getFullYear();
-  if (monthEl) monthEl.value = dateObj.getMonth() + 1;
-  if (dayEl) dayEl.value = dateObj.getDate();
-}
-
-// دالة آمنة تضمن تعبئة الأيام قبل تعيين اليوم
-function safeSetDate(yearId, monthId, dayId, dateObj, fillDaysFn) {
-  const yearEl = document.getElementById(yearId);
-  const monthEl = document.getElementById(monthId);
-  const dayEl = dayId ? document.getElementById(dayId) : null;
-  if (!yearEl || !monthEl) return;
-
-  yearEl.value = dateObj.getFullYear();
-  monthEl.value = dateObj.getMonth() + 1;
-
-  if (typeof fillDaysFn === "function" && dayEl) {
-    fillDaysFn(yearEl, monthEl, dayEl);
-    setTimeout(() => {
-      dayEl.value = dateObj.getDate();
-    }, 0);
-  } else if (dayEl) {
-    dayEl.value = dateObj.getDate();
-  }
-}
-
+    
 // --- تعبئة السنوات والشهور ---
 function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
   if (!sel) return;
@@ -993,9 +933,19 @@ function fillYearSelect(sel, start = currentYear - 1, end = currentYear + 1){
   }
 }
 
+fillYearSelect(document.getElementById("yearSelect"));
+fillYearSelect(document.getElementById("reportYear"));
+fillYearSelect(document.getElementById("childAttendanceYear"));
+fillYearSelect(document.getElementById("interactionReportYear"));
+fillYearSelect(document.getElementById("absenceReportYear"));
+fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
+fillYearSelect(document.getElementById("staffReportYear"));
+fillMonthSelect(document.getElementById("staffReportMonth"));
+fillMonthSelect(document.getElementById("galleryMonthSelect"));
+
 function fillMonthSelect(sel){
   if(!sel) return;
-  sel.innerHTML = "";
+  sel.innerHTML = ""; // إزالة أي خيارات موجودة
   months.forEach((m,i)=>{
     const opt = document.createElement("option");
     opt.value = i+1;
@@ -1004,9 +954,45 @@ function fillMonthSelect(sel){
   });
 }
 
+
+fillMonthSelect(document.getElementById("monthSelect"));
+fillMonthSelect(document.getElementById("reportMonth"));
+fillMonthSelect(document.getElementById("childAttendanceMonth"));
+fillMonthSelect(document.getElementById("interactionReportMonth"));
+fillMonthSelect(document.getElementById("birthdayMonth"));
+fillMonthSelect(document.getElementById("absenceReportMonth"));
+    
+    const minusYear = document.getElementById("minusYear");
+const minusMonth = document.getElementById("minusMonth");
+const minusDate = document.getElementById("minusDate");
+
+    fillYearSelect(minusYear);
+fillMonthSelect(minusMonth);
+    fillFridays(minusYear, minusMonth, minusDate);
+    minusYear.onchange = () => {
+  fillFridays(minusYear, minusMonth, minusDate);
+};
+
+minusMonth.onchange = () => {
+  fillFridays(minusYear, minusMonth, minusDate);
+};
+    
+    fillYearSelect(document.getElementById("giftYear"));
+fillMonthSelect(document.getElementById("giftMonth"));
+fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+
+document.getElementById("giftYear").onchange = () => {
+  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+};
+document.getElementById("giftMonth").onchange = () => {
+  fillAllDays(document.getElementById("giftYear"), document.getElementById("giftMonth"), document.getElementById("giftDay"));
+};
+
+ fillYearSelect(document.getElementById("galleryYearSelect"), 2020, new Date().getFullYear() + 1);
+
 // --- تعبئة أيام الجمعة ---
 function fillFridays(yearSel, monthSel, dateSel){
-  if (!yearSel || !monthSel || !dateSel) return;
+  if (!yearSel || !monthSel || !dateSel) return; // حماية من null
   dateSel.innerHTML = "";
   const year = +yearSel.value;
   const month = +monthSel.value - 1;
@@ -1022,85 +1008,11 @@ function fillFridays(yearSel, monthSel, dateSel){
   }
 }
 
-// --- تعبئة كل الأيام ---
-function fillAllDays(yearSel, monthSel, daySel) {
-  if (!yearSel || !monthSel || !daySel) return;
-  daySel.innerHTML = "";
-  const year = +yearSel.value;
-  const month = +monthSel.value - 1;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  for (let d = 1; d <= daysInMonth; d++) {
-    const opt = document.createElement("option");
-    opt.value = String(d);      // ← القيمة كنص
-    opt.textContent = String(d);
-    daySel.appendChild(opt);
-  }
-}
+fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+document.getElementById("yearSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
+document.getElementById("monthSelect").onchange = () => fillFridays(document.getElementById("yearSelect"), document.getElementById("monthSelect"), document.getElementById("dateSelect"));
 
-// --- تعبئة كل العناصر ---
-fillYearSelect(document.getElementById("yearSelect"));
-fillMonthSelect(document.getElementById("monthSelect"));
-safeSetDate("yearSelect", "monthSelect", "dateSelect", nextFriday, fillFridays);
 
-fillYearSelect(document.getElementById("reportYear"));
-fillMonthSelect(document.getElementById("reportMonth"));
-safeSetDate("reportYear", "reportMonth", "reportDate", nextFriday, fillFridays);
-// احتفظ بالـ onchange handlers كما هم
-    
-fillYearSelect(document.getElementById("childAttendanceYear"));
-fillMonthSelect(document.getElementById("childAttendanceMonth"));
-
-fillYearSelect(document.getElementById("interactionReportYear"));
-fillMonthSelect(document.getElementById("interactionReportMonth"));
-
-fillYearSelect(document.getElementById("absenceReportYear"));
-fillMonthSelect(document.getElementById("absenceReportMonth"));
-
-fillYearSelect(document.getElementById("giftReportYear"), 2020, currentYear + 1);
-
-fillYearSelect(document.getElementById("staffReportYear"));
-fillMonthSelect(document.getElementById("staffReportMonth"));
-
-fillMonthSelect(document.getElementById("birthdayMonth"));
-fillMonthSelect(document.getElementById("galleryMonthSelect"));
-fillYearSelect(document.getElementById("galleryYearSelect"), 2020, new Date().getFullYear() + 1);
-
-// Minus
-fillYearSelect(minusYear);
-fillMonthSelect(minusMonth);
-safeSetDate("minusYear", "minusMonth", "minusDate", nextFriday, fillFridays);
-minusYear.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
-minusMonth.onchange = () => { fillFridays(minusYear, minusMonth, minusDate); };
-
-// عناصر هدية عيد الميلاد (تأكد من وجودها)
-// عناصر هدية عيد الميلاد
-const giftYearEl = document.getElementById("giftYear");
-const giftMonthEl = document.getElementById("giftMonth");
-const giftDayEl = document.getElementById("giftDay");
-
-if (giftYearEl && giftMonthEl && giftDayEl) {
-  // املأ السنة والشهر
-  fillYearSelect(giftYearEl);
-  fillMonthSelect(giftMonthEl);
-
-  // أول مرة: املأ الأيام ثم عيّن اليوم الحالي
-  fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-  giftDayEl.value = String(today.getDate());
-
-  // عند تغيير السنة أو الشهر: أعد التعبئة ثم عيّن اليوم الحالي أو أول يوم صالح
-  giftYearEl.addEventListener("change", () => {
-    fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-    giftDayEl.value = String(today.getDate());
-    if (!giftDayEl.value) giftDayEl.value = "1";
-  });
-
-  giftMonthEl.addEventListener("change", () => {
-    fillAllDays(giftYearEl, giftMonthEl, giftDayEl);
-    giftDayEl.value = String(today.getDate());
-    if (!giftDayEl.value) giftDayEl.value = "1";
-  });
-}
-    
 // --- تحميل الأسماء ---
 let allNames = [];
 
@@ -1923,8 +1835,6 @@ fillFridays(
   document.getElementById("ae_interact_month"),
   document.getElementById("ae_interact_day")
 );
-    setDate("ae_interact_year", "ae_interact_month", "ae_interact_day", nextFriday);
-    
 document.getElementById("ae_interact_year").onchange = () => 
   fillFridays(document.getElementById("ae_interact_year"), document.getElementById("ae_interact_month"), document.getElementById("ae_interact_day"));
 document.getElementById("ae_interact_month").onchange = () => 
@@ -1944,17 +1854,16 @@ document.getElementById("ae_abs_year").onchange = () =>
 document.getElementById("ae_abs_month").onchange = () =>
   fillAllDays(document.getElementById("ae_abs_year"), document.getElementById("ae_abs_month"), document.getElementById("ae_abs_day"));
 
-// تعبئة التفاعل (جمعة) بضبط القيم أولًا
+    // تعبئة السنوات والشهور للتفاعل
 fillYearSelect(document.getElementById("interactionYearSelect"));
 fillMonthSelect(document.getElementById("interactionMonthSelect"));
-safeSetDate("interactionYearSelect", "interactionMonthSelect", "interactionDateSelect", nextFriday, fillFridays);
 
-document.getElementById("interactionYearSelect").onchange = () => {
-  fillFridays(document.getElementById("interactionYearSelect"), document.getElementById("interactionMonthSelect"), document.getElementById("interactionDateSelect"));
-};
-document.getElementById("interactionMonthSelect").onchange = () => {
-  fillFridays(document.getElementById("interactionYearSelect"), document.getElementById("interactionMonthSelect"), document.getElementById("interactionDateSelect"));
-};
+// تعبئة أيام الجمعة فقط
+fillFridays(
+  document.getElementById("interactionYearSelect"),
+  document.getElementById("interactionMonthSelect"),
+  document.getElementById("interactionDateSelect")
+);
 
 // تحديث الأيام عند تغيير السنة أو الشهر
 document.getElementById("interactionYearSelect").onchange = () => {
@@ -2500,9 +2409,7 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
     const checkRes = await fetch(`${apiURL}?type=checkInteraction&name=${encodeURIComponent(name)}&year=${year}&month=${month}&date=${date}`);
     const checkData = await checkRes.json();
 
-    const actionType = (checkData.exists && checkData.source === "manual") 
-  ? "updateInteraction" 
-  : "interaction";
+    const actionType = checkData.exists ? "updateInteraction" : "interaction";
 
     const res = await fetch(apiURL, {
       method: "POST",
@@ -2525,125 +2432,6 @@ document.getElementById("galleryGiftSearchBtn").addEventListener("click", async 
     btn.textContent = "حفظ التفاعل"; // يرجع النص الأصلي
     btn.disabled = false;
   }
-});
-
-document.getElementById("ae_att_btn").addEventListener("click", async () => {
-  const btn = document.getElementById("ae_att_btn");
-  const name = document.getElementById("ae_att_name").value.trim();
-  const year = document.getElementById("ae_att_year").value;
-  const month = document.getElementById("ae_att_month").value;
-  const date = document.getElementById("ae_att_day").value;
-
-  // الحضور (راديو)
-  const attendance = document.querySelector('input[name="ae_att_status"]:checked')?.value || "";
-  // النوتة (راديو)
-  const notebook = document.querySelector('input[name="ae_att_notebook"]:checked')?.value || "";
-
-  if (!name || !year || !month || !date) {
-    return alert("⚠️ لازم تدخل الاسم والتاريخ كامل");
-  }
-
-  btn.textContent = "جارٍ الحفظ...";
-  btn.disabled = true;
-
-  try {
-    const res = await fetch(apiURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "updateAttendance",
-        name,
-        year,
-        month,
-        date,
-        attendance,
-        notebook
-      })
-    });
-
-    const result = await res.json();
-    console.log("📩 Response:", result);
-
-    if (result.success) {
-      alert("✅ تم تسجيل الحضور بنجاح");
-      // تفريغ الحقول بعد الحفظ
-      document.getElementById("ae_att_name").value = "";
-      document.querySelectorAll('input[name="ae_att_status"]').forEach(r => r.checked = false);
-      document.querySelectorAll('input[name="ae_att_notebook"]').forEach(r => r.checked = false);
-    } else {
-      alert("❌ حصل خطأ أثناء الحفظ");
-    }
-  } catch (err) {
-    console.error("❌ Error:", err);
-    alert("⚠️ لم يتم الاتصال بالخادم: " + err.message);
-  } finally {
-    btn.textContent = "💾 حفظ الحضور"; // يرجع النص الأصلي
-    btn.disabled = false;
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date();
-
-  // 🟢 احسب أقرب جمعة جاية
-  const nextFriday = new Date(today);
-  const dayOfWeek = today.getDay(); // الأحد=0 ... السبت=6
-  const daysUntilFriday = (5 - dayOfWeek + 7) % 7 || 7;
-  nextFriday.setDate(today.getDate() + daysUntilFriday);
-
-  // 🟢 دالة تظبط الـ selects لو موجودة
-  function setDate(yearId, monthId, dayId, dateObj) {
-    const yearEl = document.getElementById(yearId);
-    const monthEl = document.getElementById(monthId);
-    const dayEl = document.getElementById(dayId);
-
-    if (yearEl) yearEl.value = dateObj.getFullYear();
-    if (monthEl) monthEl.value = dateObj.getMonth() + 1;
-    if (dayEl) dayEl.value = dateObj.getDate();
-  }
-
-  // 🟢 دالة تظبط الشهر فقط
-  function setMonth(monthId, dateObj) {
-    const monthEl = document.getElementById(monthId);
-    if (monthEl) monthEl.value = dateObj.getMonth() + 1;
-  }
-
-  // 🟢 دالة تظبط السنة فقط
-  function setYear(yearId, dateObj) {
-    const yearEl = document.getElementById(yearId);
-    if (yearEl) yearEl.value = dateObj.getFullYear();
-  }
-
-  // ✅ التواريخ اليومية (اليوم الحالي)
-  setDate("absenceYear", "absenceMonth", "absenceDate", today);
-  setDate("giftYear", "giftMonth", "giftDay", today);
-  setDate("ae_year", "ae_month", "ae_day", today);
-  setDate("ae_abs_year", "ae_abs_month", "ae_abs_day", today);
-
-  // ✅ التواريخ الأسبوعية (الجمعة الجاية)
-  setDate("reportYear", "reportMonth", "reportDate", nextFriday);
-  setDate("ae_att_year", "ae_att_month", "ae_att_day", nextFriday);
-  setDate("ae_interact_year", "ae_interact_month", "ae_interact_day", nextFriday);
-
-  // 🟢 تسجيل الحضور والنوتة (card الأساسي)
-  setDate("yearSelect", "monthSelect", "dateSelect", nextFriday);
-
-  // 🟢 تسجيل التفاعل (card الأساسي)
-  setDate("interactionYearSelect", "interactionMonthSelect", "interactionDateSelect", nextFriday);
-
-  // 🟢 تسجيل Minus
-  setDate("minusYear", "minusMonth", "minusDate", nextFriday);
-
-  // ✅ التواريخ الشهرية
-  setMonth("birthdayMonth", today);
-  setDate("childAttendanceYear", "childAttendanceMonth", null, today);
-  setDate("absenceReportYear", "absenceReportMonth", null, today);
-  setYear("giftReportYear", today);
-  setDate("staffReportYear", "staffReportMonth", null, today);
-  setDate("galleryYearSelect", "galleryMonthSelect", null, today);
-
-  // ✅ التواريخ السنوية
-  setYear("interactionReportYear", today);
 });
 
 // تجيب كل الأسماء حسب مجموعات المستخدم
@@ -2728,7 +2516,6 @@ document.getElementById("showAllScoresBtn").addEventListener("click", async () =
     box.innerHTML = "❌ حصل خطأ أثناء تحميل التقرير";
   }
 });
-
 </script>
 </body>
 </html>
