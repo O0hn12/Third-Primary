@@ -2523,7 +2523,7 @@ document.getElementById("showAllScoresBtn").addEventListener("click", async () =
   box.innerHTML = "⏳ جاري التحميل...";
 
   try {
-    const { html } = await buildAllScoresReport(userGroups);
+    const { html } = await buildAllScoresReportFromSheet(userGroups);
     box.innerHTML = html;
   } catch (err) {
     console.error(err);
