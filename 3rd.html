@@ -2460,48 +2460,54 @@ async function fetchChildGroup(name) {
 }
 
 // تجميع كل الدرجات مع أسماء الأطفال والمجموعات
-async function buildAllScoresReport(groups) {
-  let names = await fetchAllNames(groups);
+async function buildAllScoresReportFromSheet() {
+  // 🟢 هات بيانات الشيت Attendance بالكامل
+  const res = await fetch(`${apiURL}?type=attendanceAll`);
+  const data = await res.json();
+  const rows = data.records || [];
 
-  // 🟢 تأكد إن الأسماء فريدة
-  names = [...new Set(names)];
+  // 🟢 خريطة: الاسم → مجموع النقاط
+  const pointsMap = new Map();
 
-  const results = await Promise.all(
-    names.map(async (name) => {
-      const [net, group] = await Promise.all([
-        fetchNetPoints(name),
-        fetchChildGroup(name)
-      ]);
-      return { name, group, net: Number(net) || 0 };
-    })
-  );
+  rows.forEach(r => {
+    const name = String(r[0] || "").trim();
+    const interaction = Number(r[6]) || 0; // عمود التفاعل
+    const minus = Number(r[12]) || 0;      // عمود minus
+
+    if (!name) return;
+
+    // اجمع التفاعل واطرح منه الماينص
+    const current = pointsMap.get(name) || 0;
+    const newTotal = current + interaction - minus;
+    pointsMap.set(name, newTotal);
+  });
+
+  // 🟢 حول الخريطة لنتائج منظمة
+  const results = Array.from(pointsMap.entries())
+    .map(([name, net]) => ({ name, net }))
+    .filter(r => r.net !== 0); // استبعد اللي درجتهم صفر
 
   // 🟢 اجمع الأطفال حسب الدرجة
   const scoreMap = new Map();
   results.forEach(r => {
-    const score = r.net;
-    if (!scoreMap.has(score)) scoreMap.set(score, []);
-    scoreMap.get(score).push(r);
+    if (!scoreMap.has(r.net)) scoreMap.set(r.net, []);
+    scoreMap.get(r.net).push(r);
   });
 
-  // 🟢 رتب الدرجات تصاعدي واستبعد الدرجة صفر
-const sorted = Array.from(scoreMap.entries())
-  .filter(([score]) => score !== 0)   // ← هنا بنشيل الصفوف اللي درجتها صفر
-  .sort((a,b)=>a[0]-b[0]);
+  // 🟢 رتب الدرجات تصاعدي
+  const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
 
   // 🟢 بناء جدول HTML
   const tableHtml = `
     <table>
-      <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء والمجموعات</th></tr>
+      <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء</th></tr>
       ${sorted.map(([score, kids]) => {
         kids.sort((a,b)=>a.name.localeCompare(b.name,"ar"));
         return `
           <tr>
             <td>${score}</td>
             <td>${kids.length}</td>
-            <td>
-              ${kids.map(k => `${k.name} (${k.group})`).join("<br>")}
-            </td>
+            <td>${kids.map(k => k.name).join("<br>")}</td>
           </tr>
         `;
       }).join("")}
