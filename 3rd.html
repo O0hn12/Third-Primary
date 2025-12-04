@@ -2484,8 +2484,10 @@ async function buildAllScoresReport(groups) {
     scoreMap.get(score).push(r);
   });
 
-  // 🟢 رتب الدرجات تصاعدي
-  const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
+  // 🟢 رتب الدرجات تصاعدي واستبعد الدرجة صفر
+const sorted = Array.from(scoreMap.entries())
+  .filter(([score]) => score !== 0)   // ← هنا بنشيل الصفوف اللي درجتها صفر
+  .sort((a,b)=>a[0]-b[0]);
 
   // 🟢 بناء جدول HTML
   const tableHtml = `
