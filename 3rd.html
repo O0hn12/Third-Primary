@@ -2460,7 +2460,6 @@ async function fetchChildGroup(name) {
 }
 
 // تجميع كل الدرجات مع أسماء الأطفال والمجموعات
-// تجميع كل الدرجات مع أسماء الأطفال والمجموعات
 async function buildAllScoresReport(groups) {
   let names = await fetchAllNames(groups);
 
@@ -2470,34 +2469,44 @@ async function buildAllScoresReport(groups) {
   const results = await Promise.all(
     names.map(async (name) => {
       const [net, group] = await Promise.all([
-        fetchNetPoints(name),   // بيجمع earned - used - minus من كل الصفوف
-        fetchChildGroup(name)   // بيجيب المجموعة من Admin
+        fetchNetPoints(name),
+        fetchChildGroup(name)
       ]);
       return { name, group, net: Number(net) || 0 };
     })
   );
 
-  // 🟢 ثبّت الترتيب النهائي: الأول حسب الدرجة، بعدين حسب الاسم
-  results.sort((a,b)=>{
-    if (a.net !== b.net) return a.net - b.net;
-    return a.name.localeCompare(b.name,"ar");
+  // 🟢 اجمع الأطفال حسب الدرجة
+  const scoreMap = new Map();
+  results.forEach(r => {
+    const score = r.net;
+    if (!scoreMap.has(score)) scoreMap.set(score, []);
+    scoreMap.get(score).push(r);
   });
 
-  // 🟢 بناء جدول HTML مباشر من النتائج
+  // 🟢 رتب الدرجات تصاعدي
+  const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
+
+  // 🟢 بناء جدول HTML
   const tableHtml = `
     <table>
-      <tr><th>الدرجة</th><th>الاسم</th><th>المجموعة</th></tr>
-      ${results.map(r => `
-        <tr>
-          <td>${r.net}</td>
-          <td>${r.name}</td>
-          <td>${r.group}</td>
-        </tr>
-      `).join("")}
+      <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء والمجموعات</th></tr>
+      ${sorted.map(([score, kids]) => {
+        kids.sort((a,b)=>a.name.localeCompare(b.name,"ar"));
+        return `
+          <tr>
+            <td>${score}</td>
+            <td>${kids.length}</td>
+            <td>
+              ${kids.map(k => `${k.name} (${k.group})`).join("<br>")}
+            </td>
+          </tr>
+        `;
+      }).join("")}
     </table>
   `;
 
-  return { html: tableHtml, list: results };
+  return { html: tableHtml, list: sorted };
 }
 
 // تفعيل زر "عرض كل الدرجات"
