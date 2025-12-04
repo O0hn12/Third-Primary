@@ -2461,7 +2461,10 @@ async function fetchChildGroup(name) {
 
 // تجميع كل الدرجات مع أسماء الأطفال والمجموعات
 async function buildAllScoresReport(groups) {
-  const names = await fetchAllNames(groups);
+  let names = await fetchAllNames(groups);
+
+  // 🟢 تأكد إن الأسماء فريدة
+  names = [...new Set(names)];
 
   const results = await Promise.all(
     names.map(async (name) => {
@@ -2469,38 +2472,31 @@ async function buildAllScoresReport(groups) {
         fetchNetPoints(name),
         fetchChildGroup(name)
       ]);
-      return { name, group, net };
+      return { name, group, net: Number(net) || 0 };
     })
   );
 
-  // خريطة: الدرجة → قائمة الأطفال
-  const scoreMap = new Map();
-  results.forEach(r => {
-    const score = Number(r.net) || 0;
-    if (!scoreMap.has(score)) scoreMap.set(score, []);
-    scoreMap.get(score).push(r);
+  // 🟢 ثبّت الترتيب النهائي: الأول حسب الدرجة، بعدين حسب الاسم
+  results.sort((a,b)=>{
+    if (a.net !== b.net) return a.net - b.net;
+    return a.name.localeCompare(b.name,"ar");
   });
 
-  // ترتيب الدرجات تصاعدي
-  const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
-
-  // بناء جدول HTML
+  // 🟢 بناء جدول HTML مباشر من النتائج
   const tableHtml = `
     <table>
-      <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء والمجموعات</th></tr>
-      ${sorted.map(([score, kids]) => `
+      <tr><th>الدرجة</th><th>الاسم</th><th>المجموعة</th></tr>
+      ${results.map(r => `
         <tr>
-          <td>${score}</td>
-          <td>${kids.length}</td>
-          <td>
-            ${kids.sort((a,b)=>a.name.localeCompare(b.name,"ar")).map(k => `${k.name} (${k.group})`).join("<br>")}
-          </td>
+          <td>${r.net}</td>
+          <td>${r.name}</td>
+          <td>${r.group}</td>
         </tr>
       `).join("")}
     </table>
   `;
 
-  return { html: tableHtml, map: scoreMap, list: sorted };
+  return { html: tableHtml, list: results };
 }
 
 // تفعيل زر "عرض كل الدرجات"
