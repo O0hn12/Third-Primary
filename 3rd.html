@@ -2460,6 +2460,7 @@ async function fetchChildGroup(name) {
 }
 
 // تجميع كل الدرجات مع أسماء الأطفال والمجموعات
+// تجميع كل الدرجات مع أسماء الأطفال والمجموعات
 async function buildAllScoresReport(groups) {
   let names = await fetchAllNames(groups);
 
@@ -2469,8 +2470,8 @@ async function buildAllScoresReport(groups) {
   const results = await Promise.all(
     names.map(async (name) => {
       const [net, group] = await Promise.all([
-        fetchNetPoints(name),
-        fetchChildGroup(name)
+        fetchNetPoints(name),   // بيجمع earned - used - minus من كل الصفوف
+        fetchChildGroup(name)   // بيجيب المجموعة من Admin
       ]);
       return { name, group, net: Number(net) || 0 };
     })
