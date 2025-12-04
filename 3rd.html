@@ -2493,7 +2493,7 @@ async function buildAllScoresReport(groups) {
           <td>${score}</td>
           <td>${kids.length}</td>
           <td>
-            ${kids.map(k => `${k.name} (${k.group})`).join("<br>")}
+            ${kids.sort((a,b)=>a.name.localeCompare(b.name,"ar")).map(k => `${k.name} (${k.group})`).join("<br>")}
           </td>
         </tr>
       `).join("")}
