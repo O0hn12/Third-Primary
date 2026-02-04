@@ -2505,10 +2505,24 @@ async function buildAllScoresReportFromSheet() {
 
     const gifts = giftName.split(/[,،]/).map(g => g.trim()).filter(Boolean);
 
-    let totalGiftPoints = 0;
-    gifts.forEach(g => {
-      totalGiftPoints += giftPointsMap[g] || 0;
-    });
+   let totalGiftPoints = 0;
+gifts.forEach(g => {
+  // نشيل أي إيموجي أو رموز ونخلي النص الأساسي
+  const clean = g.replace(/[^\u0600-\u06FF\s×0-9]/g, "").trim();
+
+  // نقرأ العدد بعد × (لو موجود)
+  const match = clean.match(/(.+?)\s*×\s*(\d+)/);
+  let giftBase = clean;
+  let qty = 1;
+
+  if (match) {
+    giftBase = match[1].trim();   // اسم الهدية
+    qty = Number(match[2]) || 1;  // العدد
+  }
+
+  // نجيب قيمة الهدية من الخريطة ونضربها في العدد
+  totalGiftPoints += (giftPointsMap[giftBase] || 0) * qty;
+});
 
     const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
     current.used += totalGiftPoints;
