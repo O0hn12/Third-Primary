@@ -2460,32 +2460,69 @@ async function fetchChildGroup(name) {
 }
 
 // تجميع كل الدرجات مع أسماء الأطفال والمجموعات
-async function buildAllScoresReportFromSheet() {
-  // 🟢 هات بيانات الشيت Attendance بالكامل
-  const res = await fetch(`${apiURL}?type=attendanceAll`);
-  const data = await res.json();
-  const rows = data.records || [];
+// 🟢 خريطة أسماء الهدايا → قيم النقاط
+const giftPointsMap = {
+  "🎮 لعبة": 4,
+  "🎨 كراسة رسم": 3,
+  "🖍️ ألوان": 2,
+  "✨ ستيكرات": 1,
+  "📘 كتاب صغير": 5
+  // ممكن تزود أي هدايا تانية بنفس الشكل
+};
 
-  // 🟢 خريطة: الاسم → مجموع النقاط
+async function buildAllScoresReportFromSheet() {
+  // 🟢 هات بيانات الحضور والتفاعل
+  const attRes = await fetch(`${apiURL}?type=attendanceAll`);
+  const attData = await attRes.json();
+  const attRows = attData.records || [];
+
+  // 🟢 هات بيانات الهدايا المستهلكة
+  const giftsRes = await fetch(`${apiURL}?type=giftsAll`);
+  const giftsData = await giftsRes.json();
+  const giftRows = giftsData.records || [];
+
+  // 🟢 خريطة: الاسم → { earned, minus, used }
   const pointsMap = new Map();
 
-  rows.forEach(r => {
+  // اجمع earned و minus من ورقة الحضور
+  attRows.forEach(r => {
     const name = String(r[0] || "").trim();
     const interaction = Number(r[6]) || 0; // عمود التفاعل
     const minus = Number(r[12]) || 0;      // عمود minus
-
     if (!name) return;
 
-    // اجمع التفاعل واطرح منه الماينص
-    const current = pointsMap.get(name) || 0;
-    const newTotal = current + interaction - minus;
-    pointsMap.set(name, newTotal);
+    const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
+    current.earned += interaction;
+    current.minus  += minus;
+    pointsMap.set(name, current);
   });
 
-  // 🟢 حول الخريطة لنتائج منظمة
+  // اجمع النقاط المستهلكة من ورقة الهدايا
+  giftRows.forEach(r => {
+    const name = String(r[0] || "").trim();
+    const giftName = String(r[3] || "").trim(); // عمود الهدايا المختارة
+    if (!name || !giftName) return;
+
+    // لو فيه أكتر من هدية في نفس الخلية (مفصولة بفواصل)
+    const gifts = giftName.split(/[,،]/).map(g => g.trim()).filter(Boolean);
+
+    let totalGiftPoints = 0;
+    gifts.forEach(g => {
+      totalGiftPoints += giftPointsMap[g] || 0; // لو مش موجودة في الخريطة → 0
+    });
+
+    const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
+    current.used += totalGiftPoints;
+    pointsMap.set(name, current);
+  });
+
+  // 🟢 حساب المحصلة النهائية لكل طفل
   const results = Array.from(pointsMap.entries())
-    .map(([name, net]) => ({ name, net }))
-    .filter(r => r.net !== 0); // استبعد اللي درجتهم صفر
+    .map(([name, obj]) => ({
+      name,
+      net: obj.earned - obj.used - obj.minus
+    }))
+    .filter(r => r.net !== 0);
 
   // 🟢 اجمع الأطفال حسب الدرجة
   const scoreMap = new Map();
@@ -2494,7 +2531,6 @@ async function buildAllScoresReportFromSheet() {
     scoreMap.get(r.net).push(r);
   });
 
-  // 🟢 رتب الدرجات تصاعدي
   const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
 
   // 🟢 بناء جدول HTML
