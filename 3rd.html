@@ -2469,82 +2469,30 @@ const giftPointsMap = {
   "كتاب صغير": 5,
 };
 
-async function buildAllScoresReportFromSheet() {
-  // 🟢 هات بيانات الحضور والتفاعل
-  const attRes = await fetch(`${apiURL}?type=attendanceAll`);
-  const attData = await attRes.json();
-  const attRows = attData.records || [];
+async function buildAllScoresReportFromSheet(groups) {
+  // 🟢 هات كل الأسماء
+  const names = await fetchAllNames(groups);
 
-  // 🟢 هات بيانات الهدايا من ورقة Feria
-  const feriaRes = await fetch(`${apiURL}?type=feriaAll`);
-  const feriaData = await feriaRes.json();
-  const feriaRows = feriaData.records || [];
-
-  // 🟢 خريطة: الاسم → { earned, minus, used }
-  const pointsMap = new Map();
-
-  // اجمع earned و minus من ورقة الحضور
-  attRows.forEach(r => {
-    const name = String(r["الاسم"] || r[0] || "").trim();
-    const interaction = Number(r["التفاعل"] || r[6]) || 0;
-    const minus = Number(r["minus"] || r[12]) || 0;
-    if (!name) return;
-
-    const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
-    current.earned += interaction;
-    current.minus  += minus;
-    pointsMap.set(name, current);
-  });
-
-  // اجمع النقاط المستهلكة من ورقة Feria
-  feriaRows.forEach(r => {
-    const name = String(r["الاسم"] || r[0] || "").trim();
-    const giftName = String(r["الهدايا المختارة"] || r[3] || "").trim();
-    if (!name || !giftName) return;
-
-    const gifts = giftName.split(/[,،]/).map(g => g.trim()).filter(Boolean);
-
-   let totalGiftPoints = 0;
-gifts.forEach(g => {
-  // نشيل أي إيموجي أو رموز ونخلي النص الأساسي
-  const clean = g.replace(/[^\u0600-\u06FF\s×0-9]/g, "").trim();
-
-  // نقرأ العدد بعد × (لو موجود)
-  const match = clean.match(/(.+?)\s*×\s*(\d+)/);
-  let giftBase = clean;
-  let qty = 1;
-
-  if (match) {
-    giftBase = match[1].trim();   // اسم الهدية
-    qty = Number(match[2]) || 1;  // العدد
+  // 🟢 هات المحصلة النهائية لكل طفل من نفس الـ API بتاع المعرض
+  const results = [];
+  for (const name of names) {
+    const net = await fetchNetPoints(name); // ← نفس الحساب اللي شغال في زرار المعرض
+    if (net !== 0) {
+      results.push({ name, net });
+    }
   }
 
-  // نجيب قيمة الهدية من الخريطة ونضربها في العدد
-  totalGiftPoints += (giftPointsMap[giftBase] || 0) * qty;
-});
-
-    const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
-    current.used += totalGiftPoints;
-    pointsMap.set(name, current);
-  });
-
-  // 🟢 حساب المحصلة النهائية لكل طفل
-  const results = Array.from(pointsMap.entries())
-    .map(([name, obj]) => ({
-      name,
-      net: obj.earned - obj.used - obj.minus
-    }))
-    .filter(r => r.net !== 0);
-
-  // 🟢 بناء جدول HTML زي ما هو
+  // 🟢 اجمع الأطفال حسب الدرجة
   const scoreMap = new Map();
   results.forEach(r => {
     if (!scoreMap.has(r.net)) scoreMap.set(r.net, []);
     scoreMap.get(r.net).push(r);
   });
 
+  // 🟢 رتب الدرجات تصاعدي
   const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
 
+  // 🟢 بناء جدول HTML
   const tableHtml = `
     <table>
       <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء</th></tr>
