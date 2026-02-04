@@ -2474,13 +2474,16 @@ async function buildAllScoresReportFromSheet(groups) {
   const names = await fetchAllNames(groups);
 
   // 🟢 هات المحصلة النهائية لكل طفل من نفس الـ API بتاع المعرض
-  const results = [];
-  for (const name of names) {
-    const net = await fetchNetPoints(name); // ← نفس الحساب اللي شغال في زرار المعرض
-    if (net !== 0) {
-      results.push({ name, net });
-    }
-  }
+  // 🟢 هات المحصلة النهائية لكل طفل بالتوازي
+const results = await Promise.all(
+  names.map(async name => {
+    const net = await fetchNetPoints(name);
+    return { name, net };
+  })
+);
+
+// 🟢 استبعد اللي درجتهم صفر
+const filteredResults = results.filter(r => r.net !== 0);
 
   // 🟢 اجمع الأطفال حسب الدرجة
   const scoreMap = new Map();
