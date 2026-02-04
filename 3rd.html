@@ -2476,19 +2476,19 @@ async function buildAllScoresReportFromSheet() {
   const attData = await attRes.json();
   const attRows = attData.records || [];
 
-  // 🟢 هات بيانات الهدايا المستهلكة
-  const giftsRes = await fetch(`${apiURL}?type=giftsAll`);
-  const giftsData = await giftsRes.json();
-  const giftRows = giftsData.records || [];
+  // 🟢 هات بيانات الهدايا من ورقة Feria
+  const feriaRes = await fetch(`${apiURL}?type=feriaAll`);
+  const feriaData = await feriaRes.json();
+  const feriaRows = feriaData.records || [];
 
   // 🟢 خريطة: الاسم → { earned, minus, used }
   const pointsMap = new Map();
 
   // اجمع earned و minus من ورقة الحضور
   attRows.forEach(r => {
-    const name = String(r[0] || "").trim();
-    const interaction = Number(r[6]) || 0; // عمود التفاعل
-    const minus = Number(r[12]) || 0;      // عمود minus
+    const name = String(r["الاسم"] || r[0] || "").trim();
+    const interaction = Number(r["التفاعل"] || r[6]) || 0;
+    const minus = Number(r["minus"] || r[12]) || 0;
     if (!name) return;
 
     const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
@@ -2497,18 +2497,17 @@ async function buildAllScoresReportFromSheet() {
     pointsMap.set(name, current);
   });
 
-  // اجمع النقاط المستهلكة من ورقة الهدايا
-  giftRows.forEach(r => {
-    const name = String(r[0] || "").trim();
-    const giftName = String(r[3] || "").trim(); // عمود الهدايا المختارة
+  // اجمع النقاط المستهلكة من ورقة Feria
+  feriaRows.forEach(r => {
+    const name = String(r["الاسم"] || r[0] || "").trim();
+    const giftName = String(r["الهدايا المختارة"] || r[3] || "").trim();
     if (!name || !giftName) return;
 
-    // لو فيه أكتر من هدية في نفس الخلية (مفصولة بفواصل)
     const gifts = giftName.split(/[,،]/).map(g => g.trim()).filter(Boolean);
 
     let totalGiftPoints = 0;
     gifts.forEach(g => {
-      totalGiftPoints += giftPointsMap[g] || 0; // لو مش موجودة في الخريطة → 0
+      totalGiftPoints += giftPointsMap[g] || 0;
     });
 
     const current = pointsMap.get(name) || { earned:0, minus:0, used:0 };
@@ -2524,7 +2523,7 @@ async function buildAllScoresReportFromSheet() {
     }))
     .filter(r => r.net !== 0);
 
-  // 🟢 اجمع الأطفال حسب الدرجة
+  // 🟢 بناء جدول HTML زي ما هو
   const scoreMap = new Map();
   results.forEach(r => {
     if (!scoreMap.has(r.net)) scoreMap.set(r.net, []);
@@ -2533,7 +2532,6 @@ async function buildAllScoresReportFromSheet() {
 
   const sorted = Array.from(scoreMap.entries()).sort((a,b)=>a[0]-b[0]);
 
-  // 🟢 بناء جدول HTML
   const tableHtml = `
     <table>
       <tr><th>الدرجة</th><th>عدد الأطفال</th><th>الأسماء</th></tr>
@@ -2552,7 +2550,7 @@ async function buildAllScoresReportFromSheet() {
 
   return { html: tableHtml, list: sorted };
 }
-
+    
 // تفعيل زر "عرض كل الدرجات"
 document.getElementById("showAllScoresBtn").addEventListener("click", async () => {
   const box = document.getElementById("allScoresResult");
